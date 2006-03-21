@@ -1,0 +1,7 @@
+ReWriteEngin	on
+
+# redirect pod document requests to perl script
+RewriteRule ^docperl/pod/(.*)$ docperl/cgi/docperl.cgi?pod=$2 [L]
+
+DirectoryIndex  cgi/docperl.cgi
+

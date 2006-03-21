@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US" xml:lang="en-US">
+	<head>
+		<title>Module Options</title>
+		<style type="text/css">
+			html {
+				padding:		0px;
+				margin:			0px;
+			}
+			body {
+				padding:		0px;
+				margin:			0px;
+			}
+			h1 {
+				float:			left;
+				padding-top:	0px;
+				padding-bottom:	0px;
+				margin-top:		0px;
+				margin-bottom:	0px;
+			}
+			ul {
+				display:		inline;
+			}
+			li {
+				display:		inline;
+			}
+			pre { display: none; }
+		</style>
+		<script type="text/javascript">
+		<!--
+			
+		//-->
+		</script>
+	</head>
+	<body>
+		<table style="width:100%; vertical-align:center; text-align: center; clear: both; ">
+			<tr>
+				<th>[% module %]</th>
+				<td><a target="contents" href="?page=pod&module=[% module %]&file=[% file %]&location=[% location %]"> POD </a></td>
+				<td><a target="contents" href="?page=api&module=[% module %]&file=[% file %]&location=[% location %]"> API </a></td>
+				<td><a target="contents" href="?page=code&module=[% module %]&file=[% file %]&location=[% location %]">CODE</a></td>
+				<td><a target="contents" href="http://search.cpan.org/search?query=[% module %]&mode=module"> CPAN</a></td>
+			</tr>
+		</table>
+		<pre>
+			[% DUMP %]
+		</pre>
+	</body>
+</html>

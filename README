@@ -1,0 +1,29 @@
+DocPerl
+
+Installation:
+
+DocPerl requires little in the way of installation. You need to place the
+files where ever you want and then set up your web server to execute the
+docperl.cgi script. For apache this may be just adding something like:
+
+<Directory "/path/to/docperl">
+	Options +ExecCGI
+    AllowOverride Limit
+    DirectoryIndex docperl.cgi
+    AddHandler cgi-script .cgi
+</Directory>
+
+DocPerl needs some perl modules that may not be already installed these
+include:
+Template Toolkit
+Readonly
+
+to install one of the following commands should work
+cpan Template Readonly
+or
+perl -MCPAN -e 'install Template; install Readonly'
+or for active perl users
+(forgotten)
+
+If you have any problems try going to the help forums at
+https://sourceforge.net/forum/forum.php?forum_id=553595

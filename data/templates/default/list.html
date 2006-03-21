@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US" xml:lang="en-US">
+	<head>
+		<title>DocPerl Index</title>
+		<style type="text/css">
+		<!--/* <![CDATA[ */
+			@import url("?page=css.css");
+			body {
+				font-size:			10pt;
+				padding:			0px;
+				margin:				0px;
+			}
+			h1, h2, h3 {
+				margin-top:			0px;
+				padding:			5px 2px 4px 2px;
+			}
+			h1 {
+				font-size:			1em;
+				text-align:			center;
+			}
+			h2 {
+				font-size:			0.9em;
+				
+			}
+			table {
+				font-size:			0.9em;
+				
+			}
+			ul {
+				font-size:			1em;
+				list-style-type:	none;
+				padding-left:		0px;
+			}
+			li {
+				clear:				left;
+			}
+			ul li {
+				padding-left:		0.3em;
+			}
+			ul ul {
+				padding-left:		0.3em;
+				margin-left:		0.3em;
+			}
+			li > ul {
+				display:			none;
+			}
+			.plus {
+				padding-left:		2px;
+				padding-right:		2px;
+				border-style:		solid;
+				border-width:		1px;
+			}
+			.mod_expand {
+				width:				1em;
+				margin-right:		0.8em;
+				text-align:			center;
+				vertical-align:		center;
+				display:			block;
+				float:				left;
+				border-style:		solid;
+				border-width:		1px;
+				clear:				left;
+				-moz-border-radius:	4px;
+				border-radius:		4px;
+			}
+			.info {
+				width:				10px;
+				-moz-border-radius:	10px;
+				border-width:		1px;
+				border-color:		red;
+				border-style:		solid;
+				display:			block;
+				float:				right;
+				text-align:			center;
+				position:			relative;
+				top:				-17px;
+			}
+			.info div {
+				display:			none;
+			}
+			.info:hover div {
+				display:			block;
+			}
+		/* ]]> */-->
+		</style>
+		<script type="text/javascript">
+		<!--
+			[% js.pod %]
+			[% js.inc %]
+			[% js.local %]
+			[% perl %]
+			[% inc %]
+			[% local %]
+			var links = new Array();
+			var level;
+			
+			function setup_modules() {
+				// set up each of perl, inc and local
+				level = 0;
+				var total_perl = create_tree( perl,	document.getElementById('perl'),	'perl' );
+				level = 0;
+				var total_inc = create_tree( inc,	document.getElementById('inc'),		'inc' );
+				level = 0;
+				var total_local = create_tree( local,	document.getElementById('local'),	'local' );
+				level = 0;
+				//alert( 'local = ' + total_local + '\n perl = ' + total_perl + '\n inc = ' + total_inc );
+				document.getElementById('perl_head').appendChild( document.createTextNode(' ('+total_perl+')') );
+				document.getElementById('local_head').appendChild( document.createTextNode(' ('+total_local+')') );
+				document.getElementById('inc_head').appendChild( document.createTextNode(' ('+total_inc+')') );
+			}
+			
+			function create_tree ( files, container, path ) {
+				// need to stick each module into a container
+				var ul = document.createElement('ul');
+				ul.className = 'mod_list';
+				ul.id = 'ul__'+path;
+				level++;
+				var count = 0;
+				
+				for ( var module in files ) {
+					if ( module != '*' ) {
+						var li = document.createElement('li');
+						li.id = 'li__' + path + '__' + module;
+						var label;
+						var data = files[module];
+						var num = 0;
+						for ( var sub in data ) {
+							num++;
+						}
+						if ( num >= 2 ) {
+							var plus	= document.createElement('a');
+							plus.id		= 'plus__' + path + '__' + module;
+							plus.href	= 'javascript: list_toggle("' + path + '__' + module + '")';
+							plus.setAttribute( 'class', 'mod_expand' );
+							plus.setAttribute( 'style', 'text-decoration: none' );
+							plus.appendChild( document.createTextNode( '+' ) );
+							li.appendChild( plus );
+						}
+						else {
+							var plus	= document.createElement('div');
+							plus.setAttribute( 'class', 'mod_expand' );
+							plus.setAttribute( 'style', 'border-width: 0px;' );
+							plus.appendChild( document.createTextNode( '.' ) );
+							li.appendChild( plus );
+						}
+						
+						data = files[module]['*'];
+						if ( data && data.length ) { // && data.length() ) {
+							label = document.createElement('a');
+							label.href = '?page=module&module=' + path + '__' + module;
+							label.setAttribute( 'onclick', 'javascript: click_module("' + path + '__' + module + '");' );
+							label.setAttribute( 'target', 'main' );
+							label.id = 'a__' + path + '__' + module;
+							label.appendChild( document.createTextNode( module ) );
+							count++;
+						}
+						else {
+							label = document.createTextNode( module );
+						}
+						li.appendChild( label );
+						// recurse to get sub elements here
+						count += create_tree( files[module], li, path + '__' + module );
+						ul.appendChild( li );
+					}
+				}
+				
+				container.appendChild( ul );
+				return count;
+			}
+			function list_toggle( id ) {
+				var ul = document.getElementById( 'ul__' + id );
+				var link  = document.getElementById( 'plus__' + id );
+				// check the status of the list
+				if ( ul.style && ul.style.display ) {
+					// list is open so close
+					ul.style.display = '';
+					link.removeChild( link.firstChild );
+					link.appendChild( document.createTextNode('+') );
+				}
+				else {
+					// list is closed so open
+					ul.style.display = 'block';
+					link.removeChild( link.firstChild );
+					link.appendChild( document.createTextNode('-') );
+				}
+			}
+		//-->
+		</script>
+	</head>
+	<body onload="setup_modules();">
+	
+		<h1>Perl Documentation</h1>
+		<!--h2>Search</h2-->
+		<center>
+			<table>
+				<tr>
+					<th>Search&nbsp;:&nbsp;</th>
+					<td><input type="text" name="search" id="search" size="15"/></td>
+				</tr>
+				<tr>
+					<td colspan="2" style="text-align: center"><input type="submit" value="Find Modules"/></td>
+				</tr>
+			</table>
+		</center>
+		<div id="search_results" style="display:none">
+			<h2>Search Results</h2>
+			<div id="results">
+			</div>
+		</div>
+		<div id="perl_doc">
+			<h2 id="perl_head">Perl <div class="info">i<div>[% perl_path %]</div></div></h2>
+			<div id="perl">
+			</div>
+		</div>
+		<div id="local_doc">
+			<h2 id="local_head">Local Programs <div class="info">i<div>[% local_path %]</div></div></h2>
+			<div id="local">
+			</div>
+		</div>
+		<div id="inc_doc">
+			<h2 id="inc_head">Installed Modules <div class="info">i<div>[% inc_path %]</div></div></h2>
+			<div id="inc">
+			</div>
+		</div>
+	</body>
+</html>
