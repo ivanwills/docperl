@@ -152,7 +152,7 @@
 							label = document.createElement('a');
 							label.href = '?page=module&module=' + path + '__' + module;
 							label.setAttribute( 'onclick', 'javascript: click_module("' + path + '__' + module + '");' );
-							label.setAttribute( 'target', 'main' );
+							[% IF !sidebar %]label.setAttribute( 'target', 'main' );[% END %]
 							label.id = 'a__' + path + '__' + module;
 							label.appendChild( document.createTextNode( module ) );
 							count++;
@@ -225,5 +225,6 @@
 			<div id="inc">
 			</div>
 		</div>
+		<a href="?page=list&sidebar=1">Bookmark for Firefox sidebar</a>
 	</body>
 </html>

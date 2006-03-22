@@ -186,6 +186,13 @@ sub _check_cache {
 	die "Missing required argument - source, file" unless $arg{source};
 	die "Missing required argument - cache, location" unless $arg{cache};
 	
+	# check if the cache file has a suffix
+	if ( $arg{cache} !~ /\.\w+$/ ) {
+		# add the sources suffix
+		my ( $suffix ) = $arg{source} =~ /(\.\w+)$/xs;
+		$arg{cache} .= $suffix;
+	}
+	
 	# get the cached file's full name
 	my $file	= "$self->{cache_dir}/$arg{cache}";
 	
@@ -230,12 +237,24 @@ sub _save_cache {
 	# check that the arguments are supplied
 	die "Missing required argument - source, file" unless $arg{source};
 	die "Missing required argument - cache, location" unless $arg{cache};
+	warn "here";
+	
+	# check if the cache file has a suffix
+	if ( $arg{cache} !~ /\.\w+$/ ) {
+		# add the sources suffix
+		my ( $suffix ) = $arg{source} =~ /(\.\w+)$/xs;
+		$arg{cache} .= $suffix;
+	}
+	else {
+		warn "$arg{cache} has a suffix!";
+	}
 	
 	# split up the directory parts of the cache
 	my @parts	= split m{/}, $arg{cache};
 	my $file	= pop @parts;
 	my $dir		= $self->{cache_dir};
 	
+	warn "dir = $dir, ".join ' ', @parts;
 	# make sure that we have all the directories up to the cached file
 	for my $part ( @parts ) {
 		$dir .= "/$part";

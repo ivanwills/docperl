@@ -110,12 +110,8 @@ use strict;
 use warnings;
 use Carp;
 use Data::Dumper qw/Dumper/;
-
 use Scalar::Util;
 use List::Util;
-#use List::MoreUtils;
-
-use CGI;
 use base qw/DocPerl::Cached/;
 
 our $VERSION = 0.0.1;
@@ -174,32 +170,11 @@ sub pod {
 	my $self	= shift;
 	my $conf	= $self->{conf};
 	my $module	= $self->{module};
-	my $file	= $self->{module_file} || '';
-	my @folders;
+	my $file	= $self->{source} || '';
+	my @folders	= $self->{folders};
 	my @suffixes;
 	
 	die "No location supplied" unless $self->{current_location};
-	
-	if ( $self->{current_location} eq 'local' ) {
-		@folders = split /:/, $conf->{LocalFolders}{Path};
-		@suffixes = @{ $conf->{LocalFolders}{suffixes} };
-	}
-	else {
-		@folders = @INC;
-		push @folders, split /:/, $conf->{IncFolders}{Path};
-		@suffixes = @{ $conf->{LocalFolders}{suffixes} };
-	}
-	
-	# Get the location of the file
-	for my $dir ( @folders ) {
-		for my $suffix ( @suffixes ) {
-			#warn "trying $dir/$file.$suffix";
-			if ( -f "$dir/$file.$suffix" ) {
-				$file = "$dir/$file.$suffix";
-				last;
-			}
-		}
-	}
 	
 	# check that we found the proper file
 	return ( pod => "Could not find $self->{module_file} in ".join ", ", @folders )

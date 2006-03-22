@@ -196,12 +196,41 @@ sub process {
 			$self->{module}				= $q->{module};
 			$self->{module_file}		= $q->{module};
 			
-			$self->{module_file} =~ s{::}{/}xs;
+			$self->{module_file} =~ s{::}{/}gxs;
 			$self->{module_file} = "pod/$self->{module_file}" if $self->{current_location} eq 'perl';
 		}
 		die "Module went!" unless $self->{module};
 		die "Module file went!" unless $self->{module_file};
 		die "Location went!" unless $self->{current_location};
+		
+		my $file	= $self->{module_file};
+		my @files;
+		my @folders;
+		my @suffixes;
+		if ( $self->{current_location} eq 'local' ) {
+			@folders = split /:/, $conf->{LocalFolders}{Path};
+			@suffixes = @{ $conf->{LocalFolders}{suffixes} };
+		}
+		else {
+			@folders = @INC;
+			push @folders, split /:/, $conf->{IncFolders}{Path};
+			@suffixes = @{ $conf->{LocalFolders}{suffixes} };
+		}
+		
+		# Get the location of the file
+		for my $dir ( @folders ) {
+			for my $suffix ( @suffixes ) {
+				#warn "trying $dir/$file.$suffix";
+				if ( -f "$dir/$file.$suffix" ) {
+					push @files, "$dir/$file.$suffix";
+				}
+			}
+		}
+		$self->{folders} = \@folders;
+		$self->{suffixes} = \@suffixes;
+		$self->{sources} = \@files;
+		$self->{source}	 = $q->{source} || $files[0];
+		#warn Dumper $self;
 	}
 	
 	if ( $page ) {
@@ -223,6 +252,8 @@ sub process {
 		module	=> $self->{module},
 		file	=> $self->{module_file},
 		location=> $self->{current_location},
+		sources	=> $self->{sources},
+		source	=> $self->{source},
 		%vars,
 	);
 }
@@ -299,6 +330,7 @@ sub list {
 	delete $vars{INC};
 	delete $vars{PERL};
 	delete $vars{LOCAL};
+	$vars{sidebar} = $q->{sidebar};
 	
 	return %vars;
 }
