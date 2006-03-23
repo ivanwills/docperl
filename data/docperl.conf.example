@@ -1,7 +1,7 @@
 # This section allows for the getting of documentation of files not in the @INC path
 [LocalFolders]
 
-Path: /home/ivan/lib:/var/www/apache2-default/docperl/cgi:/var/www/apache2-default/docperl/data/lib:/home/ivan/src
+Path: .
 Match: \.(?:pm|pl|pod|cgi)$
 suffixes: pod
 suffixes: pm
@@ -11,7 +11,7 @@ suffixes: cgi
 # Info about extra paths to add to @INC ...
 [IncFolders]
 
-Path: /home/ivan/lib
+Path: .
 Match: \.(?:pm|pod)$
 suffixes: pod
 suffixes: pm
@@ -21,10 +21,10 @@ suffixes: cgi
 # Details of template usage
 [Templates]
 
-Path: /var/www/apache2-default/docperl/data/templates/local:/var/www/apache2-default/docperl/data/templates/default
+Path: ./data/templates/local:./data/templates/default
 
 # General configuration
 [General]
 
-Data: /var/www/html/docperl/data
+Data: ./data
 Touch: /usr/bin/touch
