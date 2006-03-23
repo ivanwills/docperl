@@ -144,6 +144,8 @@ sub process {
 
 sub get_api {
 	my $self	= shift;
+	my $conf	= $self->{conf};
+	my $location= $self->{current_location};
 	my ($file)	= @_;
 
 	# open the file
@@ -251,6 +253,16 @@ sub get_api {
 		}
 	}
 	close FILE;
+	
+	my @paths = split /:/, $location eq 'local' ? $conf->{LocalFolders}{Path} : $conf->{IncFolders}{Path};
+	push @INC, @paths;
+	warn join "\n", @paths, "\n ";
+	warn join "\n", @INC, "\n ";
+	
+	if ( $api{package} ) {
+		$api{version} = eval("require $api{package};\$$api{package}\:\:VERSION");
+		warn $@ if $@;
+	}
 	return \%api;
 }
 
