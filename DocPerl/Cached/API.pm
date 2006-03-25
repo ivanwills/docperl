@@ -108,13 +108,13 @@ PARTICULAR PURPOSE.
 
 use strict;
 use warnings;
+use version;
 use Carp;
 use Data::Dumper qw/Dumper/;
-
 use Scalar::Util;
 use base qw/DocPerl::Cached/;
 
-our $VERSION = 0.0.1;
+our $VERSION = version->new('0.0.1');
 our @EXPORT = qw//;
 our @EXPORT_OK = qw//;
 
@@ -260,6 +260,7 @@ sub get_api {
 	if ( $api{package} ) {
 		$api{version} = eval("require $api{package};\$$api{package}\:\:VERSION");
 		warn $@ if $@;
+		$api{hirachy} = [ get_hirachy( $api{package} ) ];
 	}
 	if ( ref $api{modules} ) {
 		$api{modules} = [ sort keys %{ $api{modules} } ];
@@ -273,265 +274,19 @@ sub get_api {
 	return \%api;
 }
 
-sub api {
-	my ( $module, $api, $file, $q ) = @_;
-	my $out;
-
-	$out .= $q->h1($module);
-	$out .= $q->div(
-		{ -style => "float: right; border-width:2px; border-style:solid;" },
-		$q->h2(
-			{
-				-style =>
-"border-width:0px 0px 2px 0px; border-style:solid; padding:0px 3px 0px 3px;margin:0px;background-color:transparent;-moz-border-radius:0px"
-			},
-			"Class Inheritance",
-		),
-		$q->ul(
-			{ -style => "list-style-type:none;padding-left:5px;font-weight:bold" },
-			$q->li( { -style => "font-weight:bold" }, getHirachy( $module, $q ) ),
-		)
-	);
-	$out .= $q->start_table( { -border => 1 } );
-	if ( $api->{package} ) {
-		$out .= $q->Tr( $q->th('Package'), $q->td( { -colspan => "2" }, $api->{package} ) );
-		my $v = eval("require $module;\$$module\:\:VERSION");
-		#warn "$v = $module\:\:VERSION;\t$@";
-		$out .= $q->Tr( $q->th('Version'), $q->td( { -colspan => "2" }, $v || 'Module has no $VERSION' ) );    # if $module::VERSION;
-	}
-	if ( $api->{modules} ) {
-		my @modules = sort keys %{ $api->{modules} };
-		$out .= $q->Tr(
-			$q->th(
-				{ -style => "vertical-align:top", -rowspan => int( ( scalar(@modules) + 1 ) / 2 ) + 1 }, "Modules"
-			)
-		);
-		for ( my $i = 0 ; $i < @modules ; $i += 2 ) {
-			if ( $i + 2 > @modules ) {
-				$out .= $q->Tr(
-					$q->td(
-						{ -colspan => 2 },
-						$q->a( { -href => "?type=module&module=" . $modules[$i] }, $modules[$i] )
-					)
-				);
-				last;
-			}
-			$out .= $q->Tr(
-				$q->td( $q->a( { -href => "?type=module&module=" . $modules[$i] }, $modules[$i] ) ),
-				$q->td( $q->a( { -href => "?type=module&module=" . $modules[ $i + 1 ] }, $modules[ $i + 1 ] ) )
-			);
+sub get_hirachy {
+	my ( $object ) = @_;
+	my @hirachy;
+	
+	eval("use $object");
+	if ( not $@ ) {
+		my $o = bless {}, $object;
+		foreach my $parent ( eval("\@$object\:\:ISA") ) {
+			push @hirachy, get_hirachy( $parent );
 		}
 	}
-	if ( $api->{required} ) {
-		my @required = sort keys %{ $api->{required} };
-		$out .= $q->Tr(
-			$q->th(
-				{ -style => "vertical-align:top", -rowspan => int( ( scalar(@required) + 1 ) / 2 ) + 1 },
-				"Required Modules"
-			)
-		);
-		for ( my $i = 0 ; $i < @required ; $i += 2 ) {
-			if ( $i + 2 > @required ) {
-				$out .= $q->Tr(
-					$q->td(
-						{ -colspan => 2 },
-						$q->a( { -href => "?type=module&module=" . $required[$i] }, $required[$i] )
-					)
-				);
-				last;
-			}
-			$out .= $q->Tr(
-				$q->td( $q->a( { -href => "?type=module&module=" . $required[$i] }, $required[$i] ) ),
-				$q->td( $q->a( { -href => "?type=module&module=" . $required[ $i + 1 ] }, $required[ $i + 1 ] ) )
-			);
-		}
-	}
-	if ( $api->{parents} ) {
-		my @parents = sort @{ $api->{parents} };
-		$out .= $q->Tr(
-			$q->th(
-				{ -style => "vertical-align:top", -rowspan => int( ( scalar(@parents) + 1 ) / 2 ) + 1 },
-				"Inherited Modules"
-			)
-		);
-		for ( my $i = 0 ; $i < @parents ; $i += 2 ) {
-			if ( $i + 2 > @parents ) {
-				$out .= $q->Tr(
-					$q->td(
-						{ -colspan => 2 },
-						$q->a( { -href => "?type=module&module=" . $parents[$i] }, $parents[$i] )
-					)
-				);
-				last;
-			}
-			$out .= $q->Tr(
-				$q->td( $q->a( { -href => "?type=module&module=" . $parents[$i] }, $parents[$i] ) ),
-				$q->td( $q->a( { -href => "?type=module&module=" . $parents[ $i + 1 ] }, $parents[ $i + 1 ] ) )
-			);
-		}
-	}
-	if ( $api->{class} ) {
-		my @classes = sort keys %{ $api->{class} };
-		$out .= $q->Tr(
-			$q->th(
-				{ -style => "vertical-align:top", -rowspan => int( ( scalar(@classes) + 1 ) / 2 ) + 1 },
-				"Class Methods"
-			)
-		);
-		for ( my $i = 0 ; $i < @classes ; $i += 2 ) {
-			my $line1 = $api->{object}{ $classes[$i] };
-			my $line2 = $api->{object}{ $classes[ $i + 1 ] };
-			if ( $i + 2 > @classes ) {
-				$out .= $q->Tr(
-					$q->td(
-						{ -colspan => 2 },
-						$q->a(
-							{ -href => "?type=module&module=$module&details=code&file=$file#line$line1" },
-							$classes[$i]
-						)
-					)
-				);
-				last;
-			}
-			$out .= $q->Tr(
-				$q->td(
-					$q->a(
-						{ -href => "?type=module&module=$module&details=code&file=$file#line$line1" }, $classes[$i]
-					)
-				),
-				$q->td(
-					$q->a(
-						{ -href => "?type=module&module=$module&details=code&file=$file#line$line2" },
-						$classes[ $i + 1 ]
-					)
-				)
-			);
-		}
-	}
-	if ( $api->{object} ) {
-		my @objects = sort keys %{ $api->{object} };
-		$out .= $q->Tr(
-			$q->th(
-				{ -style => "vertical-align:top", -rowspan => int( ( scalar(@objects) + 1 ) / 2 ) + 1 },
-				"Object Methods"
-			)
-		);
-		for ( my $i = 0 ; $i < @objects ; $i += 2 ) {
-			my $line1 = $api->{object}{ $objects[$i] }		 if $objects[$i];
-			my $line2 = $api->{object}{ $objects[ $i + 1 ] } if $objects[ $i + 1 ];
-			if ( $i + 2 > @objects ) {
-				$out .= $q->Tr(
-					$q->td(
-						{ -colspan => 2 },
-						$q->a(
-							{ -href => "?type=module&module=$module&details=code&file=$file#line$line1" },
-							$objects[$i]
-						)
-					)
-				);
-				last;
-			}
-			$out .= $q->Tr(
-				$q->td(
-					$q->a(
-						{ -href => "?type=module&module=$module&details=code&file=$file#line$line1" }, $objects[$i]
-					)
-				),
-				$q->td(
-					$q->a(
-						{ -href => "?type=module&module=$module&details=code&file=$file#line$line2" },
-						$objects[ $i + 1 ]
-					)
-				)
-			);
-		}
-	}
-	if ( keys %{ $api->{func} } ) {
-		my @funcs = sort keys %{ $api->{func} };
-		$out .= $q->Tr(
-			$q->th(
-				{ -style => "vertical-align:top", -rowspan => int( scalar(@funcs) / 2 ) + 2 },
-				"General Soubroutines"
-			)
-		);
-		for ( my $i = 0 ; $i < @funcs ; $i += 2 ) {
-			my $line1 = $api->{object}{ $funcs[$i] }		if $funcs[$i];
-			my $line2 = $api->{object}{ $funcs[ $i + 1 ] }	if $funcs[ $i + 1 ];
-			if ( $i + 2 > @funcs ) {
-				my $a;
-				if ( $line1 ) {
-					$a = $q->a(
-						{ -href => "?type=module&module=$module&details=code&file=$file#line$line1" },
-						$funcs[$i]
-					);
-				}
-				else {
-					$a = $q->span( { title => "Error lost line number" }, $funcs[$i], );
-				}
-				$out .= $q->Tr( $q->td( { -colspan => 2 }, $a ) );
-				last;
-			}
-			$out .= $q->Tr(
-				$q->td(
-					$q->a( { -href => "?type=module&module=$module&details=code&file=$file#line$line1" }, $funcs[$i] )
-				),
-				$q->td(
-					$q->a(
-						{ -href => "?type=module&module=$module&details=code&file=$file#line$line2" },
-						$funcs[ $i + 1 ]
-					)
-				)
-			);
-		}
-	}
-	$out .= $q->end_table();
-	$out .= <<NOTICE;
-<br />
-<div style="clear:both;font-size:0.8em">
-	<b>Note:</b> This API is just a guess on the meaning of the subroutines in the file.<br />
-	<div style="clear:both;">
-		<i>Class Methods</i> are assumed be in one of the following forms:
-		<pre style="width:16em;float: left">
-sub class_method {
-	my \$class = shift;
-	...
-}</pre>
-		<div style="float:left;padding:5px"><br />or</div>
-		<pre style="width:16em;float: left">
-sub class_method {
-	my \$caller = shift;
-	...
-}</pre>
-	</div>
-	<div style="clear:both;">
-		<i>Object Methods</i> are assumed to be in one of the following forms:
-		<pre style="width:16em;float: left">
-sub object_method {
-	my \$self = shift;
-	...
-}</pre>
-		<div style="float:left;padding:5px"><br />or</div>
-		<pre style="width:16em;float: left">
-sub object_method {
-	my \$this = shift;
-	...
-}</pre>
-		<div style="float:left;padding:5px"><br />or</div>
-		<pre style="width:18em;float: left">
-sub object_method {
-	my ( \$self, ... ) = \@_;
-	...
-}</pre>
-		<div style="float:left;padding:5px"><br />or</div>
-		<pre style="width:18em;float: left">
-sub object_method {
-	my ( \$this, ... ) = \@_;
-	...
-}</pre>
-	</div>
-</div>
-NOTICE
-	return $out;
+	
+	return { class => $object, hirachy => @hirachy ? \@hirachy : undef };
 }
 
 1;

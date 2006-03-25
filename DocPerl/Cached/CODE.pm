@@ -108,17 +108,13 @@ PARTICULAR PURPOSE.
 
 use strict;
 use warnings;
+use version;
 use Carp;
 use Data::Dumper qw/Dumper/;
-
 use Scalar::Util;
-use List::Util;
-#use List::MoreUtils;
-
-use CGI;
 use base qw/Exporter/;
 
-our $VERSION = 0.0.1;
+our $VERSION = version->new('0.0.1');
 our @EXPORT = qw//;
 our @EXPORT_OK = qw//;
 

@@ -55,6 +55,9 @@
 				padding:			5px;
 				list-style-type:	none;
 			}
+			div ul ul {
+				margin-left:		10px;
+			}
 			.hirachy {
 				float:				right;
 				border:				1px solid black;
@@ -85,18 +88,23 @@
 		<h1>[% module %]</h1>
 		<div class="hirachy">
 			<div>Class Inheritance</div>
+			[% INCLUDE class_hirachy
+				list = api.hirachy
+			%]
+			[% BLOCK class_hirachy %]
 			<ul>
+				[% FOR item = list %]
 				<li>
-					[% module %]
-					[%- IF parents %]
-					<ul>
-						[% FOR parent = api.parents %]
-						<li>parent</li>
-						[% END %]
-					</ul>
+					[% item.class %]
+					[%- IF item.hirachy %]
+						[% INCLUDE class_hirachy
+							list = item.hirachy
+						%]
 					[% END %]
 				</li>
+				[% END %]
 			<ul>
+			[% END %]
 		</div>
 		<table>
 			[% IF api.package %]

@@ -5,19 +5,15 @@
 
 use strict;
 use warnings;
+use version;
 use Scalar::Util;
-use List::Util;
-use Data::Dumper qw/Dumper/;
 use CGI;
 use Template;
 use Config::Std;
 use Readonly;
-
-use lib qw{/home/ivan/src/docperl/data/lib};
 use DocPerl;
-use DocPerl::Cached::POD;
 
-our $VERSION = 0.1;
+our $VERSION = version->new('0.1');
 
 Readonly my $BASE		=> '/var/www/html/docperl';
 Readonly my $DATA		=> "$BASE/data";
