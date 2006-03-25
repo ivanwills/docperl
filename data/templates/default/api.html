@@ -22,6 +22,9 @@
 			}
 			table {
 				border:				1px outset;
+				width:				500px;
+				overflow:			visible;
+				border-collapse:	collapse;
 			}
 			th, td {
 				border:				1px inset;
@@ -30,6 +33,22 @@
 			}
 			th {
 				text-align:			right;
+				width:				160px;
+			}
+			td.double_list {
+				padding:			0px;
+			}
+			td.double_list > table {
+				border-width:		0px;
+				margin:				0px;
+				width:				100%;
+			}
+			td.double_list > table td {
+				border-width:		0px;
+				border-left-width:	1px;
+				padding:			2px;
+				margin:				0px;
+				width:				50%;
 			}
 			ul {
 				margin:				0px;
@@ -69,65 +88,163 @@
 			<ul>
 				<li>
 					[% module %]
-					[%- IF parents -%]
+					[%- IF parents %]
 					<ul>
-						[%- FOR parent = parents -%]
+						[% FOR parent = api.parents %]
 						<li>parent</li>
-						[%- END -%]
+						[% END %]
 					</ul>
-					[%- END -%]
+					[% END %]
 				</li>
 			<ul>
 		</div>
 		<table>
+			[% IF api.package %]
 			<tr>
 				<th>Package</th>
 				<td>[% module %]</td>
 			</tr>
+			[% END -%]
+			[% IF api.version %]
 			<tr>
 				<th>Version</th>
-				<td>[% version %]</td>
+				<td>[% api.version %]</td>
 			</tr>
+			[% END -%]
+			[% IF api.modules %]
 			<tr>
 				<th>Modules</th>
-				<td></td>
+				<td class="double_list">
+					<table>
+					[% counter = 1 -%]
+					[% FOR inc_module = api.modules -%]
+						[% IF counter % 2 %]
+						<tr>
+						[% END %]
+							<td>[% inc_module %]</td>
+						[% IF !(counter % 2) %]
+						</tr>
+						[% END -%]
+						[% counter = counter + 1 -%]
+					[% END -%]
+					[% IF !(counter % 2) %]
+						[% IF counter > 2 %]<td></td>[% END %]
+						</tr>
+					[% END -%]
+					</table>
+				</td>
 			</tr>
+			[% END -%]
+			[% IF api.parents -%]
 			<tr>
 				<th>Inherited Modules</th>
-				<td></td>
+				<td class="double_list">
+					<table>
+					[% counter = 1 -%]
+					[% FOR parent = api.parents -%]
+						[% IF counter % 2 %]
+						<tr>
+						[% END -%]
+							<td>[% parent %]</td>
+						[% IF !(counter % 2) %]
+						</tr>
+						[% END -%]
+						[% counter = counter + 1 -%]
+					[% END -%]
+					[% IF !(counter % 2) %]
+						[% IF counter > 2 %]<td></td>[% END %]
+						</tr>
+					[% END -%]
+					</table>
+				</td>
 			</tr>
+			[% END -%]
+			[% IF api.class -%]
 			<tr>
 				<th>Class Methods</th>
-				<td></td>
+				<td class="double_list">
+					<table>
+					[% counter = 1 -%]
+					[% FOR sub = api.class -%]
+						[% IF counter % 2 %]
+						<tr>
+						[% END -%]
+							<td>
+								<a href="?page=code&module=&location=&source=#sub.line">
+									[% sub.name %]
+								</a>
+							</td>
+						[% IF !(counter % 2) %]
+						</tr>
+						[% END -%]
+						[% counter = counter + 1 -%]
+					[% END -%]
+					[% IF !(counter % 2) %]
+						[% IF counter > 2 %]<td></td>[% END %]
+						</tr>
+					[%- END -%]
+					</table>
+				</td>
 			</tr>
+			[% END -%]
+			[% IF api.object -%]
 			<tr>
 				<th>Object Methods</th>
-				<td></td>
+				<td class="double_list">
+					<table>
+					[% counter = 1 -%]
+					[% FOR sub = api.object -%]
+						[% IF counter % 2 %]
+						<tr>
+						[% END -%]
+							<td>
+								<a href="?page=code&module=&location=&source=#sub.line">
+									[% sub.name %]
+								</a>
+							</td>
+						[% IF !(counter % 2) %]
+						</tr>
+						[% END -%]
+						[% counter = counter + 1 -%]
+					[% END -%]
+					[% IF !(counter % 2) %]
+						[% IF counter > 2 %]<td></td>[% END %]
+						</tr>
+					[%- END -%]
+					</table>
+				</td>
 			</tr>
+			[% END -%]
+			[% IF api.func -%]
 			<tr>
 				<th>General Subroutines</th>
-				<td></td>
+				<td class="double_list">
+					<table>
+					[%- counter = 1 -%]
+					[%- FOR sub = api.func -%]
+						[% IF counter % 2 %]
+						<tr>
+						[%- END -%]
+							<td>
+								<a href="?page=code&module=&location=&source=#sub.line">
+									[% sub.name %]
+								</a>
+							</td>
+						[% IF !(counter % 2) %]
+						</tr>
+						[% END -%]
+						[% counter = counter + 1 -%]
+					[% END -%]
+					[% IF !(counter % 2) %]
+						[% IF counter > 2 %]<td></td>[% END %]
+						</tr>
+					[%- END -%]
+					</table>
+				</td>
 			</tr>
-			<tr>
-				<th>Package</th>
-				<td></td>
-			</tr>
-			<tr>
-				<th>Package</th>
-				<td></td>
-			</tr>
-			<tr>
-				<th>Package</th>
-				<td></td>
-			</tr>
-			<tr>
-				<th>Package</th>
-				<td></td>
-			</tr>
+			[% END -%]
 		</table>
-		<pre>
-[% DUMP %]
-		</pre>
+		<!--pre>[%# DUMP %]</pre-->
 		<br />
 		<div style="clear:both;font-size:0.8em">
 			<b>Note:</b> This API is just a guess on the meaning of the subroutines in the file.<br />
@@ -158,7 +275,7 @@ sub object_method {
 	my $this = shift;
 	...
 }</pre>
-				<div style="float:left;padding:5px"><br />or</div>
+				<div style="float:left;padding:5px;clear:left;"><br />or</div>
 				<pre style="width:20em;float: left">
 sub object_method {
 	my ( $self, ... ) = @_;

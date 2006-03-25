@@ -256,13 +256,20 @@ sub get_api {
 	
 	my @paths = split /:/, $location eq 'local' ? $conf->{LocalFolders}{Path} : $conf->{IncFolders}{Path};
 	push @INC, @paths;
-	warn join "\n", @paths, "\n ";
-	warn join "\n", @INC, "\n ";
 	
 	if ( $api{package} ) {
 		$api{version} = eval("require $api{package};\$$api{package}\:\:VERSION");
 		warn $@ if $@;
 	}
+	if ( ref $api{modules} ) {
+		$api{modules} = [ sort keys %{ $api{modules} } ];
+	}
+	for my $type ( qw/class object func/ ) {
+		if ( ref $api{$type} ) {
+			$api{$type} = [ map { { name => $_, line => $api{$type}{$_} } } sort keys %{ $api{$type} } ];
+		}
+	}
+	
 	return \%api;
 }
 
