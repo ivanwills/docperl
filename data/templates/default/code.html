@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-AU" xml:lang="en-AU">
+	<head>
+		<title>Code for [% source %]</title>
+		<meta http-equiv="Content-Type"		content="text/html; charset=utf-8" />
+		<meta http-equiv="Content-Language"	content="en-au" />
+		<meta name="author"		 content="Ivan Wills" />
+		<meta name="copyright"	 content="Copyright (c) 2006 Ivan Wills, All Rights Reserved" />
+		<meta name="description" content="" />
+		<meta name="keywords"	 content="" />
+		<style type="text/css">
+			@import url(?page=css.css);
+			/* Perl Syntax Highliting Styles */
+			a.line_no {
+				background-color:	blue;
+				color:				black;
+				width:				4em;
+				text-align:			right;
+				display:			block;
+				float:				left;
+			}
+			.reserved {
+				color:				red;
+			}
+			.pod {
+				color:				#A23;
+			}
+			.comment {
+				color:				#A41;
+			}
+			.builtin {
+				color:				#36E;
+			}
+			.other {
+				color:				#E33;
+			}
+			.operator {
+				color:				#4A4;
+			}
+			.logic {
+				color:				#92D;
+			}
+			.declatory {
+				color:				#F66;
+			}
+		</style>
+		<script type="text/javascript">
+		<!--
+			
+		//-->
+		</script>
+	</head>
+	<body>
+		<pre>
+			[%- FOR line = lines %]
+[% line -%]
+			[%- END -%]
+		</pre>
+	</body>
+</html>

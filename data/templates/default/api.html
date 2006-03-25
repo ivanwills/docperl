@@ -1,10 +1,10 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html
 	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 	 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US" xml:lang="en-US">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-AU" xml:lang="en-AU">
 	<head>
-		<title>Untitled Document</title>
+		<title>API for [% module %]</title>
 		<meta http-equiv="Content-Type"		content="text/html; charset=utf-8" />
 		<meta http-equiv="Content-Language"	content="en-au" />
 		<meta name="author"		 content="Ivan Wills" />
@@ -178,7 +178,7 @@
 						<tr>
 						[% END -%]
 							<td>
-								<a href="?page=code&module=&location=&source=#sub.line">
+								<a href="?page=code&module=&location=&source=#[% sub.line %]">
 									[% sub.name %]
 								</a>
 							</td>
@@ -206,7 +206,7 @@
 						<tr>
 						[% END -%]
 							<td>
-								<a href="?page=code&module=&location=&source=#sub.line">
+								<a href="?page=code&module=[% module %]&location=[% location %]&source=[% source %]#line[% sub.line %]">
 									[% sub.name %]
 								</a>
 							</td>
@@ -234,7 +234,7 @@
 						<tr>
 						[%- END -%]
 							<td>
-								<a href="?page=code&module=&location=&source=#sub.line">
+								<a href="?page=code&module=[% module %]&location=[% location %]&source=[% source %]#line[% sub.line %]">
 									[% sub.name %]
 								</a>
 							</td>

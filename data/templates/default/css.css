@@ -22,32 +22,3 @@ h4 {
 	padding-left:		16px;
 }
 
-/* Perl Syntax Highliting Styles */
-.line_no {
-	background-color:	blue;
-	color:				black;
-}
-.reserved {
-	color:				red;
-}
-.pod {
-	color:				#A23;
-}
-.comment {
-	color:				#A41;
-}
-.builtin {
-	color:				#36E;
-}
-.other {
-	color:				#E33;
-}
-.operator {
-	color:				#4A4;
-}
-.logic {
-	color:				#92D;
-}
-.declatory {
-	color:				#F66;
-}
