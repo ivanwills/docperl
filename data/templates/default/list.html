@@ -103,20 +103,31 @@
 			[% local %]
 			var links = new Array();
 			var level;
+			var group = 0;
 			
 			function setup_modules() {
 				// set up each of perl, inc and local
-				level = 0;
-				var total_perl = create_tree( perl,	document.getElementById('perl'),	'perl' );
-				level = 0;
-				var total_inc = create_tree( inc,	document.getElementById('inc'),		'inc' );
-				level = 0;
-				var total_local = create_tree( local,	document.getElementById('local'),	'local' );
-				level = 0;
-				//alert( 'local = ' + total_local + '\n perl = ' + total_perl + '\n inc = ' + total_inc );
-				document.getElementById('perl_head').appendChild( document.createTextNode(' ('+total_perl+')') );
-				document.getElementById('local_head').appendChild( document.createTextNode(' ('+total_local+')') );
-				document.getElementById('inc_head').appendChild( document.createTextNode(' ('+total_inc+')') );
+				if ( group == 0 ) {
+					level = 0;
+					var total_perl = create_tree( perl,	document.getElementById('perl'),	'perl' );
+					document.getElementById('perl_head').appendChild( document.createTextNode(' ('+total_perl+')') );
+					group++;
+					setTimeout( setup_modules, 10 );
+				}
+				else if ( group == 1 ) {
+					level = 0;
+					var total_local = create_tree( local,	document.getElementById('local'),	'local' );
+					document.getElementById('local_head').appendChild( document.createTextNode(' ('+total_local+')') );
+					group++;
+					setTimeout( setup_modules, 10 );
+				}
+				else if ( group == 2 ) {
+					level = 0;
+					var total_inc = create_tree( inc,	document.getElementById('inc'),	'inc' );
+					document.getElementById('inc_head').appendChild( document.createTextNode(' ('+total_inc+')') );
+					group++;
+					setTimeout( setup_modules, 10 );
+				}
 			}
 			
 			function create_tree ( files, container, path ) {

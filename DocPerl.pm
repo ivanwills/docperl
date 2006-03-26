@@ -431,10 +431,11 @@ sub create_js {
 	
 	for my $module ( sort keys %{ $vars } ) {
 		my $result = $self->_blah( $module, $vars->{ $module } );
-		$js .= $result . ', ' if $result;
+		$js .= $result . ',' if $result;
 	}
+	$js =~ s/,$//;
 	
-	return "$js };"
+	return "$js};"
 }
 
 
@@ -444,19 +445,20 @@ sub _blah {
 	my ( $name, $vars,  ) = @_;
 	return '' unless ref $vars;
 	
-	my $js = "'$name': { '*' : new Array(";
+	my $js = "'$name':{'*':new Array(";
 	
 	if ( $vars->{'*'} and ref $vars->{'*'} eq 'ARRAY' ) {
 		$js .= "'" . join( "','", @{ $vars->{'*'} } ) . "'";
 	}
-	$js .= "), ";
+	$js .= "),";
 
 	for my $module ( sort keys %{ $vars } ) {
 		next if $module eq '*' or not ref $vars->{$module};
-		$js .= $self->_blah( $module, $vars->{$module} ) . ', ';
+		$js .= $self->_blah( $module, $vars->{$module} ) . ',';
 	}
+	$js =~ s/,$//;
 	
-	return "$js }"
+	return "$js}"
 }
 
 
