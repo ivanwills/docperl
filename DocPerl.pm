@@ -327,9 +327,11 @@ sub list {
 	$vars{inc_path}		= join "<br/>", ( @INC, split /:/, $conf->{IncFolders}{Path}, );
 	$vars{local_path}	= join "<br/>", split /:/, $conf->{IncFolders}{Path};
 	
-	delete $vars{INC};
-	delete $vars{PERL};
-	delete $vars{LOCAL};
+	unless ( $self->{save_data} ) {
+		delete $vars{INC};
+		delete $vars{PERL};
+		delete $vars{LOCAL};
+	}
 	$vars{sidebar} = $q->{sidebar};
 	
 	return %vars;

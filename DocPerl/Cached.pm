@@ -234,7 +234,6 @@ sub _save_cache {
 	# check that the arguments are supplied
 	die "Missing required argument - source, file" unless $arg{source};
 	die "Missing required argument - cache, location" unless $arg{cache};
-	warn "here";
 	
 	# check if the cache file has a suffix
 	if ( $arg{cache} !~ /\.\w+$/ ) {
@@ -251,11 +250,12 @@ sub _save_cache {
 	my $file	= pop @parts;
 	my $dir		= $self->{cache_dir};
 	
-	warn "dir = $dir, ".join ' ', @parts;
+	#warn "dir = $dir, ".join ' ', @parts;
 	# make sure that we have all the directories up to the cached file
 	for my $part ( @parts ) {
 		$dir .= "/$part";
-		mkdir $dir unless -d $dir;
+		mkdir $dir or die "Could not create the directory '$dir': $!"
+			unless -d $dir;
 	}
 	
 	# open the cache file and write the contents
@@ -267,7 +267,7 @@ sub _save_cache {
 	if ( -x $touch ) {
 		system( "$touch --reference=$arg{source} $dir/$file" );
 	}
-	warn( "$touch --reference=$arg{source} $dir/$file" );
+	#warn( "$touch --reference=$arg{source} $dir/$file" );
 	
 	return;
 }

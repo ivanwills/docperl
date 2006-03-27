@@ -5,17 +5,22 @@
 
 use strict;
 use warnings;
-use File::Basename;
+use FindBin;
 use Scalar::Util;
 use List::Util;
+use Config::Std;
+use Readonly;
 use Getopt::Long;
 use Pod::Usage;
 use Data::Dumper qw/Dumper/;
 
 our $VERSION = 0.1;
 
+use lib ($FindBin::Bin);
+Readonly my $CONFIG => "$FindBin::Bin/data/docperl.conf";
+
 my %option = (
-	other			=> undef,
+	compile			=> [],
 	verbose 		=> 0,
 	man				=> 0,
 	help			=> 0,
@@ -30,7 +35,7 @@ sub main {
 	Getopt::Long::Configure("bundling");
 	GetOptions(
 		\%option,
-		'other=s',
+		'compile|c=s@',
 		'verbose|v!',
 		'man',
 		'help',
@@ -63,8 +68,59 @@ sub main {
 	else {
 		print "Config::Std", ' 'x12, "$Config::Std::VERSION",' 'x3,"OK\n";
 	}
+	print "\n";
 	
-	my $dir = dirname('.');
+	if ( ref $option{compile} && @{ $option{compile} } ) {
+		read_config $CONFIG, my %config;
+		use DocPerl;
+		my $dp = DocPerl->new( cgi => { page => 'list', }, conf => \%config, save_data => 1 );
+		my %data = $dp->process();
+		
+		for my $options ( @{ $option{compile} } ) {
+			for my $option ( split /,/, $options ) {
+				compile( lc $option, \%data, $dp );
+			}
+		}
+		`chmod o+w -R $FindBin::Bin/data/cache`;
+	}
+}
+
+sub compile {
+	my ( $type, $data, $dp ) = @_;
+	
+	if ( $type eq 'pod' ) {
+		use DocPerl::Cached::POD;
+		#for my $location ( qw/LOCAL / ) {
+		for my $location ( qw/PERL LOCAL INC/ ) {
+			print "Create $location POD\n";
+			pod( $data->{$location}, $dp, lc $location );
+			#die Dumper $data->{$location};
+		}
+	}
+}
+
+sub pod {
+	my ( $data, $dp, $location, $parent ) = @_;
+	$parent ||= '';
+	$parent .= '::' if $parent;
+	#die Dumper $data if $location eq 'local';
+	
+	for my $module ( keys %{ $data } ) {
+		next if $module eq '*';
+		next if $module =~ m{/};
+		
+		#warn "$parent$module\n";
+		$dp->{cgi} = { page => 'pod', module => "$parent$module", location => $location };
+		$dp->process();
+		
+		if ( ref $data->{$module} && keys %{ $data->{$module} } > ($parent?1:0) ) {
+			for my $sub ( keys %{ $data->{$module} } ) {
+				next if $sub =~ /\*/;
+				my $super = ( !$parent && length $module > 1 ) ? "$parent$module" : '';
+				pod( $data->{$module}{$sub}, $dp, $location, $super );
+			}
+		}
+	}
 }
 
 __DATA__
@@ -82,7 +138,8 @@ This documentation refers to checksetup.pl version 0.1.
    checksetup.pl [option] 
    
  OPTIONS:
-  -o --other         other option 
+  -c --compile=opt   Pre compile the pod/api/code (seperate with commas to
+                     compile more than one option)
 
   -v --verbose       Show more detailed option
      --version       Prints the version information
