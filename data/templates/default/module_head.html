@@ -43,17 +43,17 @@
 	</head>
 	<body>
 		<table style="width:100%; vertical-align:center; text-align: center; clear: both; ">
-			<tr>
 [%- FOR source = sources -%]
-				<th>[% module %]</th>
+			<tr>
+				<th>[% IF !first %][% first = 1 %][% module %][% END %]</th>
 				<td><a target="contents" href="?page=pod&module=[% module %]&file=[% file %]&location=[% location %]&source=[% source %]"> POD </a></td>
 	[%#- UNLESS source =~ /\.pod$/ -%]
 				<td><a target="contents" href="?page=api&module=[% module %]&file=[% file %]&location=[% location %]&source=[% source %]"> API </a></td>
 	[%#- END -%]
 				<td><a target="contents" href="?page=code&module=[% module %]&file=[% file %]&location=[% location %]&source=[% source %]">CODE</a></td>
 				<td><a target="contents" href="http://search.cpan.org/search?query=[% module %]&mode=module"> CPAN</a></td>
-[%- END -%]
 			</tr>
+[%- END -%]
 		</table>
 		<pre>
 			[% DUMP %]

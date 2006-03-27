@@ -132,34 +132,34 @@
 			
 			function create_tree ( files, container, path ) {
 				// need to stick each module into a container
-				var ul = document.createElement('ul');
+				var ul		 = document.createElement('ul');
+				var count	 = 0;
 				ul.className = 'mod_list';
-				ul.id = 'ul__'+path;
+				ul.id		 = 'ul__'+path;
 				level++;
-				var count = 0;
 				
 				for ( var module in files ) {
 					if ( module != '*' ) {
-						var li = document.createElement('li');
-						li.id = 'li__' + path + '__' + module;
+						var li	= document.createElement('li');
+						li.id	= 'li__' + path + '__' + module;
 						var label;
-						var data = files[module];
-						var num = 0;
+						var data	= files[module];
+						var num		= 0;
 						for ( var sub in data ) {
 							num++;
 						}
 						if ( num >= 2 ) {
-							var plus	= document.createElement('a');
-							plus.id		= 'plus__' + path + '__' + module;
-							plus.href	= 'javascript: list_toggle("' + path + '__' + module + '")';
-							plus.setAttribute( 'class', 'mod_expand' );
+							var plus		= document.createElement('a');
+							plus.id			= 'plus__' + path + '__' + module;
+							plus.href		= 'javascript: list_toggle("' + path + '__' + module + '")';
+							plus.className	= 'mod_expand';
 							plus.setAttribute( 'style', 'text-decoration: none' );
 							plus.appendChild( document.createTextNode( '+' ) );
 							li.appendChild( plus );
 						}
 						else {
-							var plus	= document.createElement('div');
-							plus.setAttribute( 'class', 'mod_expand' );
+							var plus		= document.createElement('div');
+							plus.className	= 'mod_expand';
 							plus.setAttribute( 'style', 'border-width: 0px;' );
 							plus.appendChild( document.createTextNode( '.' ) );
 							li.appendChild( plus );
@@ -189,8 +189,8 @@
 				return count;
 			}
 			function list_toggle( id ) {
-				var ul = document.getElementById( 'ul__' + id );
-				var link  = document.getElementById( 'plus__' + id );
+				var ul		= document.getElementById( 'ul__' + id );
+				var link	= document.getElementById( 'plus__' + id );
 				// check the status of the list
 				if ( ul.style && ul.style.display ) {
 					// list is open so close
