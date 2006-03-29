@@ -8,8 +8,6 @@ use warnings;
 use FindBin;
 use Scalar::Util;
 use List::Util;
-use Config::Std;
-use Readonly;
 use Getopt::Long;
 use Pod::Usage;
 use Data::Dumper qw/Dumper/;
@@ -17,7 +15,7 @@ use Data::Dumper qw/Dumper/;
 our $VERSION = 0.1;
 
 use lib ($FindBin::Bin);
-Readonly my $CONFIG => "$FindBin::Bin/data/docperl.conf";
+my $CONFIG = "$FindBin::Bin/data/docperl.conf";
 
 my %option = (
 	compile			=> [],
@@ -71,6 +69,8 @@ sub main {
 	print "\n";
 	
 	if ( ref $option{compile} && @{ $option{compile} } ) {
+		use Config::Std;
+		use Readonly;
 		read_config $CONFIG, my %config;
 		use DocPerl;
 		my $dp = DocPerl->new( cgi => { page => 'list', }, conf => \%config, save_data => 1 );
