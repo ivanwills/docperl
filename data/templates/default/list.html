@@ -104,39 +104,52 @@
 			var links = new Array();
 			var level;
 			var group = 0;
+			var counter = { perl:0, local:0, inc:0 };
 			
 			function setup_modules() {
 				// set up each of perl, inc and local
 				if ( group == 0 ) {
 					level = 0;
 					var total_perl = create_tree( perl,	document.getElementById('perl'),	'perl' );
-					document.getElementById('perl_head').appendChild( document.createTextNode(' ('+total_perl+')') );
 					group++;
 					setTimeout( setup_modules, 10 );
 				}
 				else if ( group == 1 ) {
 					level = 0;
-					var total_local = create_tree( local,	document.getElementById('local'),	'local' );
-					document.getElementById('local_head').appendChild( document.createTextNode(' ('+total_local+')') );
 					group++;
-					setTimeout( setup_modules, 10 );
+					create_tree( local,	document.getElementById('local'),	'local' );
+					setTimeout( setup_modules, 30 );
 				}
 				else if ( group == 2 ) {
 					level = 0;
-					var total_inc = create_tree( inc,	document.getElementById('inc'),	'inc' );
-					document.getElementById('inc_head').appendChild( document.createTextNode(' ('+total_inc+')') );
 					group++;
-					setTimeout( setup_modules, 10 );
+					create_tree( inc,	document.getElementById('inc'),	'inc' );
+					setTimeout( setup_modules, 50 );
+				}
+				else if ( group == 3 ) {
+					level = 0;
+					group++;
+					setTimeout( setup_modules, 70 );
 				}
 			}
 			
-			function create_tree ( files, container, path ) {
+			function add_count( counter, amount ) {
+				var counter_span = document.getElementById( counter + '_count' );
+				var counter_value = counter_span.firstChild.nodeValue;
+				counter_value -= -amount;
+				counter_span.removeChild( counter_span.firstChild );
+				counter_span.appendChild( document.createTextNode( counter_value ) );
+			}
+			
+			function create_tree ( files, container, path, counter ) {
 				// need to stick each module into a container
 				var ul		 = document.createElement('ul');
 				var count	 = 0;
 				ul.className = 'mod_list';
 				ul.id		 = 'ul__'+path;
 				level++;
+				if ( !counter )
+					counter = path;
 				
 				for ( var module in files ) {
 					if ( module != '*' ) {
@@ -179,15 +192,20 @@
 							label = document.createTextNode( module );
 						}
 						li.appendChild( label );
+						
+						var time = 50 + Math.floor( Math.random() * 50 );
 						// recurse to get sub elements here
-						count += create_tree( files[module], li, path + '__' + module );
+						setTimeout( create_tree, time, files[module], li, path + '__' + module, counter );
+						
 						ul.appendChild( li );
 					}
 				}
 				
 				container.appendChild( ul );
+				add_count( counter, count );
 				return count;
 			}
+			
 			function list_toggle( id ) {
 				var ul		= document.getElementById( 'ul__' + id );
 				var link	= document.getElementById( 'plus__' + id );
@@ -223,23 +241,28 @@
 				</tr>
 			</table>
 		</center>
-		<div id="search_results" style="display:none">
-			<h2>Search Results</h2>
+		<div id="results_doc" style="display:none">
+			<h2>Search Results (<span id="results_count">0</span>)</h2>
 			<div id="results">
 			</div>
 		</div>
+		<div id="recent_doc" style="display:none">
+			<h2>Recent Modules (<span id="recent_count">0</span>)</h2>
+			<div id="recent">
+			</div>
+		</div>
 		<div id="perl_doc">
-			<h2 id="perl_head">Perl <div class="info">i<div>[% perl_path %]</div></div></h2>
+			<h2 id="perl_head">Perl (<span id="perl_count">0</span>)<div class="info">i<div>[% perl_path %]</div></div></h2>
 			<div id="perl">
 			</div>
 		</div>
 		<div id="local_doc">
-			<h2 id="local_head">Local Programs <div class="info">i<div>[% local_path %]</div></div></h2>
+			<h2 id="local_head">Local Programs (<span id="local_count">0</span>)<div class="info">i<div>[% local_path %]</div></div></h2>
 			<div id="local">
 			</div>
 		</div>
 		<div id="inc_doc">
-			<h2 id="inc_head">Installed Modules <div class="info">i<div>[% inc_path %]</div></div></h2>
+			<h2 id="inc_head">Installed Modules (<span id="inc_count">0</span>)<div class="info">i<div>[% inc_path %]</div></div></h2>
 			<div id="inc">
 			</div>
 		</div>
