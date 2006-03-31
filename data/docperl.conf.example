@@ -1,30 +1,31 @@
 # This section allows for the getting of documentation of files not in the @INC path
 [LocalFolders]
 
-Path: .
-Match: \.(?:pm|pl|pod|cgi)$
-suffixes: pod
-suffixes: pm
-suffixes: pl
-suffixes: cgi
+Path:		.
+Match:		\.(?:pm|pl|pod|cgi)$
+suffixes:	pod
+suffixes:	pm
+suffixes:	pl
+suffixes:	cgi
 
 # Info about extra paths to add to @INC ...
 [IncFolders]
 
-Path: .
-Match: \.(?:pm|pod)$
-suffixes: pod
-suffixes: pm
-suffixes: pl
-suffixes: cgi
+Path:		.
+Match:		\.(?:pm|pod)$
+suffixes:	pod
+suffixes:	pm
+suffixes:	pl
+suffixes:	cgi
 
 # Details of template usage
 [Templates]
 
-Path: ./data/templates/local:./data/templates/default
+Path:		./data/templates/local:./data/templates/default
 
 # General configuration
 [General]
 
-Data: ./data
-Touch: /usr/bin/touch
+Data:		./data
+Touch:		/usr/bin/touch
+#Cache:		off

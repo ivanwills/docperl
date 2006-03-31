@@ -177,7 +177,10 @@ modified times are different. Returning the cache contents if they match.
 
 sub _check_cache {
 	my $self	= shift;
+	my $conf	= $self->{conf};
 	my %arg		= @_;
+	
+	return '' if $conf->{General}{Cache} && $conf->{General}{Cache} eq 'off';
 	
 	# check that the arguments are supplied
 	die "Missing required argument - source, file" unless $arg{source};
@@ -230,6 +233,8 @@ sub _save_cache {
 	my $conf	= $self->{conf};
 	my $touch	= $conf->{General}{Touch};
 	my %arg		= @_;
+	
+	return if $conf->{General}{Cache} && $conf->{General}{Cache} eq 'off';
 	
 	# check that the arguments are supplied
 	die "Missing required argument - source, file" unless $arg{source};
