@@ -6,6 +6,7 @@
 use strict;
 use warnings;
 use FindBin;
+use File::Copy qw/copy/;
 use Scalar::Util;
 use List::Util;
 use Getopt::Long;
@@ -23,6 +24,14 @@ my %option = (
 	man				=> 0,
 	help			=> 0,
 	VERSION			=> 0,
+);
+
+my %required_modules = (
+	Readonly		=> { },
+	Template		=> { },
+	'Config::Std'	=> { },
+	'Pod::Html'		=> { },
+	version			=> { },
 );
 
 main();
@@ -45,27 +54,39 @@ sub main {
 	pod2usage( -verbose => 1 ) if $option{help};
 
 	# Check module existance
-	eval("require Readonly");
-	if ( $@ ) {
-		print "Readonly", ' 'x15, "Missing\n";
+	my @missing;
+	for my $module ( sort keys %required_modules ) {
+		print $module, (' 'x(24 - length $module) );
+		eval("require $module");
+		if ( $@ ) {
+			print "Missing\n";
+			push @missing, $module;
+		}
+		else {
+			my $version = eval("\$${module}::VERSION");
+			print "OK    $version\n";
+		}
+	}
+	if ( @missing ) {
+		print "\n\nTo install all missing modules try the following commands:\n\n";
+		print '$ cpan '.join(' ', @missing)."\nor\n";
+		print "\$ perl -MCPAN -e 'install ", join( "'\n\$ perl -MCPAN -e 'install ", @missing ), "'\n\n";
+		print "Windows/ActivePerl users try useing ppm\n";
+	}
+	
+	print "\n";
+	my $conf = "$FindBin::Bin/data/docperl.conf";
+	unless ( -f $conf ) {
+		my $eg = "$FindBin::Bin/data/docperl.conf.expample";
+		die "Serious problem trying to set up config '$conf': Missing $eg\n"
+			unless -f $eg;
+		print "Setting default config. Please check the settings in $conf\n";
+		copy $eg, $conf;
 	}
 	else {
-		print "Readonly", ' 'x15, "$Readonly::VERSION",' 'x5,"OK\n";
+		print "Config Exists\n";
 	}
-	eval("require Template");
-	if ( $@ ) {
-		print "Template", ' 'x15, "Missing\n";
-	}
-	else {
-		print "Template", ' 'x15, "$Template::VERSION",' 'x5,"OK\n";
-	}
-	eval("require Config::Std");
-	if ( $@ ) {
-		print "Config::Std", ' 'x15, "Missing\n";
-	}
-	else {
-		print "Config::Std", ' 'x12, "$Config::Std::VERSION",' 'x3,"OK\n";
-	}
+	
 	print "\n";
 	
 	if ( ref $option{compile} && @{ $option{compile} } ) {
