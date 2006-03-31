@@ -7,6 +7,7 @@ use strict;
 use warnings;
 use version;
 use Scalar::Util;
+use FindBin qw/$Bin/;
 use CGI;
 use Template;
 use Config::Std;
@@ -15,7 +16,7 @@ use DocPerl;
 
 our $VERSION = version->new('0.1');
 
-Readonly my $BASE		=> '/var/www/html/docperl';
+Readonly my $BASE		=> $Bin;
 Readonly my $DATA		=> "$BASE/data";
 Readonly my $CONFIG		=> "$DATA/docperl.conf";
 #Readonly my $TEMPLATE	=> "$DATA/templates";
