@@ -3,17 +3,22 @@
  */
 
 pre {
-	background-color:	silver;
+	background-color:	#DDD;
 }
-
+body {
+	font-family:		sans-serif;
+}
 h1, h2, h3, h4, h5, h6 {
-	background-color:	silver;
+	background-color:	#BCB;
+	font-family:		serif;
+	-moz-border-radius:	5px;
 }
 h1 {
 	padding-left:		4px;
 }
 h2 {
 	padding-left:		8px;
+	background-color:	#BBC5BB;
 }
 h3 {
 	padding-left:		12px;
@@ -21,4 +26,5 @@ h3 {
 h4 {
 	padding-left:		16px;
 }
-
+hr {
+}

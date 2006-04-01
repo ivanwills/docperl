@@ -222,14 +222,14 @@ sub process {
 			for my $suffix ( @suffixes ) {
 				#warn "trying $dir/$file.$suffix";
 				if ( -f "$dir/$file.$suffix" ) {
-					push @files, "$dir/$file.$suffix";
+					push @files, { file => "$dir/$file.$suffix", suffix => $suffix };
 				}
 			}
 		}
 		$self->{folders} = \@folders;
 		$self->{suffixes} = \@suffixes;
 		$self->{sources} = \@files;
-		$self->{source}	 = $q->{source} || $files[0];
+		$self->{source}	 = $q->{source} || $files[0]{file};
 		#warn Dumper $self;
 	}
 	

@@ -27,6 +27,7 @@
 			h1 {
 				font-size:			1.4em;
 				text-align:			center;
+				-moz-border-radius:	0px;
 			}
 			h2 {
 				font-size:			1.2em;
@@ -85,10 +86,17 @@
 				position:			relative;
 				top:				-17px;
 			}
-			.info div {
+			.info span {
 				display:			none;
+				float:				right;
+				border:				1px solid black;
+				background-color:	white;
+				padding:			3px;
+				position:			relative;
+				left:				1px;
+				top:				1px;
 			}
-			.info:hover div {
+			.info:hover span {
 				display:			block;
 			}
 		/* ]]> */-->
@@ -252,17 +260,17 @@
 			</div>
 		</div>
 		<div id="perl_doc">
-			<h2 id="perl_head">Perl (<span id="perl_count">0</span>)<div class="info">i<div>[% perl_path %]</div></div></h2>
+			<h2 id="perl_head">Perl (<span id="perl_count">0</span>)<span class="info">i<span>[% perl_path %]</span></span></h2>
 			<div id="perl">
 			</div>
 		</div>
 		<div id="local_doc">
-			<h2 id="local_head">Local Programs (<span id="local_count">0</span>)<div class="info">i<div>[% local_path %]</div></div></h2>
+			<h2 id="local_head">Local Programs (<span id="local_count">0</span>)<span class="info">i<span>[% local_path %]</span></span></h2>
 			<div id="local">
 			</div>
 		</div>
 		<div id="inc_doc">
-			<h2 id="inc_head">Installed Modules (<span id="inc_count">0</span>)<div class="info">i<div>[% inc_path %]</div></div></h2>
+			<h2 id="inc_head">Installed Modules (<span id="inc_count">0</span>)<span class="info">i<span>[% inc_path %]</span></span></h2>
 			<div id="inc">
 			</div>
 		</div>
