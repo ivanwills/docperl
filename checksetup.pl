@@ -87,6 +87,11 @@ sub main {
 		print "Config Exists\n";
 	}
 	
+	# set up the local directory
+	my $local = "$FindBin::Bin/data/templates/local";
+	unless ( -d $local ) {
+		mkdir $local or warn "Could not create the local template directory '$local': $!\n";
+	}
 	print "\n";
 	
 	if ( ref $option{compile} && @{ $option{compile} } ) {
