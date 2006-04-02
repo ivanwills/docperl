@@ -1,3 +1,4 @@
+[% UNLESS history_size %][% history_size = 10 %][% END -%]
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html
 	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
@@ -31,6 +32,7 @@
 			}
 			h2 {
 				font-size:			1.2em;
+				-moz-border-radius:	0px;
 				
 			}
 			table {
@@ -41,6 +43,7 @@
 				font-size:			1em;
 				list-style-type:	none;
 				padding-left:		0px;
+				margin-left:		0px;
 			}
 			li {
 				clear:				left;
@@ -80,11 +83,8 @@
 				border-width:		1px;
 				border-color:		red;
 				border-style:		solid;
-				display:			block;
 				float:				right;
 				text-align:			center;
-				position:			relative;
-				top:				-17px;
 			}
 			.info span {
 				display:			none;
@@ -135,9 +135,22 @@
 					setTimeout( setup_modules, 50 );
 				}
 				else if ( group == 3 ) {
+					group++;
+					var name = 'DocPerl_recent';
+					if ( exists_cookie( name ) ) {
+						var list	= get_cookie( name );
+						var modules	= list.split(':');
+						
+						for ( var module in modules ) {
+							display_recent( modules[module] );
+						}
+					}
+					setTimeout( setup_modules, 70 );
+				}
+				else if ( group == 4 ) {
 					level = 0;
 					group++;
-					setTimeout( setup_modules, 70 );
+					setTimeout( setup_modules, 90 );
 				}
 			}
 			
@@ -169,6 +182,8 @@
 						for ( var sub in data ) {
 							num++;
 						}
+						
+						// the javascript contains only one element if there are no sub directories
 						if ( num >= 2 ) {
 							var plus		= document.createElement('a');
 							plus.id			= 'plus__' + path + '__' + module;
@@ -191,7 +206,7 @@
 							label = document.createElement('a');
 							label.href = '?page=module&module=' + path + '__' + module;
 							label.setAttribute( 'onclick', 'javascript: click_module("' + path + '__' + module + '");' );
-							[% IF !sidebar %]label.setAttribute( 'target', 'main' );[% END %]
+							label.setAttribute( 'target', '[% IF !sidebar %]main[% ELSE %]_content[% END %]' );
 							label.id = 'a__' + path + '__' + module;
 							label.appendChild( document.createTextNode( module ) );
 							count++;
@@ -214,6 +229,59 @@
 				return count;
 			}
 			
+			function click_module( path ) {
+				var name = 'DocPerl_recent';
+				if ( exists_cookie( name ) ) {
+					var list	= get_cookie( name );
+					var modules	= list.split(':');
+					for ( var module in modules ) {
+						if ( module == path )
+							return;
+					}
+					list += ':' + path;
+					modules.push(path);
+					if ( modules.length > [% history_size %] )
+						modules.splice( 0,  modules.length - [% history_size %] );
+					set_cookie( name, modules.join(':') );
+				}
+				else {
+					set_cookie( name, path );
+				}
+				display_recent(path);
+			}
+			
+			function display_recent(path) {
+				var path_parts	= path.split('__');
+				var recent_doc	= document.getElementById('recent_doc');
+				var recent_ul	= document.getElementById('ul_recent');
+				var name		= '';
+				recent_doc.style.cssText = '';
+				
+				for ( var i = 2; i < path_parts.length; i++ ) {
+					if ( i != 2 )
+						name += '::';
+					name += path_parts[i];
+				}
+				
+				var li			= document.createElement('li');
+				var plus		= document.createElement('div');
+				plus.className	= 'mod_expand';
+				plus.setAttribute( 'style', 'border-width: 0px;' );
+				plus.appendChild( document.createTextNode( '.' ) );
+				li.appendChild( plus );
+				
+				var label;
+				label = document.createElement('a');
+				label.href = '?page=module&module=' + path;
+				label.setAttribute( 'target', '[% IF !sidebar %]main[% ELSE %]_content[% END %]' );
+				label.id = 'recent_a__' + path;
+				label.appendChild( document.createTextNode( name ) );
+				li.appendChild( label );
+				
+				recent_ul.appendChild( li );
+				add_count( 'recent', 1 );
+			}
+			
 			function list_toggle( id ) {
 				var ul		= document.getElementById( 'ul__' + id );
 				var link	= document.getElementById( 'plus__' + id );
@@ -230,6 +298,79 @@
 					link.removeChild( link.firstChild );
 					link.appendChild( document.createTextNode('-') );
 				}
+			}
+			
+			function get_cookie(name) {
+				var result			= null;
+				var my_cookie		= " " + document.cookie + "; ";
+				var search_name		= " " + name + "=";
+				var start_of_cookie	= my_cookie.indexOf(search_name);
+				var end_of_cookie;
+				
+				if (start_of_cookie != -1) {
+					start_of_cookie += search_name.length;
+					// skip past cookie name
+					end_of_cookie = my_cookie.indexOf(";",start_of_cookie);
+					result = unescape(my_cookie.substring(start_of_cookie, end_of_cookie));
+				}
+				
+				return result
+			}
+
+			function set_cookie(name, value, expires, path, domain, secure) {
+				var expString	 = expires	== null	? "" : ("; expires=" + expires.toGMTString());
+				var pathString	 = path		== null	? "" : ("; path=" + path);
+				var domainString = domain	== null	? "" : ("; domain=" + domain);
+				var secureString = secure	== true	? "; secure" : "";
+				var new_cookie	 = name + "=" + escape(value) + expString + pathString + domainString + secureString;
+				document.cookie	 = new_cookie;
+			}
+
+			function clear_cookie(name, path, domain, secure) {
+				var ThreeDays	= 3 * 24 * 60 * 60 * 1000;
+				var expDate		= new Date();
+				expDate.setTime(expDate.getTime() - ThreeDays);
+				set_cookie(name, "ImOutOfHere", expDate, path, domain, secure)
+			}
+
+			function exists_cookie(cookie) {
+				return (get_cookie(cookie) == null) ? false : true;
+			}
+			
+			function get_cookie_count(name) {
+				var result			= 0;
+				var my_cookie		= " " + document.cookie + ";";
+				var search_name		= " " + name + "=";
+				var name_length		= search_name.length;
+				var start_of_cookie	= myCookie.indexOf(search_name);
+				
+				while (start_of_cookie != -1) {
+					result += 1;
+					start_of_cookie = my_cookie.indexOf(search_name, start_of_cookie + name_length);
+				}
+				return result;
+			}
+			
+			function get_cookie_number(name, cookie_num) {
+				var result = null;
+				if (cookie_num >= 1) {
+					var cntr			= 0;
+					var my_cookie		= " " + document.cookie + ";";
+					var search_name		= " " + name + "=";
+					var name_length		= search_name.length;
+					var start_of_cookie	= my_cookie.indexOf(search_name);
+					
+					for (cntr = 1; cntr < cookie_number; cntr++) {
+						start_of_cookie = my_cookie.indexOf(search_name, start_of_cookie + name_length);
+					}
+					
+					if (start_of_cookie != 1) {
+						start_of_cookie	 += name_length; // skip past cookie name
+						var end_of_cookie = my_cookie.indexOf(";", start_of_cookie);
+						result = unescape(my_cookie.substring(start_of_cookie, end_of_cookie));
+					}
+				}
+				return result;
 			}
 		//-->
 		</script>
@@ -257,20 +398,22 @@
 		<div id="recent_doc" style="display:none">
 			<h2>Recent Modules (<span id="recent_count">0</span>)</h2>
 			<div id="recent">
+				<ul id="ul_recent" class="mod_list" style="display:list">
+				</ul>
 			</div>
 		</div>
 		<div id="perl_doc">
-			<h2 id="perl_head">Perl (<span id="perl_count">0</span>)<span class="info">i<span>[% perl_path %]</span></span></h2>
+			<h2 id="perl_head"><span class="info">i<span>[% perl_path %]</span></span>Perl (<span id="perl_count">0</span>)</h2>
 			<div id="perl">
 			</div>
 		</div>
 		<div id="local_doc">
-			<h2 id="local_head">Local Programs (<span id="local_count">0</span>)<span class="info">i<span>[% local_path %]</span></span></h2>
+			<h2 id="local_head"><span class="info">i<span>[% local_path %]</span></span>Local Programs (<span id="local_count">0</span>)</h2>
 			<div id="local">
 			</div>
 		</div>
 		<div id="inc_doc">
-			<h2 id="inc_head">Installed Modules (<span id="inc_count">0</span>)<span class="info">i<span>[% inc_path %]</span></span></h2>
+			<h2 id="inc_head"><span class="info">i<span>[% inc_path %]</span></span>Installed Modules (<span id="inc_count">0</span>)</h2>
 			<div id="inc">
 			</div>
 		</div>

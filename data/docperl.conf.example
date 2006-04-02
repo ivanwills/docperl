@@ -3,6 +3,7 @@
 
 Path:		.
 Match:		\.(?:pm|pl|pod|cgi)$
+Exclude:	./data
 suffixes:	pod
 suffixes:	pm
 suffixes:	pl
@@ -13,6 +14,7 @@ suffixes:	cgi
 
 Path:		.
 Match:		\.(?:pm|pod)$
+Exclude:	./data
 suffixes:	pod
 suffixes:	pm
 suffixes:	pl
@@ -22,6 +24,7 @@ suffixes:	cgi
 [Templates]
 
 Path:		./data/templates/local:./data/templates/default
+history_size:	10
 
 # General configuration
 [General]
