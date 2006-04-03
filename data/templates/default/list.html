@@ -68,7 +68,7 @@
 				width:				1em;
 				margin-right:		0.8em;
 				text-align:			center;
-				vertical-align:		center;
+				vertical-align:		middle;
 				display:			block;
 				float:				left;
 				border-style:		solid;
@@ -162,6 +162,13 @@
 				counter_span.appendChild( document.createTextNode( counter_value ) );
 			}
 			
+			function reset_count( counter ) {
+				var counter_span = document.getElementById( counter + '_count' );
+				
+				counter_span.removeChild( counter_span.firstChild );
+				counter_span.appendChild( document.createTextNode( '0' ) );
+			}
+			
 			function create_tree ( files, container, path, counter ) {
 				// need to stick each module into a container
 				var ul		 = document.createElement('ul');
@@ -184,31 +191,11 @@
 						}
 						
 						// the javascript contains only one element if there are no sub directories
-						if ( num >= 2 ) {
-							var plus		= document.createElement('a');
-							plus.id			= 'plus__' + path + '__' + module;
-							plus.href		= 'javascript: list_toggle("' + path + '__' + module + '")';
-							plus.className	= 'mod_expand';
-							plus.setAttribute( 'style', 'text-decoration: none' );
-							plus.appendChild( document.createTextNode( '+' ) );
-							li.appendChild( plus );
-						}
-						else {
-							var plus		= document.createElement('div');
-							plus.className	= 'mod_expand';
-							plus.setAttribute( 'style', 'border-width: 0px;' );
-							plus.appendChild( document.createTextNode( '.' ) );
-							li.appendChild( plus );
-						}
+						li.appendChild( create_plus( num >= 2 ? path + '__' + module : null ) );
 						
 						data = files[module]['*'];
-						if ( data && data.length ) { // && data.length() ) {
-							label = document.createElement('a');
-							label.href = '?page=module&module=' + path + '__' + module;
-							label.setAttribute( 'onclick', 'javascript: click_module("' + path + '__' + module + '");' );
-							label.setAttribute( 'target', '[% IF !sidebar %]main[% ELSE %]_content[% END %]' );
-							label.id = 'a__' + path + '__' + module;
-							label.appendChild( document.createTextNode( module ) );
+						if ( data && data.length ) {
+							label = create_module( path + '__' + module, module );
 							count++;
 						}
 						else {
@@ -227,6 +214,38 @@
 				container.appendChild( ul );
 				add_count( counter, count );
 				return count;
+			}
+			
+			function create_module(path, module) {
+				var label	= document.createElement('a');
+				label.href	= '?page=module&module=' + path;
+				//label.id	= 'a__' + path + '__' + module;
+				label.setAttribute( 'onclick', 'javascript: click_module("' + path + '");' );
+				label.setAttribute( 'target', '[% IF !sidebar %]main[% ELSE %]_content[% END %]' );
+				label.appendChild( document.createTextNode( module ) );
+				
+				return label;
+			}
+			
+			function create_plus(path) {
+				var plus;
+				// the javascript contains only one element if there are no sub directories
+				if ( path ) {
+					plus				= document.createElement('a');
+					plus.id				= 'plus__' + path;
+					plus.href			= 'javascript: list_toggle("' + path + '")';
+					plus.className		= 'mod_expand';
+					plus.style.cssText	= 'text-decoration: none';
+					plus.appendChild( document.createTextNode( '+' ) );
+				}
+				else {
+					plus				= document.createElement('div');
+					plus.className		= 'mod_expand';
+					plus.style.cssText	= 'border-width: 0px;';
+					plus.appendChild( document.createTextNode( '.' ) );
+				}
+				
+				return plus;
 			}
 			
 			function click_module( path ) {
@@ -263,23 +282,102 @@
 					name += path_parts[i];
 				}
 				
-				var li			= document.createElement('li');
-				var plus		= document.createElement('div');
-				plus.className	= 'mod_expand';
-				plus.setAttribute( 'style', 'border-width: 0px;' );
-				plus.appendChild( document.createTextNode( '.' ) );
-				li.appendChild( plus );
-				
-				var label;
-				label = document.createElement('a');
-				label.href = '?page=module&module=' + path;
-				label.setAttribute( 'target', '[% IF !sidebar %]main[% ELSE %]_content[% END %]' );
-				label.id = 'recent_a__' + path;
-				label.appendChild( document.createTextNode( name ) );
-				li.appendChild( label );
+				var li	= document.createElement('li');
+				li.appendChild( create_plus() );
+				li.appendChild( create_module( path, name ) );
 				
 				recent_ul.appendChild( li );
 				add_count( 'recent', 1 );
+			}
+			
+			function search() {
+				var string		= document.getElementById('search').value;
+				var terms		= string.split(/\s+/);
+				var results_doc	= document.getElementById('results_doc');
+				var results		= document.getElementById('results');
+				var ul			= document.createElement('ul');
+				results_doc.style.cssText = '';
+				
+				while (results.firstChild)
+					results.removeChild(results.firstChild);
+				
+				ul.id = 'ul__results';
+				results.appendChild(ul);
+				reset_count('results');
+				
+				for ( var i in terms ) {
+					var term = terms[i];
+					
+					// search POD documentation
+					var found = find_in( perl.POD, term );
+					if ( found.length )
+						ul.appendChild( add_found( found, 'POD' ) );
+					
+					var container;
+					// search local files/modules
+					for ( var i in local ) {
+						var letter	= local[i];
+						var found	= find_in( letter, term );
+						if ( found.length )
+							ul.appendChild( add_found( found, 'local__' + i, 'Local ' + i ) );
+					}
+					
+					// search system/general modules
+					for ( var i in inc ) {
+						var letter	= inc[i];
+						var found	= find_in( letter, term );
+						if ( found.length )
+							ul.appendChild( add_found( found, 'inc__' + i, 'Installed ' + i ) );
+					}
+					
+				}
+			}
+			
+			function add_found( found, base, name ) {
+				var li		= document.createElement('li');
+				var ul_sub	= document.createElement('ul');
+				var path	= 'results__' + base;
+				li.id		= 'li__' + path;
+				ul_sub.id	= 'ul__' + path;
+				li.appendChild( create_plus(path) );
+				li.appendChild( document.createTextNode(name) );
+				li.appendChild(ul_sub);
+				
+				for ( var item in found ) {
+					var li_sub	= document.createElement('li');
+					var name	= found[item];
+					name = name.replace( /::/g, '__' );
+					
+					li_sub.appendChild( create_plus() );
+					li_sub.appendChild( create_module( path + '__' + name, found[item] ) );
+					ul_sub.appendChild(li_sub);
+				}
+				add_count( 'results', found.length );
+				
+				return li;
+			}
+			
+			function find_in( object, term, name ) {
+				var next	= name ? name + '::' : '';
+				var found	= new Array();
+				var regex	= new RegExp(term);
+				
+				for ( var item in object ) {
+					var module = next + item;
+					
+					// Check if the node is actually a module and if it matches the re
+					if ( object[item]['*'] && object[item]['*'].length && module.match( regex ) ) {
+						found.push( module );
+					}
+					
+					// itterate to sub modules
+					if ( item != '*' ) {
+						var matches = find_in( object[item], term, module );
+						for ( var i in matches )
+							found.push( matches[i] );
+					}
+				}
+				return found;
 			}
 			
 			function list_toggle( id ) {
@@ -386,7 +484,7 @@
 					<td><input type="text" name="search" id="search" size="15"/></td>
 				</tr>
 				<tr>
-					<td colspan="2" style="text-align: center"><input type="submit" value="Find Modules"/></td>
+					<td colspan="2" style="text-align: center"><input type="button" value="Find Modules" onclick="search();"/></td>
 				</tr>
 			</table>
 		</center>
@@ -398,7 +496,7 @@
 		<div id="recent_doc" style="display:none">
 			<h2>Recent Modules (<span id="recent_count">0</span>)</h2>
 			<div id="recent">
-				<ul id="ul_recent" class="mod_list" style="display:list">
+				<ul id="ul_recent" class="mod_list" style="display:block">
 				</ul>
 			</div>
 		</div>
