@@ -147,27 +147,27 @@ sub get_api {
 	my $conf	= $self->{conf};
 	my $location= $self->{current_location};
 	my ($file)	= @_;
-
+	
 	# open the file
-	open FILE, $file or warn "Cannot open $file: $!\n";
+	open my $fh, '<', $file or warn "Cannot open $file: $!\n";
 	my %api;
 	my $i = 0;
-
+	
 	# loop through the file line by line
-	while ( my $line = <FILE> ) {
+	while ( my $line = <$fh> ) {
 		$i++;
-
+		
 		# ignore lines starting with a { or = or #
 		next if $line =~ /^\s*(?:{|=|#)/;
-
+		
 		# check if we have reached the end of the file
 		last if $line =~ /^__(END|DATA)__/;
-
+		
 		# if the line starts with the package directive
 		if ( $line =~ /^\s*package ([\w:]+);/ ) {
 			$api{package} = $1;
 		}
-
+		
 		# check if the line starts with 'use base' to indicate inhereted packages
 		elsif ( $line =~ m#^
 							\s* use \s+ base \s+ qw
@@ -179,7 +179,7 @@ sub get_api {
 			my @parents = split /\s+/, $parents;
 			$api{parents} = \@parents;
 		}
-
+		
 		# check if the line starts with '@ISA' to indicate inhereted packages
 		elsif ( $line =~ / \@ISA \s* = \s* \( ([^)]+) \)  /x ) {
 			my $parents = $1;
@@ -198,42 +198,47 @@ sub get_api {
 			my @parents = split /\s+/, $parents;
 			$api{parents} = \@parents;
 		}
-
+		
 		# check for generic module 'use'
 		elsif ( my ($module) = $line =~ /^\s*use\s+([\w:]*)/ ) {
 			$api{modules}{$module}++;
 		}
-
+		
 		# check for generic module 'require'
 		elsif ( my ($require) = $line =~ /^\s*require\s+([\w:]*)/ ) {
-
+			
 			#			my ($require) = $line =~ /require\s+([\w:]*)/;
 			#			warn $line;
 			$api{required}{$require}++;
 		}
-
+		
+		# check for package variables
+		elsif ( my ($var) = $line =~ /^\s*our\s+([\$\%\@]\w+)/xs ) {
+			$api{vars}{$var} = $.;
+		}
+		
 		# check for sub directives
 		elsif ( my ($func) = $line =~ /^\s*sub\s+(\w+)/ ) {
 			my $method     = 0;
 			my $found_line = $i;
 			my $line;
-			for ( my $sub_line_no = 0 ; $sub_line_no < 10 and $line = <FILE> ; $sub_line_no++ ) {
+			for ( my $sub_line_no = 0 ; $sub_line_no < 10 and $line = <$fh> ; $sub_line_no++ ) {
 				$i++;
 				if ( my ($require) = $line =~ /require\s+([\w:]*)/ ) {
 					$api{required}{$require}++;
 				}
-
+				
 				# if the line is of the from $self = shift then assume sub is a method
 				if ( $line =~ /}/ ) {
 					$sub_line_no = 11;
 				}
-
+				
 				# if the line is of the form $class = shift or $caller = shift assume sub is a class method
 				elsif ( $line =~ /\$(class|caller)\s*=\s*shift;/ ) {
 					$api{class}{$func} = $found_line;
 					$method = 1;
 				}
-
+				
 				# stop if we come accross a closing bracket
 				elsif ( $line =~ /\$(self|this)\s*=\s*shift;/ ) {
 					$api{object}{$func} = $found_line;
@@ -247,12 +252,12 @@ sub get_api {
 				}
 				
 			}
-
+			
 			# if no a class or object method add to functions
 			$api{func}{$func} = $found_line unless $method;
 		}
 	}
-	close FILE;
+	close $fh;
 	
 	my @paths = split /:/, $location eq 'local' ? $conf->{LocalFolders}{Path} : $conf->{IncFolders}{Path};
 	push @INC, @paths;
@@ -265,7 +270,7 @@ sub get_api {
 	if ( ref $api{modules} ) {
 		$api{modules} = [ sort keys %{ $api{modules} } ];
 	}
-	for my $type ( qw/class object func/ ) {
+	for my $type ( qw/class object func vars/ ) {
 		if ( ref $api{$type} ) {
 			$api{$type} = [ map { { name => $_, line => $api{$type}{$_} } } sort keys %{ $api{$type} } ];
 		}

@@ -251,6 +251,34 @@
 				</td>
 			</tr>
 			[% END -%]
+			[% IF api.vars -%]
+			<tr>
+				<th>Package Variables</th>
+				<td class="double_list">
+					<table>
+					[%- counter = 1 -%]
+					[%- FOR var = api.vars -%]
+						[% IF counter % 2 %]
+						<tr>
+						[%- END -%]
+							<td>
+								<a href="?page=code&module=[% module %]&location=[% location %]&source=[% source %]#line[% var.line %]">
+									[% var.name %]
+								</a>
+							</td>
+						[% IF !(counter % 2) %]
+						</tr>
+						[% END -%]
+						[% counter = counter + 1 -%]
+					[% END -%]
+					[% IF !(counter % 2) %]
+						[% IF counter > 2 %]<td></td>[% END %]
+						</tr>
+					[%- END -%]
+					</table>
+				</td>
+			</tr>
+			[% END -%]
 		</table>
 		<!--pre>[%# DUMP %]</pre-->
 		<br />
