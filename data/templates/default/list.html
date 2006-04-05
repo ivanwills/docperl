@@ -254,7 +254,7 @@
 					var list	= get_cookie( name );
 					var modules	= list.split(':');
 					for ( var module in modules ) {
-						if ( module == path )
+						if ( modules[module] == path )
 							return;
 					}
 					list += ':' + path;
@@ -290,10 +290,18 @@
 				add_count( 'recent', 1 );
 			}
 			
-			function search() {
+			function search(force) {
 				var string		= document.getElementById('search').value;
-				var terms		= string.split(/\s+/);
 				var results_doc	= document.getElementById('results_doc');
+				
+				if ( !force && string.length < 4 )
+					return;
+				if ( !string ) {
+					results_doc.style.cssText = 'display:none';
+					return;
+				}
+				
+				var terms		= string.split(/\s+/);
 				var results		= document.getElementById('results');
 				var ul			= document.createElement('ul');
 				results_doc.style.cssText = '';
@@ -308,32 +316,20 @@
 				for ( var i in terms ) {
 					var term = terms[i];
 					
-					// search POD documentation
-					var found = find_in( perl.POD, term );
-					if ( found.length )
-						ul.appendChild( add_found( found, 'POD' ) );
-					
-					var container;
-					// search local files/modules
-					for ( var i in local ) {
-						var letter	= local[i];
-						var found	= find_in( letter, term );
-						if ( found.length )
-							ul.appendChild( add_found( found, 'local__' + i, 'Local ' + i ) );
-					}
-					
-					// search system/general modules
-					for ( var i in inc ) {
-						var letter	= inc[i];
-						var found	= find_in( letter, term );
-						if ( found.length )
-							ul.appendChild( add_found( found, 'inc__' + i, 'Installed ' + i ) );
-					}
-					
+					var list = show_found( new Array(perl.POD), term, 'perl__', 'POD' );
+					if ( list )
+						ul.appendChild( list );
+					list = show_found( local, term, 'local__', 'Local' );
+					if ( list )
+						ul.appendChild( list );
+					list = show_found( inc, term, 'inc__', 'Installed' );
+					if ( list )
+						ul.appendChild( list );
 				}
 			}
 			
-			function add_found( found, base, name ) {
+			function show_found( list, term, base, name ) {
+				var count	= 0;
 				var li		= document.createElement('li');
 				var ul_sub	= document.createElement('ul');
 				var path	= 'results__' + base;
@@ -341,18 +337,31 @@
 				ul_sub.id	= 'ul__' + path;
 				li.appendChild( create_plus(path) );
 				li.appendChild( document.createTextNode(name) );
-				li.appendChild(ul_sub);
 				
-				for ( var item in found ) {
-					var li_sub	= document.createElement('li');
-					var name	= found[item];
-					name = name.replace( /::/g, '__' );
+				for ( var i in list ) {
+					var item	= list[i];
+					var found	= find_in( item, term );
 					
-					li_sub.appendChild( create_plus() );
-					li_sub.appendChild( create_module( path + '__' + name, found[item] ) );
-					ul_sub.appendChild(li_sub);
+					if ( found.length ) {
+						count += found.length;
+						
+						for ( var item in found ) {
+							var li_sub	= document.createElement('li');
+							var name	= found[item];
+							name = name.replace( /::/g, '__' );
+							
+							li_sub.appendChild( create_plus() );
+							li_sub.appendChild( create_module( path + '__' + name, found[item] ) );
+							ul_sub.appendChild(li_sub);
+						}
+					}
 				}
-				add_count( 'results', found.length );
+				
+				if ( !count )
+					return null;
+				
+				add_count( 'results', count );
+				li.appendChild(ul_sub);
 				
 				return li;
 			}
@@ -360,7 +369,7 @@
 			function find_in( object, term, name ) {
 				var next	= name ? name + '::' : '';
 				var found	= new Array();
-				var regex	= new RegExp(term);
+				var regex	= new RegExp( term, 'i' );
 				
 				for ( var item in object ) {
 					var module = next + item;
@@ -478,15 +487,17 @@
 		<h1>Perl Documentation</h1>
 		<!--h2>Search</h2-->
 		<center>
+			<!--form action="" onsubmit="search(); return false;"-->
 			<table>
 				<tr>
 					<th>Search&nbsp;:&nbsp;</th>
-					<td><input type="text" name="search" id="search" size="15"/></td>
+					<td><input type="text" name="search" id="search" size="15" onkeyup="search(false);"/></td>
 				</tr>
 				<tr>
-					<td colspan="2" style="text-align: center"><input type="button" value="Find Modules" onclick="search();"/></td>
+					<td colspan="2" style="text-align: center"><input type="button" value="Find Modules" onclick="search(true);"/></td>
 				</tr>
 			</table>
+			<!--/form-->
 		</center>
 		<div id="results_doc" style="display:none">
 			<h2>Search Results (<span id="results_count">0</span>)</h2>
