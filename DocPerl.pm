@@ -82,8 +82,29 @@ sub new {
 	
 	bless $self, $class;
 	
-	if ( $self->{cgi}{page} ) {
-		my $template = $self->{cgi}{page};
+	# initialise the object
+	$self->init();
+	
+	return $self;
+}
+
+=head3 C<init ( )>
+
+Return: void
+
+Description: Initialises the DocPerl object
+
+=cut
+
+sub init {
+	my $self	= shift;
+	my $q		= $self->{cgi};
+	my $conf	= $self->{conf};
+	my $page	= $q->{page};
+	
+	# initialise the template name and mime type
+	if ( $page ) {
+		my $template = $page;
 		if ( $template =~ /\.(\w+)$/ ) {
 			$self->{template}	= $template;
 			$self->{mime}		= "text/$1";
@@ -93,25 +114,11 @@ sub new {
 			$self->{mime}		= "text/html";
 		}
 	}
-	
-	return $self;
-}
-
-=head3 C<process ( )>
-
-Return: HASH - Parameters for use in the templates
-
-Description: Processes the page that is to be displaied and returns the
-parameters that contain the information to be used by the template system.
-
-=cut
-
-sub process {
-	my $self	= shift;
-	my $q		= $self->{cgi};
-	my $conf	= $self->{conf};
-	my $page	= $q->{page};
-	my %vars;
+	else {
+		# if no page is given the default template is to create the frames page
+		$self->{template}	= "frames.html";
+		$self->{mime}		= "text/html";
+	}
 	
 	# check if a module has been passed as a CGI parameter
 	if ( $q->{module} ) {
@@ -190,6 +197,22 @@ sub process {
 		$self->{source}	 = $q->{source} || $files[0]{file};
 		#warn Dumper $self;
 	}
+}
+
+=head3 C<process ( )>
+
+Return: HASH - Parameters for use in the templates
+
+Description: Processes the page that is to be displaied and returns the
+parameters that contain the information to be used by the template system.
+
+=cut
+
+sub process {
+	my $self	= shift;
+	my $q		= $self->{cgi};
+	my $page	= $q->{page};
+	my %vars;
 	
 	# Check if there is a page to view specified
 	if ( $page ) {
