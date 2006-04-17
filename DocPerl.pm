@@ -8,7 +8,6 @@ DocPerl - Module for DocPerl stuff
 
 This documentation refers to DocPerl version 0.1.
 
-
 =head1 SYNOPSIS
 
    use DocPerl;
@@ -39,68 +38,6 @@ In an object-oriented module, this section should begin with a sentence (of the
 form "An object of this class represents ...") to give the reader a high-level
 context to help them understand the methods that are subsequently described.
 
-=head1 DIAGNOSTICS
-
-A list of every error and warning message that the module can generate (even
-the ones that will "never happen"), with a full explanation of each problem,
-one or more likely causes, and any suggested remedies.
-
-=head1 CONFIGURATION AND ENVIRONMENT
-
-A full explanation of any configuration system(s) used by the module, including
-the names and locations of any configuration files, and the meaning of any
-environment variables or properties that can be set. These descriptions must
-also include details of any configuration language used.
-
-=head1 DEPENDENCIES
-
-A list of all of the other modules that this module relies upon, including any
-restrictions on versions, and an indication of whether these required modules
-are part of the standard Perl distribution, part of the module's distribution,
-or must be installed separately.
-
-=head1 INCOMPATIBILITIES
-
-A list of any modules that this module cannot be used in conjunction with.
-This may be due to name conflicts in the interface, or competition for system
-or program resources, or due to internal limitations of Perl (for example, many
-modules that use source code filters are mutually incompatible).
-
-=head1 BUGS AND LIMITATIONS
-
-A list of known problems with the module, together with some indication of
-whether they are likely to be fixed in an upcoming release.
-
-Also, a list of restrictions on the features the module does provide: data types
-that cannot be handled, performance issues and the circumstances in which they
-may arise, practical limitations on the size of data sets, special cases that
-are not (yet) handled, etc.
-
-The initial template usually just has:
-
-There are no known bugs in this module.
-
-Please report problems to Ivan Wills (ivan.wills@gmail.com).
-
-Patches are welcome.
-
-=head1 AUTHOR
-
-Ivan Wills - (ivan.wills@gmail.com)
-<Author name(s)>  (<contact address>)
-
-=head1 LICENSE AND COPYRIGHT
-
-Copyright (c) 2006 Ivan Wills (101 Miles St Bald Hills QLD Australia 4036).
-All rights reserved.
-
-
-This module is free software; you can redistribute it and/or modify it under
-the same terms as Perl itself. See L<perlartistic>.  This program is
-distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
-without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
-PARTICULAR PURPOSE.
-
 =cut
 
 # Created on: 2006-01-31 19:59:04
@@ -119,13 +56,18 @@ our @EXPORT = qw//;
 our @EXPORT_OK = qw//;
 
 
-=head3 C<sub ( $search,  )>
+=head3 C<new ( %param )>
 
-Param: C<$search> - type (detail) - description
+Param: C<%param> - The for use of docperl
+
+C<cgi> - CGI - the cgi object.
+
+C<conf> - Config::Std - The configuration object
 
 Return: DocPerl - 
 
-Description: 
+Description: Creates a new DocPerl object with the template file name and mime
+type defined.
 
 =cut
 
@@ -155,15 +97,12 @@ sub new {
 	return $self;
 }
 
-=head3 C<process ( $var1, $var2,  )>
+=head3 C<process ( )>
 
-Param: C<$var1> - type (detail) - description
+Return: HASH - Parameters for use in the templates
 
-Param: C<$var2> - type (detail) - description
-
-Return:  - 
-
-Description: 
+Description: Processes the page that is to be displaied and returns the
+parameters that contain the information to be used by the template system.
 
 =cut
 
@@ -173,10 +112,16 @@ sub process {
 	my $conf	= $self->{conf};
 	my $page	= $q->{page};
 	my %vars;
-
+	
+	# check if a module has been passed as a CGI parameter
 	if ( $q->{module} ) {
+		# check if the module starts with a double underscore which means that
+		# it came from the module list page
 		if ( $q->{module} =~ /__/ ) {
+			# module came from the front page so need to get the actual module
+			# name from the module parameter
 			my $module = $self->{tag} = $q->{module};
+			
 			# remove the location start parts
 			$module =~ s{^([^_]+)__[^_]+__}{}xs;
 			
@@ -192,21 +137,32 @@ sub process {
 			$self->{module_file} =~ s{__}{/}gxs;
 		}
 		else {
+			# extract the cgi parameters
 			$self->{current_location}	= $q->{location};
 			$self->{module}				= $q->{module};
 			$self->{module_file}		= $q->{module};
 			
+			# Convert the module_file parameter to a more file like name
+			# ie convert double colons to forward slashes (:: -> /)
 			$self->{module_file} =~ s{::}{/}gxs;
-			$self->{module_file} = "pod/$self->{module_file}" if $self->{current_location} eq 'perl';
+			if ( $self->{current_location} eq 'perl' ) {
+				$self->{module_file} = "pod/$self->{module_file}";
+			}
 		}
+		
+		# Check after all that we still have a module, file and a location
 		die "Module went!" unless $self->{module};
 		die "Module file went!" unless $self->{module_file};
 		die "Location went!" unless $self->{current_location};
 		
-		my $file	= $self->{module_file};
+		# 
+		my $file = $self->{module_file};
 		my @files;
 		my @folders;
 		my @suffixes;
+		
+		# Get the folder locations and file name suffixes for the current
+		# location.
 		if ( $self->{current_location} eq 'local' ) {
 			@folders = split /:/, $conf->{LocalFolders}{Path};
 			@suffixes = @{ $conf->{LocalFolders}{suffixes} };
@@ -226,27 +182,35 @@ sub process {
 				}
 			}
 		}
+		
+		# store all the calculated paramteres
 		$self->{folders} = \@folders;
 		$self->{suffixes} = \@suffixes;
-		$self->{sources} = \@files;
+		$self->{sources} = \@files;		# all files that match the module name
 		$self->{source}	 = $q->{source} || $files[0]{file};
 		#warn Dumper $self;
 	}
 	
+	# Check if there is a page to view specified
 	if ( $page ) {
+		# Check that the page is OK to execute (ie if a method of this module
+		# and is not a hidden method)
 		if ( $page !~ /^_/xs && $self->can( $page ) ) {
 			%vars = $self->$page();
 		}
 		elsif ( $page =~ /^[a-zA-Z]\w+$/ ) {
+			# try to see if the method is a cached module
 			my $module = 'DocPerl::Cached::'.uc $page;
 			eval( "require $module" );
 			unless ( $@ ) {
+				# use the cached object to get the data
 				my $cache = $module->new( %$self );
 				%vars = $cache->process();
 			}
 		}
 	}
 	
+	# return the parameters
 	return (
 		DUMP	=> Dumper( \%vars ),
 		module	=> $self->{module},
@@ -260,9 +224,9 @@ sub process {
 
 =head3 C<template ( )>
 
-Return:  - 
+Return: string - The file name of the current template.
 
-Description: 
+Description: Gets the template file for the current page
 
 =cut
 
@@ -273,9 +237,9 @@ sub template {
 
 =head3 C<mime ( )>
 
-Return:  - 
+Return: string - A HTTP MIME type string
 
-Description: 
+Description: Gets the mime type of the current template file
 
 =cut
 
@@ -284,15 +248,13 @@ sub mime {
 	return $self->{mime};
 }
 
-=head3 C<list ( $var1, $var2,  )>
+=head3 C<list ( )>
 
-Param: C<$var1> - type (detail) - description
+Return: HASH - The parameters for displaying the module/file list page.
 
-Param: C<$var2> - type (detail) - description
-
-Return:  - 
-
-Description: 
+Description: Finds all modules in the three specified locations (perl,local
+and inc) and returns the parameters for the list page to display that
+information.
 
 =cut
 
@@ -302,31 +264,37 @@ sub list {
 	my $conf	= $self->{conf};
 	my %vars;
 	
-	# find all the modules in the compined paths
+	# find all the installed modules in the combined paths
 	$vars{INC} ||= {};
-	$self->get_files(
+	$self->_get_files(
 		[ @INC, split /:/, $conf->{IncFolders}{Path}, ],
 		$conf->{IncFolders}{Match},
 		$vars{INC},
 	);
 	
+	# Move any module found in the pod name space to the PERL
+	# location and create the javascript for the list page
 	$vars{PERL} = $vars{INC}{P}{pod};
-	$vars{perl} = $self->create_js( 'perl', { POD => $vars{PERL} } );
-	delete $vars{INC}{P}{pod};
-	$vars{inc} = $self->create_js( 'inc', $vars{INC} );
+	$vars{perl} = $self->_create_js( 'perl', { POD => $vars{PERL} } );
 	
-	# find all the programs in the LocalFolders path
+	# delete the pod documentation and reate the INC javascript
+	delete $vars{INC}{P}{pod};
+	$vars{inc} = $self->_create_js( 'inc', $vars{INC} );
+	
+	# find all the programs in the LocalFolders path and create its javascript
 	$vars{LOCAL} ||= {};
-	$self->get_files(
+	$self->_get_files(
 		[ split /:/, $conf->{LocalFolders}{Path}, ],
 		$conf->{LocalFolders}{Match},
 		$vars{LOCAL},
 	);
-	$vars{local} = $self->create_js( 'local', $vars{LOCAL} );
+	$vars{local} = $self->_create_js( 'local', $vars{LOCAL} );
 	
+	# create the path info for the list page
 	$vars{inc_path}		= join "<br/>", ( @INC, split /:/, $conf->{IncFolders}{Path}, );
 	$vars{local_path}	= join "<br/>", split /:/, $conf->{IncFolders}{Path};
 	
+	# remove all unnessesery data
 	unless ( $self->{save_data} ) {
 		delete $vars{INC};
 		delete $vars{PERL};
@@ -334,29 +302,20 @@ sub list {
 	}
 	$vars{sidebar} = $q->{sidebar};
 	
+	# return parameters
 	return %vars;
 }
 
-=head3 C<get_files ( $var1, $var2,  )>
-
-Param: C<$var1> - type (detail) - description
-
-Param: C<$var2> - type (detail) - description
-
-Return:  - 
-
-Description: 
-
-=cut
-
-sub get_files {
+# gets the files listed in a specified path
+sub _get_files {
 	my $self	= shift;
 	my $cgi_module = $self->{cgi}{module};
 	my ( $path_ref, $match, $vars ) = @_;
 	
+	# for each path find the all files files that match.
 	for my $path ( @$path_ref ) {
 		$vars->{$path} = 1;
-		find(
+		_find(
 			$path,
 			$match,
 			sub {
@@ -393,7 +352,8 @@ sub get_files {
 	}
 }
 
-sub find {
+# recursivly finds files
+sub _find {
 	my ( $path, $match, $action ) = @_;
 	opendir DIR, $path or return;
 	my @files = readdir DIR;
@@ -411,19 +371,10 @@ sub find {
 	}
 }
 
-=head3 C<create_js ( $var1, $var2,  )>
-
-Param: C<$var1> - type (detail) - description
-
-Param: C<$var2> - type (detail) - description
-
-Return:  - 
-
-Description: 
-
-=cut
-
-sub create_js {
+# creates the javascript to contain the information provided in $vars
+# ie converts $vars to a javascript object syntax (the closest thing to
+# a perl hash in javascript).
+sub _create_js {
 	my $self	= shift;
 	#my $dbh	= $self->{-dbh};
 	#my $q		= $self->{-cgi};
@@ -432,7 +383,7 @@ sub create_js {
 	my $js = "var $name = {";
 	
 	for my $module ( sort keys %{ $vars } ) {
-		my $result = $self->_blah( $module, $vars->{ $module } );
+		my $result = $self->_create_js_object( $module, $vars->{ $module } );
 		$js .= $result . ',' if $result;
 	}
 	$js =~ s/,$//;
@@ -441,8 +392,8 @@ sub create_js {
 }
 
 
-# struggling for a good name for this method
-sub _blah {
+# Recursivly creates a javascript object form a perl hash reference
+sub _create_js_object {
 	my $self	= shift;
 	my ( $name, $vars,  ) = @_;
 	return '' unless ref $vars;
@@ -456,7 +407,7 @@ sub _blah {
 
 	for my $module ( sort keys %{ $vars } ) {
 		next if $module eq '*' or not ref $vars->{$module};
-		$js .= $self->_blah( $module, $vars->{$module} ) . ',';
+		$js .= $self->_create_js_object( $module, $vars->{$module} ) . ',';
 	}
 	$js =~ s/,$//;
 	
@@ -467,3 +418,55 @@ sub _blah {
 1;
 
 __END__
+
+=head1 DIAGNOSTICS
+
+A list of every error and warning message that the module can generate (even
+the ones that will "never happen"), with a full explanation of each problem,
+one or more likely causes, and any suggested remedies.
+
+=head1 CONFIGURATION AND ENVIRONMENT
+
+A full explanation of any configuration system(s) used by the module, including
+the names and locations of any configuration files, and the meaning of any
+environment variables or properties that can be set. These descriptions must
+also include details of any configuration language used.
+
+=head1 DEPENDENCIES
+
+A list of all of the other modules that this module relies upon, including any
+restrictions on versions, and an indication of whether these required modules
+are part of the standard Perl distribution, part of the module's distribution,
+or must be installed separately.
+
+=head1 INCOMPATIBILITIES
+
+A list of any modules that this module cannot be used in conjunction with.
+This may be due to name conflicts in the interface, or competition for system
+or program resources, or due to internal limitations of Perl (for example, many
+modules that use source code filters are mutually incompatible).
+
+=head1 BUGS AND LIMITATIONS
+
+There are no known bugs in this module.
+
+Please report problems to Ivan Wills (ivan.wills@gmail.com).
+
+Patches are welcome.
+
+=head1 AUTHOR
+
+Ivan Wills - (ivan.wills@gmail.com)
+
+=head1 LICENSE AND COPYRIGHT
+
+Copyright (c) 2006 Ivan Wills (101 Miles St Bald Hills QLD Australia 4036).
+All rights reserved.
+
+This module is free software; you can redistribute it and/or modify it under
+the same terms as Perl itself. See L<perlartistic>.  This program is
+distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE.
+
+=cut
