@@ -363,7 +363,7 @@ sub _find {
 		next if $file eq '.' || $file eq '..' or $file =~ /^\d+$/;
 		my $full = "$path/$file";
 		if ( -d $full ) {
-			find( $full, $match, $action );
+			_find( $full, $match, $action );
 		}
 		elsif ( $full =~ /$match/ ) {
 			&$action($full);
