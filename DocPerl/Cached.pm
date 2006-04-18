@@ -177,17 +177,17 @@ modified times are different. Returning the cache contents if they match.
 
 sub _check_cache {
 	my $self	= shift;
-	my $conf	= $self->{conf};
 	my %arg		= @_;
+	my $conf	= $self->{conf};
 	
 	return '' if $conf->{General}{Cache} && $conf->{General}{Cache} eq 'off';
 	
 	# check that the arguments are supplied
-	die "Missing required argument - source, file" unless $arg{source};
-	die "Missing required argument - cache, location" unless $arg{cache};
+	croak "Missing required argument - source, file" unless $arg{source};
+	croak "Missing required argument - cache, location" unless $arg{cache};
 	
 	# check if the cache file has a suffix
-	if ( $arg{cache} !~ /\.\w+$/ ) {
+	if ( $arg{cache} !~ /\.\w+$/ && $arg{source} ne 1 ) {
 		# add the sources suffix
 		my ( $suffix ) = $arg{source} =~ /(\.\w+)$/xs;
 		$arg{cache} .= $suffix;
@@ -200,11 +200,11 @@ sub _check_cache {
 	return '' unless -f $file;
 	
 	# get the file stats for the source and cached files
-	my @source	= stat $arg{source};
+	my @source	= stat $arg{source} if $arg{source} ne 1;
 	my @cache	= stat $file;
 	
 	# check that the last modified times of both files are the same
-	return '' if $source[9] != $cache[9];
+	return '' if $arg{source} ne 1 && $source[9] != $cache[9];
 	
 	# read the contents of the cached file
 	open my $cache, '<', $file or warn "Could not read the cache file $file: $!" and return '';
@@ -213,6 +213,7 @@ sub _check_cache {
 		local $/;
 		$data = <$cache>;
 	}
+	close $cache;
 	
 	# return the cached contents
 	return $data;
@@ -237,17 +238,15 @@ sub _save_cache {
 	return if $conf->{General}{Cache} && $conf->{General}{Cache} eq 'off';
 	
 	# check that the arguments are supplied
-	die "Missing required argument - source, file" unless $arg{source};
-	die "Missing required argument - cache, location" unless $arg{cache};
+	croak "Missing required argument - source, file" unless $arg{source};
+	croak "Missing required argument - cache, location" unless $arg{cache};
+	carp "No cache content to save!" && return unless $arg{content};
 	
 	# check if the cache file has a suffix
-	if ( $arg{cache} !~ /\.\w+$/ ) {
+	if ( $arg{cache} !~ /\.\w+$/ && $arg{source} ne 1 ) {
 		# add the sources suffix
 		my ( $suffix ) = $arg{source} =~ /(\.\w+)$/xs;
 		$arg{cache} .= $suffix;
-	}
-	else {
-		warn "$arg{cache} has a suffix!";
 	}
 	
 	# split up the directory parts of the cache
@@ -269,7 +268,7 @@ sub _save_cache {
 	close $cache;
 	
 	# touch the file using the source file's time stamps
-	if ( -x $touch ) {
+	if ( -x $touch && $arg{source} ne 1 ) {
 		system( "$touch --reference=$arg{source} $dir/$file" );
 	}
 	#warn( "$touch --reference=$arg{source} $dir/$file" );

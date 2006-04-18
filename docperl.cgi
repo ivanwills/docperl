@@ -39,24 +39,27 @@ sub main {
 	# create a new doc perl object
 	my $dp = DocPerl->new( cgi => \%cgi, conf => \%config );
 	
-	my $template = $dp->template()	? $dp->template()
-				 : $cgi{page} 		? "$cgi{page}.html"
-				 :					  'frames.html';
+	print $cgi->header( $dp->mime() );
+	print $dp->process();
 	
-	# create a new template object
-	my $tmpl = Template->new( INCLUDE_PATH => $config{Templates}{Path}, EVAL_PERL => 1 );
-	my %params = $dp->process();
-#	warn Dumper \%params;
-#	warn join ", ", keys %params;
-	
-	# process the template
-	$tmpl->process( $template, { %cgi, %{ $config{template} }, %params }, \$out )
-		or error( $tmpl->error );
-	
-	my $mime = $dp->mime() ? $dp->mime() : 'text/html';
-	
-	print $cgi->header($mime);
-	print $out;
+#	my $template = $dp->template()	? $dp->template()
+#				 : $cgi{page} 		? "$cgi{page}.html"
+#				 :					  'frames.html';
+#	
+#	# create a new template object
+#	my $tmpl = Template->new( INCLUDE_PATH => $config{Templates}{Path}, EVAL_PERL => 1 );
+#	my %params = $dp->process();
+##	warn Dumper \%params;
+##	warn join ", ", keys %params;
+#	
+#	# process the template
+#	$tmpl->process( $template, { %cgi, %{ $config{template} }, %params }, \$out )
+#		or error( $tmpl->error );
+#	
+#	my $mime = $dp->mime() ? $dp->mime() : 'text/html';
+#	
+#	print $cgi->header($mime);
+#	print $out;
 }
 
 # catastrofic error page

@@ -49,6 +49,8 @@ use version;
 use Carp;
 use Data::Dumper qw/Dumper/;
 use Scalar::Util;
+use Template;
+use DocPerl::Cached;
 use base qw/Exporter/;
 
 our $VERSION = version->new('0.0.1');
@@ -210,12 +212,30 @@ parameters that contain the information to be used by the template system.
 
 sub process {
 	my $self	= shift;
+	my $conf	= $self->{conf};
 	my $q		= $self->{cgi};
 	my $page	= $q->{page};
 	my %vars;
+	my $out;
+	
+	# create a cache object
+	my $cache = DocPerl::Cached->new( %$self );
+	my $cache_path = $page;
+	if ( $self->{current_location} ) {
+		$cache_path .= "/$self->{current_location}";
+	}
+	if ( $self->{module_file} ) {
+		$cache_path .= "/$self->{module_file}";
+	}
 	
 	# Check if there is a page to view specified
 	if ( $page ) {
+		# check the cache for the page
+		$out = $cache->_check_cache( cache => $cache_path, source => $self->{source} || 1 );
+		
+		# return the cached output
+		return $out if $out;
+		
 		# Check that the page is OK to execute (ie if a method of this module
 		# and is not a hidden method)
 		if ( $page !~ /^_/xs && $self->can( $page ) ) {
@@ -233,16 +253,26 @@ sub process {
 		}
 	}
 	
-	# return the parameters
-	return (
-		DUMP	=> Dumper( \%vars ),
-		module	=> $self->{module},
-		file	=> $self->{module_file},
-		location=> $self->{current_location},
-		sources	=> $self->{sources},
-		source	=> $self->{source},
-		%vars,
-	);
+	# set up other required params
+	$vars{DUMP}		= Dumper( \%vars );
+	$vars{module}	= $self->{module};
+	$vars{file}		= $self->{module_file};
+	$vars{location}	= $self->{current_location};
+	$vars{sources}	= $self->{sources};
+	$vars{source}	= $self->{source};
+	
+	# create a new template object
+	my $tmpl = Template->new( INCLUDE_PATH => $conf->{Templates}{Path}, EVAL_PERL => 1 );
+	
+	# process the template
+	$tmpl->process( $self->template(), { %$q, %{ $conf->{template} }, %vars }, \$out )
+		or error( $tmpl->error );
+	
+	if ( $page ) {
+		$cache->_save_cache( cache => $cache_path, source => $self->{source} || 1, content => $out );
+	}
+	
+	return $out;
 }
 
 =head3 C<template ( )>
@@ -268,7 +298,7 @@ Description: Gets the mime type of the current template file
 
 sub mime {
 	my $self	= shift;
-	return $self->{mime};
+	return $self->{mime} || 'text/html';
 }
 
 =head3 C<list ( )>

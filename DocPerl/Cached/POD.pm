@@ -180,10 +180,10 @@ sub pod {
 	return ( pod => "Could not find $self->{module_file} in ".join ", ", @folders )
 		if !$file || $file eq $self->{module_file};
 	
-	# check the cached version
-	my $pod = $self->_check_cache( cache => "pod/$self->{current_location}/$self->{module_file}", source => $file, );
-	# return the pod if the cache exists and is in date
-	return ( pod =>$pod ) if $pod;
+#	# check the cached version
+#	my $pod = $self->_check_cache( cache => "pod/$self->{current_location}/$self->{module_file}", source => $file, );
+#	# return the pod if the cache exists and is in date
+#	return ( pod => $pod ) if $pod;
 	
 	# construct the list of parameters
 	my @params = (
@@ -207,7 +207,7 @@ sub pod {
 	$pod =~ s/<\/pre>(\s*)<pre>/$1/img if $1;
 	$pod =~ s{href="/}{target="module" href="?type=module&module=link/}gxs;
 	
-	$self->_save_cache( cache => "pod/$self->{current_location}/$self->{module_file}", source => $file, content => $pod );
+#	$self->_save_cache( cache => "pod/$self->{current_location}/$self->{module_file}", source => $file, content => $pod );
 	
 	return ( pod => $pod, pwd => `pwd` );
 }
