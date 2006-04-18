@@ -38,7 +38,6 @@ sub main {
 	
 	# create a new doc perl object
 	my $dp = DocPerl->new( cgi => \%cgi, conf => \%config );
-	my %vars = $dp->process();
 	
 	my $template = $dp->template()	? $dp->template()
 				 : $cgi{page} 		? "$cgi{page}.html"
