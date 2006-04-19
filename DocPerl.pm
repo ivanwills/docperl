@@ -373,6 +373,10 @@ sub _get_files {
 			$match,
 			sub {
 				my ( $full ) = @_;
+				
+				# ignore any file in the data directory
+				return if $full =~ /^$self->{data}/ || $full =~ m{^\./data};
+				
 				my ($inc, $module, $first_letter) = $full =~ m{^ ($path) / ((.).*) \. \w+ $}xs;
 				
 				if ( $cgi_module ) {
