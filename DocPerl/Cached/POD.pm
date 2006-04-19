@@ -197,7 +197,7 @@ sub pod {
 	my $cmd = "/usr/bin/perl -MPod::Html -e 'pod2html(\"" . join( '", "', @params ) . "\")'";
 	
 	# Create the HTML POD
-	$pod = `$cmd 2>/dev/null`;
+	my $pod = `$cmd 2>/dev/null`;
 	
 	if ( length $pod < 100 ) {
 		return ( pod => "Could not create the POD for $module $!\n$pod\n". Dumper \%ENV );

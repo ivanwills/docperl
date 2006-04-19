@@ -245,7 +245,10 @@ sub process {
 			# try to see if the method is a cached module
 			my $module = 'DocPerl::Cached::'.uc $page;
 			eval( "require $module" );
-			unless ( $@ ) {
+			if ( $@ ) {
+				warn $@;
+			}
+			else {
 				# use the cached object to get the data
 				my $cache = $module->new( %$self );
 				%vars = $cache->process();
