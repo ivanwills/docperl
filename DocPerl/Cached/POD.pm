@@ -174,7 +174,7 @@ sub pod {
 	my @folders	= $self->{folders};
 	my @suffixes;
 	
-	die "No location supplied" unless $self->{current_location};
+	croak "No location supplied" unless $self->{current_location};
 	
 	# check that we found the proper file
 	return ( pod => "Could not find $self->{module_file} in ".join ", ", @folders )

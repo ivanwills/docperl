@@ -1,34 +1,37 @@
 # This section allows for the getting of documentation of files not in the @INC path
 [LocalFolders]
 
-Path:		.
-Match:		\.(?:pm|pl|pod|cgi)$
-Exclude:	./data
-suffixes:	pod
-suffixes:	pm
-suffixes:	pl
-suffixes:	cgi
+Path:			.
+Match:			\.(?:pm|pl|pod|cgi)$
+Exclude:		./data
+suffixes:		pod
+suffixes:		pm
+suffixes:		pl
+suffixes:		cgi
 
 # Info about extra paths to add to @INC ...
 [IncFolders]
 
-Path:		.
-Match:		\.(?:pm|pod)$
-Exclude:	./data
-suffixes:	pod
-suffixes:	pm
-suffixes:	pl
-suffixes:	cgi
+Path:			.
+Match:			\.(?:pm|pod)$
+Exclude:		./data
+suffixes:		pod
+suffixes:		pm
+suffixes:		pl
+suffixes:		cgi
 
 # Details of template usage
 [Templates]
 
-Path:		./data/templates/local:./data/templates/default
+Path:			./data/templates/local:./data/templates/default
 history_size:	10
 
 # General configuration
 [General]
 
-Data:		./data
-Touch:		/usr/bin/touch
-#Cache:		off
+Data:			./data
+Touch:			/usr/bin/touch
+#Cache:			off
+
+# Set this to a value if you would like to be able to clear the cache from from a web page
+#ClearCacje:	on

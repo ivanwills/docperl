@@ -276,6 +276,22 @@ sub _save_cache {
 	return;
 }
 
+=head3 C<clear_cache ( [$dir] )>
+
+Param: C<$dir> - string (detail) - The cache directory to clear
+
+Return:  - 
+
+Description: 
+
+=cut
+
+sub clear_cache {
+	my $self	= shift;
+	my $dir		= shift || $self->{cache_dir};
+	
+	system( "rm -rf $dir/*" );
+}
 
 1;
 

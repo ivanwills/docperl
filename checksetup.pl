@@ -20,6 +20,7 @@ my $CONFIG = "$FindBin::Bin/data/docperl.conf";
 
 my %option = (
 	compile			=> [],
+	purge			=> 0,
 	verbose 		=> 0,
 	man				=> 0,
 	help			=> 0,
@@ -43,6 +44,7 @@ sub main {
 	GetOptions(
 		\%option,
 		'compile|c=s@',
+		'purge|p!',
 		'verbose|v!',
 		'man',
 		'help',
@@ -88,19 +90,25 @@ sub main {
 	}
 	
 	# set up the local directory
-	my $local = "$FindBin::Bin/data/templates/local";
+	my $data  = "$FindBin::Bin/data";
+	my $local = "$data/templates/local";
 	unless ( -d $local ) {
 		mkdir $local or warn "Could not create the local template directory '$local': $!\n";
 	}
 	print "\n";
+	
+	if ( $option{purge} ) {
+		print "Clearing old cache files\n";
+		system "rm -rf $FindBin::Bin/data/cache/*";
+	}
 	
 	if ( ref $option{compile} && @{ $option{compile} } ) {
 		use Config::Std;
 		use Readonly;
 		read_config $CONFIG, my %config;
 		use DocPerl;
-		my $dp = DocPerl->new( cgi => { page => 'list', }, conf => \%config, save_data => 1 );
-		my %data = $dp->process();
+		my $dp = DocPerl->new( cgi => { page => 'list', }, conf => \%config, save_data => 1, data => $data, );
+		my %data = $dp->list();
 		
 		for my $options ( @{ $option{compile} } ) {
 			for my $option ( split /,/, $options ) {
@@ -137,6 +145,7 @@ sub pod {
 		
 		#warn "$parent$module\n";
 		$dp->{cgi} = { page => 'pod', module => "$parent$module", location => $location };
+		$dp->init();
 		$dp->process();
 		
 		if ( ref $data->{$module} && keys %{ $data->{$module} } > ($parent?1:0) ) {
@@ -166,7 +175,8 @@ This documentation refers to checksetup.pl version 0.1.
  OPTIONS:
   -c --compile=opt   Pre compile the pod/api/code (seperate with commas to
                      compile more than one option)
-
+  -p --purge         Purge the current cache files.
+  
   -v --verbose       Show more detailed option
      --version       Prints the version information
      --help          Prints this help information

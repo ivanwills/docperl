@@ -218,6 +218,12 @@ sub process {
 	my %vars;
 	my $out;
 	
+	# check if we are meant to clear the cache (and the we are allowed to)
+	if ( $conf->{Templates}{ClearCache} && $q->{clearcache} ) {
+		my $cache = DocPerl::Cached->new( %$self );
+		$cache->clear_cache();
+	}
+	
 	# create a cache object
 	my $cache = DocPerl::Cached->new( %$self );
 	my $cache_path = $page;
@@ -268,7 +274,8 @@ sub process {
 	my $tmpl = Template->new( INCLUDE_PATH => $conf->{Templates}{Path}, EVAL_PERL => 1 );
 	
 	# process the template
-	$tmpl->process( $self->template(), { %$q, %{ $conf->{template} }, %vars }, \$out )
+	$conf->{templates} ||= {};
+	$tmpl->process( $self->template(), { %$q, %{ $conf->{templates} }, %vars }, \$out )
 		or error( $tmpl->error );
 	
 	if ( $page ) {
