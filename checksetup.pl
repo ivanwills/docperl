@@ -162,7 +162,7 @@ __DATA__
 
 =head1 NAME
 
-checksetup.pl - <One-line description of commands purpose>
+checksetup.pl - Program to check the setup of a DocPerl installation
 
 =head1 VERSION
 
@@ -186,30 +186,27 @@ This documentation refers to checksetup.pl version 0.1.
 
 =head1 DESCRIPTION
 
-A full description of the module and its features.
-
-May include numerous subsections (i.e., =head2, =head3, etc.).
-
-
-=head1 SUBROUTINES/METHODS
-
-A separate section listing the public components of the module's interface.
-
-These normally consist of either subroutines that may be exported, or methods
-that may be called on objects belonging to the classes that the module
-provides.
-
-Name the section accordingly.
-
-In an object-oriented module, this section should begin with a sentence (of the
-form "An object of this class represents ...") to give the reader a high-level
-context to help them understand the methods that are subsequently described.
+This program checks to see if everything is ok with an install of DocPerl.
+It checks that the required modules are installed, that there is a config
+file and the security settings on the file system are setup correctly
+(still to be fully completed). Also checksetup.pl can precompile all templates
+for all pages to improve performance (at the expence of diskspace). Note that
+in the future the compiled templates will be searchable.
 
 =head1 DIAGNOSTICS
 
-A list of every error and warning message that the module can generate (even
-the ones that will "never happen"), with a full explanation of each problem,
-one or more likely causes, and any suggested remedies.
+Known problems:
+
+=over 4
+
+=item POD Documentation
+
+Generating of POD documentation requires permission to write temporary files
+to the file system. This may not be possible by default with some web servers/
+operating systems combinations (eg Linux with extra security enabled by default
+in Fedora).
+
+=back
 
 =head1 CONFIGURATION AND ENVIRONMENT
 
@@ -218,33 +215,9 @@ the names and locations of any configuration files, and the meaning of any
 environment variables or properties that can be set. These descriptions must
 also include details of any configuration language used.
 
-=head1 DEPENDENCIES
-
-A list of all of the other modules that this module relies upon, including any
-restrictions on versions, and an indication of whether these required modules
-are part of the standard Perl distribution, part of the module's distribution,
-or must be installed separately.
-
-=head1 INCOMPATIBILITIES
-
-A list of any modules that this module cannot be used in conjunction with.
-This may be due to name conflicts in the interface, or competition for system
-or program resources, or due to internal limitations of Perl (for example, many
-modules that use source code filters are mutually incompatible).
-
 =head1 BUGS AND LIMITATIONS
 
-A list of known problems with the module, together with some indication of
-whether they are likely to be fixed in an upcoming release.
-
-Also, a list of restrictions on the features the module does provide: data types
-that cannot be handled, performance issues and the circumstances in which they
-may arise, practical limitations on the size of data sets, special cases that
-are not (yet) handled, etc.
-
-The initial template usually just has:
-
-There are no known bugs in this module.
+There are no known bugs in this script.
 
 Please report problems to Ivan Wills (ivan.wills@gmail.com).
 
@@ -253,13 +226,11 @@ Patches are welcome.
 =head1 AUTHOR
 
 Ivan Wills - (ivan.wills@gmail.com)
-<Author name(s)> - (<contact address>)
 
 =head1 LICENSE AND COPYRIGHT
 
 Copyright (c) 2006 Ivan Wills (101 Miles St Bald Hills QLD Australia 4036).
 All rights reserved.
-
 
 This module is free software; you can redistribute it and/or modify it under
 the same terms as Perl itself. See L<perlartistic>.  This program is
@@ -268,3 +239,4 @@ without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
 PARTICULAR PURPOSE.
 
 =cut
+
