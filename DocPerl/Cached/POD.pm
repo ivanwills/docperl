@@ -39,6 +39,84 @@ In an object-oriented module, this section should begin with a sentence (of the
 form "An object of this class represents ...") to give the reader a high-level
 context to help them understand the methods that are subsequently described.
 
+=cut
+
+# Created on: 2006-03-19 20:31:36
+# Create by:  ivan
+
+use strict;
+use warnings;
+use version;
+use Carp;
+use Data::Dumper qw/Dumper/;
+use Scalar::Util;
+use base qw/DocPerl::Cached/;
+
+our $VERSION = version->new('0.0.1');
+our @EXPORT = qw//;
+our @EXPORT_OK = qw//;
+
+=head3 C<process ( )>
+
+Return: string - The POD documentation of the module passed in during
+creation.
+
+Description: Creates the html POD documentation of the file/module passed in
+when this object was created.
+
+=cut
+
+sub process {
+	my $self	= shift;
+	my $conf	= $self->{conf};
+	my $module	= $self->{module};
+	my $file	= $self->{source} || '';
+	my @folders	= $self->{folders};
+	my @suffixes;
+	
+	croak "No location supplied" unless $self->{current_location};
+	
+	# check that we found the proper file
+	return ( pod => "Could not find $self->{module_file} in ".join ", ", @folders )
+		if !$file || $file eq $self->{module_file};
+	
+	# construct the list of parameters
+	my @params = (
+		"--infile=$file",
+		"--podroot=.",
+		"--title=$module",
+		"--index",
+		"--cachedir=$conf->{General}{Data}/cache",
+		"--css=?page=css.css"
+	);
+	# Pod::Html only appears to be able to print to STDOUT so have to call it
+	# as an external program and capture STDOUT
+	my $cmd = "/usr/bin/perl -MPod::Html -e 'pod2html(\"" . join( '", "', @params ) . "\")'";
+	
+	# Create the HTML POD
+	my $pod = `$cmd 2>/dev/null`;
+	
+	# check that the html was created success fully
+	if ( length $pod < 100 ) {
+		return ( pod => "Could not create the POD for $module $!\n$pod\n". Dumper \%ENV );
+	}
+	
+	# remove final number if one exists (bug with Pod::Html?)
+	$pod =~ s/\d$//s if $pod =~ /\d$/s;
+	# tru to get rid of gaps between pre tags
+	$pod =~ s/<\/pre>(\s*)<pre>/$1/img if $1;
+	# convert relative links to work with DocPerl structure
+	$pod =~ s{href="/}{target="module" href="?type=module&module=link/}gxs;
+	
+	# return the processed documentation
+	return ( pod => $pod, pwd => `pwd` );
+}
+
+
+1;
+
+__END__
+
 =head1 DIAGNOSTICS
 
 A list of every error and warning message that the module can generate (even
@@ -102,117 +180,3 @@ without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
 PARTICULAR PURPOSE.
 
 =cut
-
-# Created on: 2006-03-19 20:31:36
-# Create by:  ivan
-
-use strict;
-use warnings;
-use version;
-use Carp;
-use Data::Dumper qw/Dumper/;
-use Scalar::Util;
-use base qw/DocPerl::Cached/;
-
-our $VERSION = version->new('0.0.1');
-our @EXPORT = qw//;
-our @EXPORT_OK = qw//;
-
-
-=head3 C<init ( $var1, $var2,  )>
-
-Param: C<$var1> - type (detail) - description
-
-Param: C<$var2> - type (detail) - description
-
-Return:  - 
-
-Description: 
-
-=cut
-
-sub init {
-	my $self	= shift;
-	
-}
-
-=head3 C<process ( $var1, $var2,  )>
-
-Param: C<$var1> - type (detail) - description
-
-Param: C<$var2> - type (detail) - description
-
-Return:  - 
-
-Description: 
-
-=cut
-
-sub process {
-	my $self	= shift;
-	
-	return $self->pod();
-}
-
-=head3 C<pod ( $var1, $var2,  )>
-
-Param: C<$var1> - type (detail) - description
-
-Param: C<$var2> - type (detail) - description
-
-Return:  - 
-
-Description: 
-
-=cut
-
-sub pod {
-	my $self	= shift;
-	my $conf	= $self->{conf};
-	my $module	= $self->{module};
-	my $file	= $self->{source} || '';
-	my @folders	= $self->{folders};
-	my @suffixes;
-	
-	croak "No location supplied" unless $self->{current_location};
-	
-	# check that we found the proper file
-	return ( pod => "Could not find $self->{module_file} in ".join ", ", @folders )
-		if !$file || $file eq $self->{module_file};
-	
-#	# check the cached version
-#	my $pod = $self->_check_cache( cache => "pod/$self->{current_location}/$self->{module_file}", source => $file, );
-#	# return the pod if the cache exists and is in date
-#	return ( pod => $pod ) if $pod;
-	
-	# construct the list of parameters
-	my @params = (
-		"--infile=$file",
-		"--podroot=.",
-		"--title=$module",
-		"--index",
-		"--cachedir=$conf->{General}{Data}/cache",
-		"--css=?page=css.css"
-	);
-	my $cmd = "/usr/bin/perl -MPod::Html -e 'pod2html(\"" . join( '", "', @params ) . "\")'";
-	
-	# Create the HTML POD
-	my $pod = `$cmd 2>/dev/null`;
-	
-	if ( length $pod < 100 ) {
-		return ( pod => "Could not create the POD for $module $!\n$pod\n". Dumper \%ENV );
-	}
-	
-	$pod =~ s/\d$//s if $pod =~ /\d$/s;
-	$pod =~ s/<\/pre>(\s*)<pre>/$1/img if $1;
-	$pod =~ s{href="/}{target="module" href="?type=module&module=link/}gxs;
-	
-#	$self->_save_cache( cache => "pod/$self->{current_location}/$self->{module_file}", source => $file, content => $pod );
-	
-	return ( pod => $pod, pwd => `pwd` );
-}
-
-
-1;
-
-__END__

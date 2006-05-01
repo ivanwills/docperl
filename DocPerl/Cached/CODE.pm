@@ -39,68 +39,6 @@ In an object-oriented module, this section should begin with a sentence (of the
 form "An object of this class represents ...") to give the reader a high-level
 context to help them understand the methods that are subsequently described.
 
-=head1 DIAGNOSTICS
-
-A list of every error and warning message that the module can generate (even
-the ones that will "never happen"), with a full explanation of each problem,
-one or more likely causes, and any suggested remedies.
-
-=head1 CONFIGURATION AND ENVIRONMENT
-
-A full explanation of any configuration system(s) used by the module, including
-the names and locations of any configuration files, and the meaning of any
-environment variables or properties that can be set. These descriptions must
-also include details of any configuration language used.
-
-=head1 DEPENDENCIES
-
-A list of all of the other modules that this module relies upon, including any
-restrictions on versions, and an indication of whether these required modules
-are part of the standard Perl distribution, part of the module's distribution,
-or must be installed separately.
-
-=head1 INCOMPATIBILITIES
-
-A list of any modules that this module cannot be used in conjunction with.
-This may be due to name conflicts in the interface, or competition for system
-or program resources, or due to internal limitations of Perl (for example, many
-modules that use source code filters are mutually incompatible).
-
-=head1 BUGS AND LIMITATIONS
-
-A list of known problems with the module, together with some indication of
-whether they are likely to be fixed in an upcoming release.
-
-Also, a list of restrictions on the features the module does provide: data types
-that cannot be handled, performance issues and the circumstances in which they
-may arise, practical limitations on the size of data sets, special cases that
-are not (yet) handled, etc.
-
-The initial template usually just has:
-
-There are no known bugs in this module.
-
-Please report problems to Ivan Wills (ivan.wills@gmail.com).
-
-Patches are welcome.
-
-=head1 AUTHOR
-
-Ivan Wills - (ivan.wills@gmail.com)
-<Author name(s)>  (<contact address>)
-
-=head1 LICENSE AND COPYRIGHT
-
-Copyright (c) 2006 Ivan Wills (101 Miles St Bald Hills QLD Australia 4036).
-All rights reserved.
-
-
-This module is free software; you can redistribute it and/or modify it under
-the same terms as Perl itself. See L<perlartistic>.  This program is
-distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
-without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
-PARTICULAR PURPOSE.
-
 =cut
 
 # Created on: 2006-03-19 20:32:42
@@ -132,16 +70,9 @@ Description:
 =cut
 
 sub process {
-	my $self	= shift;
-	my $source	= $self->{source} || '';
-	
-	return $self->syntax_highlight($source);
-}
-
-sub syntax_highlight {
 	my $self		= shift;
 	my $q			= $self->{cgi};
-	my ($code)		= @_;
+	my $code		= $self->{source};
 	my $in_pod		= 0;
 	my $here_marker	= '';
 	my $here_style;
@@ -151,7 +82,7 @@ sub syntax_highlight {
 	
 	while ( my $line = <$file> ) {
 		# convert tabs into spaces of width 4
-		my $code_line = toSpaces( $line, 4 );
+		my $code_line = to_spaces( $line, 4 );
 		
 		my $j         = $.;
 		my $line_no   = qq{<a name="line$j" class="line_no"> $j </a> };# $q->a( { -name => "line$j", -class => "line_no" }, " $j " ) . "  ";
@@ -244,17 +175,19 @@ sub syntax_highlight {
 	return lines => \@lines;
 }
 
-=head2 toSpaces ( $line, $tab_size )
+=head2 C<to_spaces ( $line, $tab_size )>
 
-	@param	$line:		The line with tabs that are to be converted into spaces
-	@param	$tab_size:	The size that tabs are assumed to be
-	@return	string:		The line with tabs converted into spaces
+Param: $line - The line with tabs that are to be converted into spaces
+
+Param: $tab_size - The size that tabs are assumed to be
+
+Return: string - The line with tabs converted into spaces
 
 Converts one line of text from using tabs of size $tab_size to using spaces
 
 =cut
 
-sub toSpaces {
+sub to_spaces {
 	my ( $line, $tab_size ) = @_;
 
 	# only do the check if there are tabs
@@ -287,3 +220,56 @@ sub toSpaces {
 1;
 
 __END__
+
+=head1 DIAGNOSTICS
+
+A list of every error and warning message that the module can generate (even
+the ones that will "never happen"), with a full explanation of each problem,
+one or more likely causes, and any suggested remedies.
+
+=head1 CONFIGURATION AND ENVIRONMENT
+
+A full explanation of any configuration system(s) used by the module, including
+the names and locations of any configuration files, and the meaning of any
+environment variables or properties that can be set. These descriptions must
+also include details of any configuration language used.
+
+=head1 DEPENDENCIES
+
+A list of all of the other modules that this module relies upon, including any
+restrictions on versions, and an indication of whether these required modules
+are part of the standard Perl distribution, part of the module's distribution,
+or must be installed separately.
+
+=head1 INCOMPATIBILITIES
+
+A list of any modules that this module cannot be used in conjunction with.
+This may be due to name conflicts in the interface, or competition for system
+or program resources, or due to internal limitations of Perl (for example, many
+modules that use source code filters are mutually incompatible).
+
+=head1 BUGS AND LIMITATIONS
+
+This module uses a very simple syntax highlighting scheme relying only on
+regular expressions, the generated html may not be that well hightlighted.
+
+Please report problems to Ivan Wills (ivan.wills@gmail.com).
+
+Patches are welcome.
+
+=head1 AUTHOR
+
+Ivan Wills - (ivan.wills@gmail.com)
+
+=head1 LICENSE AND COPYRIGHT
+
+Copyright (c) 2006 Ivan Wills (101 Miles St Bald Hills QLD Australia 4036).
+All rights reserved.
+
+This module is free software; you can redistribute it and/or modify it under
+the same terms as Perl itself. See L<perlartistic>.  This program is
+distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE.
+
+=cut

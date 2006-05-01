@@ -66,7 +66,7 @@ C<cgi> - CGI - the cgi object.
 
 C<conf> - Config::Std - The configuration object
 
-Return: DocPerl - 
+Return: DocPerl - A new DocPerl object.
 
 Description: Creates a new DocPerl object with the template file name and mime
 type defined.
@@ -94,7 +94,8 @@ sub new {
 
 Return: void
 
-Description: Initialises the DocPerl object
+Description: Initialises the DocPerl object processing the requested
+cgi parameters.
 
 =cut
 
@@ -501,10 +502,16 @@ also include details of any configuration language used.
 
 =head1 DEPENDENCIES
 
-A list of all of the other modules that this module relies upon, including any
-restrictions on versions, and an indication of whether these required modules
-are part of the standard Perl distribution, part of the module's distribution,
-or must be installed separately.
+The following modules are required by DocPerl:
+warnings (included with perl 5.6)
+Carp (included with perl 5.6)
+Scalar::Util (included with perl 5.8)
+version
+Template (any)
+DocPerl::Cached (included in DocPerl installation)
+DocPerl::Cached::POD (included in DocPerl installation)
+DocPerl::Cached::API (included in DocPerl installation)
+DocPerl::Cached::CODE (included in DocPerl installation)
 
 =head1 INCOMPATIBILITIES
 
