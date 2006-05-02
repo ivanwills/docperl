@@ -6,10 +6,8 @@
 use strict;
 use warnings;
 use version;
-use Scalar::Util;
 use FindBin qw/$Bin/;
 use CGI;
-use Template;
 use Config::Std;
 use Readonly;
 use DocPerl;
@@ -68,27 +66,12 @@ This documentation refers to docperl.cgi version 0.1.
 
 =head1 SYNOPSIS
 
-
+ docperl.cgi?page={page_name}[&module={module_descriptor|module_name}[&location={perl|local|inc}][&file={relative_module_file}][&source={exact_module_file}]]
 
 =head1 DESCRIPTION
 
-A full description of the module and its features.
-
-May include numerous subsections (i.e., =head2, =head3, etc.).
-
-=head1 SUBROUTINES/METHODS
-
-A separate section listing the public components of the module's interface.
-
-These normally consist of either subroutines that may be exported, or methods
-that may be called on objects belonging to the classes that the module
-provides.
-
-Name the section accordingly.
-
-In an object-oriented module, this section should begin with a sentence (of the
-form "An object of this class represents ...") to give the reader a high-level
-context to help them understand the methods that are subsequently described.
+docperl.cgi processes the cgi input and displays the out put of the DocPerl.pm
+module. Setting the appropriate HTTP headders (mostly MIME type).
 
 =head1 DIAGNOSTICS
 
@@ -119,16 +102,6 @@ modules that use source code filters are mutually incompatible).
 
 =head1 BUGS AND LIMITATIONS
 
-A list of known problems with the module, together with some indication of
-whether they are likely to be fixed in an upcoming release.
-
-Also, a list of restrictions on the features the module does provide: data types
-that cannot be handled, performance issues and the circumstances in which they
-may arise, practical limitations on the size of data sets, special cases that
-are not (yet) handled, etc.
-
-The initial template usually just has:
-
 There are no known bugs in this module.
 
 Please report problems to Ivan Wills (ivan.wills@gmail.com).
@@ -144,6 +117,10 @@ Ivan Wills - (ivan.wills@gmail.com)
 Copyright (c) 2006 Ivan Wills (101 Miles St Bald Hills QLD 4036 Australia).
 All rights reserved.
 
-
+This module is free software; you can redistribute it and/or modify it under
+the same terms as Perl itself. See L<perlartistic>.  This program is
+distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE.
 
 =cut
