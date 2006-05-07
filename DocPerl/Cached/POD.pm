@@ -103,8 +103,8 @@ sub process {
 	
 	# remove final number if one exists (bug with Pod::Html?)
 	$pod =~ s/\d$//s if $pod =~ /\d$/s;
-	# tru to get rid of gaps between pre tags
-	$pod =~ s/<\/pre>(\s*)<pre>/$1/img if $1;
+	# try to get rid of gaps between pre tags
+	$pod =~ s{</pre>(\s*)<pre>}{$1}ixsg;
 	# convert relative links to work with DocPerl structure
 	$pod =~ s{href="/}{target="module" href="?type=module&module=link/}gxs;
 	
