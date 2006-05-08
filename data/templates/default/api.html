@@ -106,11 +106,38 @@
 			<ul>
 			[% END %]
 		</div>
+		[% UNLESS api %]
+		API Missing
+		[% END %]
 		<table>
 			[% IF api.package %]
 			<tr>
 				<th>Package</th>
 				<td>[% module %]</td>
+			</tr>
+			[% END -%]
+			[% IF api.packages %]
+			<tr>
+				<th>Other Packages</th>
+				<td class="double_list">
+					<table>
+					[% counter = 1 -%]
+					[% FOR package = api.packages -%]
+						[% IF counter % 2 %]
+						<tr>
+						[% END %]
+							<td>[% package %]</td>
+						[% IF !(counter % 2) %]
+						</tr>
+						[% END -%]
+						[% counter = counter + 1 -%]
+					[% END -%]
+					[% IF !(counter % 2) %]
+						[% IF counter > 2 %]<td></td>[% END %]
+						</tr>
+					[% END -%]
+					</table>
+				</td>
 			</tr>
 			[% END -%]
 			[% IF api.version %]

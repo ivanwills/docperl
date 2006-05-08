@@ -82,15 +82,20 @@ sub process {
 	while ( my $line = <$fh> ) {
 		$i++;
 		
-		# ignore lines starting with a { or = or #
-		next if $line =~ /^\s*(?:{|=|#)/;
+		# ignore lines starting with a =, {, } or #
+		next if $line =~ /^(?: = | (?: \s* (?: [{] | [}] | [#] ) ) )/xs;
 		
 		# check if we have reached the end of the file
 		last if $line =~ /^__(END|DATA)__/;
 		
 		# if the line starts with the package directive
 		if ( $line =~ /^\s*package ([\w:]+);/ ) {
-			$api{package} = $1;
+			if ( $api{package} ) {
+				push @{ $api{packages} }, $1;
+			}
+			else {
+				$api{package} = $1;
+			}
 		}
 		
 		# check if the line starts with 'use base' to indicate inhereted packages
@@ -114,9 +119,9 @@ sub process {
 		}
 		elsif ( $line =~ m#^
 							\s* \@ISA \s* = \s* qw
-							( \| | \/ | \( | \{ | \[ )
+							(?: [|] | [/] | [(] | [{] | \[ )
 							\s*(.*)\s*
-							( \| | \/ | \) | \} | \] )
+							(?: [|] | [/] | [)] | [}] | \] )
 							#xm ) {
 			warn "Untested!!!!!!!!!";
 			my $parents = $1;
@@ -201,7 +206,7 @@ sub process {
 		}
 	}
 	
-	return { api => \%api };
+	return ( api => \%api );
 }
 
 =head3 C<get_hirachy ( $object )>
@@ -220,15 +225,16 @@ sub get_hirachy {
 	my ( $object ) = @_;
 	my @hirachy;
 	
+	warn "getting hirachy of $object";
 	eval("use $object");
-	if ( not $@ ) {
+	#if ( not $@ ) {
 		my $o = bless {}, $object;
 		foreach my $parent ( eval("\@$object\:\:ISA") ) {
 			push @hirachy, get_hirachy( $parent );
 		}
-	}
+	#}
 	
-	return { class => $object, hirachy => @hirachy ? \@hirachy : undef };
+	return { class => $object, hirachy => \@hirachy };
 }
 
 1;
