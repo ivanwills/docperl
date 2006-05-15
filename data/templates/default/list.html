@@ -76,6 +76,11 @@
 				clear:				left;
 				-moz-border-radius:	4px;
 				border-radius:		4px;
+				text-decoration:	none;
+			}
+			.mod_expand {
+				-moz-border-radius:	3px;
+				border-radius:		3px;
 			}
 			.info {
 				width:				10px;
@@ -259,8 +264,12 @@
 					}
 					list += ':' + path;
 					modules.push(path);
-					if ( modules.length > [% history_size %] )
+					if ( modules.length >= [% history_size %] ) {
+						var recent = document.getElementById('ul_recent');
+						recent.removeChild( recent.firstChild );
+						add_count( 'recent', -1 );
 						modules.splice( 0,  modules.length - [% history_size %] );
+					}
 					set_cookie( name, modules.join(':') );
 				}
 				else {
@@ -407,6 +416,29 @@
 				}
 			}
 			
+			function section_toggle( section ) {
+				var div		= document.getElementById( section );
+				var head	= document.getElementById( section + '_head' );
+				var link	= document.getElementById( 'plus__' + section );
+				// check the status of the list
+				if ( div.style && div.style.display ) {
+					// list is closed so open
+					div.style.display = '';
+					head.style.paddingBottom = '';
+					head.style.marginBottom = '';
+					link.removeChild( link.firstChild );
+					link.appendChild( document.createTextNode('-') );
+				}
+				else {
+					// list is open so close
+					div.style.display = 'none';
+					head.style.paddingBottom = '1px';
+					head.style.marginBottom = '1px';
+					link.removeChild( link.firstChild );
+					link.appendChild( document.createTextNode('+') );
+				}
+			}
+			
 			function get_cookie(name) {
 				var result			= null;
 				var my_cookie		= " " + document.cookie + "; ";
@@ -500,29 +532,39 @@
 			<!--/form-->
 		</center>
 		<div id="results_doc" style="display:none">
-			<h2>Search Results (<span id="results_count">0</span>)</h2>
+			<h2 id="results_head">
+			<a id="plus__results" href="javascript: section_toggle('results');" class="mod_expand">-</a>
+			Search Results (<span id="results_count">0</span>)</h2>
 			<div id="results">
 			</div>
 		</div>
 		<div id="recent_doc" style="display:none">
-			<h2>Recent Modules (<span id="recent_count">0</span>)</h2>
+			<h2 id="recent_head">
+			<a id="plus__recent" href="javascript: section_toggle('recent');" class="mod_expand">-</a>
+			Recent Modules (<span id="recent_count">0</span>)</h2>
 			<div id="recent">
 				<ul id="ul_recent" class="mod_list" style="display:block">
 				</ul>
 			</div>
 		</div>
 		<div id="perl_doc">
-			<h2 id="perl_head"><span class="info">i<span>[% perl_path %]</span></span>Perl (<span id="perl_count">0</span>)</h2>
+			<h2 id="perl_head"><span class="info">i<span>[% perl_path %]</span></span>
+			<a id="plus__perl" href="javascript: section_toggle('perl');" class="mod_expand">-</a>
+			Perl (<span id="perl_count">0</span>)</h2>
 			<div id="perl">
 			</div>
 		</div>
 		<div id="local_doc">
-			<h2 id="local_head"><span class="info">i<span>[% local_path %]</span></span>Local Programs (<span id="local_count">0</span>)</h2>
+			<h2 id="local_head"><span class="info">i<span>[% local_path %]</span></span>
+			<a id="plus__local" href="javascript: section_toggle('local');" class="mod_expand">-</a>
+			Local Programs (<span id="local_count">0</span>)</h2>
 			<div id="local">
 			</div>
 		</div>
 		<div id="inc_doc">
-			<h2 id="inc_head"><span class="info">i<span>[% inc_path %]</span></span>Installed Modules (<span id="inc_count">0</span>)</h2>
+			<h2 id="inc_head"><span class="info">i<span>[% inc_path %]</span></span>
+			<a id="plus__inc" href="javascript: section_toggle('inc');" class="mod_expand">-</a>
+			Installed Modules (<span id="inc_count">0</span>)</h2>
 			<div id="inc">
 			</div>
 		</div>

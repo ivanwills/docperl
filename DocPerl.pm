@@ -262,6 +262,10 @@ sub process {
 			}
 		}
 	}
+	else {
+		# this only occurs when showing frames page
+		$self->{module} = $q->{module} || 'perl__pod__perlfunc';
+	}
 	
 	# set up other required params
 	$vars{DUMP}		= Dumper( \%vars );
@@ -275,8 +279,8 @@ sub process {
 	my $tmpl = Template->new( INCLUDE_PATH => $conf->{Templates}{Path}, EVAL_PERL => 1 );
 	
 	# process the template
-	$conf->{templates} ||= {};
-	$tmpl->process( $self->template(), { %$q, %{ $conf->{templates} }, %vars }, \$out )
+	$conf->{Templates} ||= {};
+	$tmpl->process( $self->template(), { %$q, %{ $conf->{Templates} }, %vars }, \$out )
 		or error( $tmpl->error );
 	
 	if ( $page ) {
