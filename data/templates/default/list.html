@@ -424,7 +424,6 @@
 				if ( div.style && div.style.display ) {
 					// list is closed so open
 					div.style.display = '';
-					head.style.paddingBottom = '';
 					head.style.marginBottom = '';
 					link.removeChild( link.firstChild );
 					link.appendChild( document.createTextNode('-') );
@@ -432,7 +431,6 @@
 				else {
 					// list is open so close
 					div.style.display = 'none';
-					head.style.paddingBottom = '1px';
 					head.style.marginBottom = '1px';
 					link.removeChild( link.firstChild );
 					link.appendChild( document.createTextNode('+') );
