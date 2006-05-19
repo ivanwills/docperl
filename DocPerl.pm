@@ -146,6 +146,13 @@ sub init {
 			$self->{module}		 =~ s{__}{::}gxs;
 			$self->{module_file} =~ s{__}{/}gxs;
 		}
+		elsif ( $q->{module} =~ m{^link/(.+)(?:[.]html)$} ) {
+			$self->{current_location}	= $q->{location};
+			$self->{module}				= $1;
+			$self->{module_file}		= $1;
+			
+			$self->{module} =~ s{/}{::}gxs;
+		}
 		else {
 			# extract the cgi parameters
 			$self->{current_location}	= $q->{location};
@@ -161,9 +168,9 @@ sub init {
 		}
 		
 		# Check after all that we still have a module, file and a location
-		die "Module went!" unless $self->{module};
+		die "Module went!"      unless $self->{module};
 		die "Module file went!" unless $self->{module_file};
-		die "Location went!" unless $self->{current_location};
+		die "Location went!"    unless $self->{current_location};
 		
 		# 
 		my $file = $self->{module_file};
@@ -174,7 +181,7 @@ sub init {
 		# Get the folder locations and file name suffixes for the current
 		# location.
 		if ( $self->{current_location} eq 'local' ) {
-			@folders = split /:/, $conf->{LocalFolders}{Path};
+			@folders  = split /:/, $conf->{LocalFolders}{Path};
 			@suffixes = @{ $conf->{LocalFolders}{suffixes} };
 		}
 		else {
@@ -194,10 +201,10 @@ sub init {
 		}
 		
 		# store all the calculated paramteres
-		$self->{folders} = \@folders;
+		$self->{folders}  = \@folders;
 		$self->{suffixes} = \@suffixes;
-		$self->{sources} = \@files;		# all files that match the module name
-		$self->{source}	 = $q->{source} || $files[0]{file};
+		$self->{sources}  = \@files;		# all files that match the module name
+		$self->{source}	  = $q->{source} || $files[0]{file};
 		#warn Dumper $self;
 	}
 }
@@ -226,7 +233,7 @@ sub process {
 	}
 	
 	# create a cache object
-	my $cache = DocPerl::Cached->new( %$self );
+	my $cache      = DocPerl::Cached->new( %$self );
 	my $cache_path = $page;
 	if ( $self->{current_location} ) {
 		$cache_path .= "/$self->{current_location}";
@@ -275,15 +282,17 @@ sub process {
 	$vars{sources}	= $self->{sources};
 	$vars{source}	= $self->{source};
 	
-	# create a new template object
-	my $tmpl = Template->new( INCLUDE_PATH => $conf->{Templates}{Path}, EVAL_PERL => 1 );
+	# get the template object
+	my $tmpl = $self->get_templ_object();
 	
 	# process the template
 	$conf->{Templates} ||= {};
 	$tmpl->process( $self->template(), { %$q, %{ $conf->{Templates} }, %vars }, \$out )
 		or error( $tmpl->error );
+	die 'The processed template "'.$self->template().'" contains not data!'.Dumper \%vars if $out =~ /^\s+$/;
 	
 	if ( $page ) {
+		#warn "Saving cache of $self->{source}\t$cache_path\n";
 		$cache->_save_cache( cache => $cache_path, source => $self->{source} || 1, content => $out );
 	}
 	
@@ -301,6 +310,26 @@ Description: Gets the template file for the current page
 sub template {
 	my $self	= shift;
 	return $self->{template};
+}
+
+=head3 C<get_templ_object ( )>
+
+Return: Template - Returns the stored template object
+
+Description: Gets (or creates then gets) the template toolkit object.
+
+=cut
+
+sub get_templ_object {
+	my $self	= shift;
+	my $conf	= $self->{conf};
+	
+	return $self->{templ} if $self->{templ};
+	
+	$self->{templ} = Template->new( INCLUDE_PATH => $conf->{Templates}{Path}, EVAL_PERL => 1 );
+	die "Could not create the template object!" unless $self->{templ};
+	
+	return $self->{templ};
 }
 
 =head3 C<mime ( )>

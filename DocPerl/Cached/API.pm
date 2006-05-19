@@ -73,8 +73,10 @@ sub process {
 	my $source	= $self->{source} || '';
 	my $file	= $source;
 	
+	return unless -f $file;
+	
 	# open the file
-	open my $fh, '<', $file or warn "Cannot open $file: $!\n";
+	open my $fh, '<', $file or warn "Cannot open $file: $!\n" and return;
 	my %api;
 	my $i = 0;
 	
@@ -123,7 +125,7 @@ sub process {
 							\s*(.*)\s*
 							(?: [|] | [/] | [)] | [}] | \] )
 							#xm ) {
-			warn "Untested!!!!!!!!!";
+			#warn "Untested!!!!!!!!!";
 			my $parents = $1;
 			my @parents = split /\s+/, $parents;
 			$api{parents} = \@parents;
@@ -190,11 +192,12 @@ sub process {
 	close $fh;
 	
 	my @paths = split /:/, $location eq 'local' ? $conf->{LocalFolders}{Path} : $conf->{IncFolders}{Path};
+	my $last = @INC - 1;
 	push @INC, @paths;
 	
 	if ( $api{package} ) {
 		$api{version} = eval("require $api{package};\$$api{package}\:\:VERSION");
-		warn $@ if $@;
+		#warn $@ if $@;
 		$api{hirachy} = [ get_hirachy( $api{package} ) ];
 	}
 	if ( ref $api{modules} ) {
@@ -205,6 +208,7 @@ sub process {
 			$api{$type} = [ map { { name => $_, line => $api{$type}{$_} } } sort keys %{ $api{$type} } ];
 		}
 	}
+	@INC = @INC[0 .. $last];
 	
 	return ( api => \%api );
 }
@@ -225,14 +229,16 @@ sub get_hirachy {
 	my ( $object ) = @_;
 	my @hirachy;
 	
-	warn "getting hirachy of $object";
+	return  { class => $object, hirachy => \@hirachy } if $object eq 'Tie::Hash';
+	
+	#warn "getting hirachy of $object\n";
 	eval("use $object");
-	#if ( not $@ ) {
+	if ( !$@ ) {
 		my $o = bless {}, $object;
 		foreach my $parent ( eval("\@$object\:\:ISA") ) {
 			push @hirachy, get_hirachy( $parent );
 		}
-	#}
+	}
 	
 	return { class => $object, hirachy => \@hirachy };
 }

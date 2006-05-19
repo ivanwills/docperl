@@ -94,7 +94,9 @@ sub process {
 	my $cmd = "/usr/bin/perl -MPod::Html -e 'pod2html(\"" . join( '", "', @params ) . "\")'";
 	
 	# Create the HTML POD
+	undef $!;
 	my $pod = `$cmd 2>/dev/null`;
+	#warn "$cmd\n$!\n" if $!; undef $!;
 	
 	# check that the html was created success fully
 	if ( length $pod < 100 ) {
@@ -106,10 +108,11 @@ sub process {
 	# try to get rid of gaps between pre tags
 	$pod =~ s{</pre>(\s*)<pre>}{$1}ixsg;
 	# convert relative links to work with DocPerl structure
-	$pod =~ s{href="/}{target="module" href="?type=module&module=link/}gxs;
+	my $location = $self->{current_location} || 'inc';
+	$pod =~ s{href="/}{target="main" href="?page=module&location=$location&module=link/}gxs;
 	
 	# return the processed documentation
-	return ( pod => $pod, pwd => `pwd` );
+	return ( pod => $pod );
 }
 
 

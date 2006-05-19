@@ -179,6 +179,7 @@ sub _save_cache {
 	croak "Missing required argument - source, file" unless $arg{source};
 	croak "Missing required argument - cache, location" unless $arg{cache};
 	carp "No cache content to save!" && return unless $arg{content};
+	return unless -f $arg{source};
 	
 	# check if the cache file has a suffix
 	if ( $arg{cache} !~ /\.\w+$/ && $arg{source} ne 1 ) {
@@ -192,6 +193,8 @@ sub _save_cache {
 	my $file	= pop @parts;
 	my $dir		= $self->{cache_dir};
 	
+	warn "The cache file '$dir/$file' does not have a suffix" unless $file =~ /\./;
+	
 	#warn "dir = $dir, ".join ' ', @parts;
 	# make sure that we have all the directories up to the cached file
 	for my $part ( @parts ) {
@@ -201,13 +204,16 @@ sub _save_cache {
 	}
 	
 	# open the cache file and write the contents
+	#warn "Saving cache file '$dir/$file'\n";
 	open my $cache, '>', "$dir/$file" or warn "Unable to create the cache file '$dir/$file': $!" and return;
 	print {$cache} $arg{content} or warn "No content was able to be added to '$dir/$file': $!" and return;
 	close $cache;
 	
 	# touch the file using the source file's time stamps
 	if ( -x $touch && $arg{source} ne 1 ) {
-		system( "$touch --reference=$arg{source} $dir/$file" );
+		my $cmd = "$touch --reference=$arg{source} $dir/$file";
+		warn "Dodgy $cmd" if $cmd =~ /[(]/;
+		system($cmd);
 	}
 	#warn( "$touch --reference=$arg{source} $dir/$file" );
 	
@@ -229,6 +235,9 @@ sub clear_cache {
 	my $dir		= shift || $self->{cache_dir};
 	
 	system( "rm -rf $dir/*" );
+}
+
+sub DESTROY {
 }
 
 1;

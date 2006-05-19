@@ -78,7 +78,9 @@ sub process {
 	my $here_style;
 	my @lines;
 	
-	open my $file, '<', $code or warn "Could not open the file '$code': $!" and return [];
+	return unless -f $code;
+	
+	open my $file, '<', $code or warn "Could not open the file '$code': $!" and return;
 	
 	while ( my $line = <$file> ) {
 		# convert tabs into spaces of width 4

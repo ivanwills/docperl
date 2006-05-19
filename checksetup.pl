@@ -110,51 +110,57 @@ sub main {
 		my $dp = DocPerl->new( cgi => { page => 'list', }, conf => \%config, save_data => 1, data => $data, );
 		my %data = $dp->list();
 		
-		for my $options ( @{ $option{compile} } ) {
-			for my $option ( split /,/, $options ) {
-				compile( lc $option, \%data, $dp );
-			}
-		}
-		`chmod o+w -R $FindBin::Bin/data/cache`;
+		my @compile = map { split /,/ } @{ $option{compile} };
+		compile( \%data, $dp, \@compile );
+		system("chmod o+w -R $FindBin::Bin/data/cache");
 	}
 }
 
 sub compile {
-	my ( $type, $data, $dp ) = @_;
+	my ( $data, $dp, $compile ) = @_;
 	
-	if ( $type eq 'pod' ) {
-		use DocPerl::Cached::POD;
 		#for my $location ( qw/LOCAL / ) {
 		for my $location ( qw/PERL LOCAL INC/ ) {
 			print "Create $location POD\n";
-			pod( $data->{$location}, $dp, lc $location );
+			pod( $data->{$location}, $dp, location => lc $location, top => 1, map {$_=>1} @$compile );
 			#die Dumper $data->{$location};
 		}
-	}
 }
 
 sub pod {
-	my ( $data, $dp, $location, $parent ) = @_;
-	$parent ||= '';
-	$parent .= '::' if $parent;
-	#die Dumper $data if $location eq 'local';
+	my ( $data, $dp, %arg ) = @_;
+	my $location = $arg{location};
+	my $parent   = $arg{parent};
+	$parent    ||= '';
+	$arg{all}  ||= '';
 	
 	for my $module ( keys %{ $data } ) {
+		next unless $module;
 		next if $module eq '*';
-		next if $module =~ m{/};
+		next if $data->{$module} == 1;
 		
-		#warn "$parent$module\n";
-		$dp->{cgi} = { page => 'pod', module => "$parent$module", location => $location };
-		$dp->init();
-		$dp->process();
-		
-		if ( ref $data->{$module} && keys %{ $data->{$module} } > ($parent?1:0) ) {
-			for my $sub ( keys %{ $data->{$module} } ) {
-				next if $sub =~ /\*/;
-				my $super = ( !$parent && length $module > 1 ) ? "$parent$module" : '';
-				pod( $data->{$module}{$sub}, $dp, $location, $super );
+		# check that the module is not the numeral 1 (just an alphabetic place holder)	
+		# and that there is an actual file for it (ie not just a name space prefix)
+		if ( !$arg{top} && $data->{$module}{'*'}[0] ) {
+			$dp->{cgi} = { page => 'pod', module => "$parent$module", location => $location, source => $data->{$module}{'*'}[0] };
+			$dp->init();
+			if ( $arg{pod} ) {
+				$dp->process();
+			}
+			if ( $arg{api} ) {
+				$dp->{cgi}{page} = 'api';
+				$dp->{template}  = 'api.html';
+				$dp->process();
+			}
+			if ( $arg{code} ) {
+				$dp->{cgi}{page} = 'code';
+				$dp->{template}  = 'code.html';
+				$dp->process();
 			}
 		}
+		
+		my $super = !$arg{top} ? "$parent$module\:\:" : '';
+		pod( $data->{$module}, $dp, %arg, parent => $super, top => 0, all => "$arg{all}/$module" );
 	}
 }
 
