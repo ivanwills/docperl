@@ -12,7 +12,7 @@ use Config::Std;
 use Readonly;
 use DocPerl;
 
-our $VERSION = version->new('0.1');
+our $VERSION = version->new('0.3');
 
 Readonly my $BASE		=> $Bin;
 Readonly my $DATA		=> "$BASE/data";
@@ -62,7 +62,7 @@ docperl.cgi - Displays the documentation/api/code of perl modules and other file
 
 =head1 VERSION
 
-This documentation refers to docperl.cgi version 0.1.
+This documentation refers to docperl.cgi version 0.3.
 
 =head1 SYNOPSIS
 

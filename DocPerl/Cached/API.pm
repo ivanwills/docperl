@@ -6,7 +6,7 @@ DocPerl::Cached::API - <One-line description of module's purpose>
 
 =head1 VERSION
 
-This documentation refers to DocPerl::Cached::API version 0.1.
+This documentation refers to DocPerl::Cached::API version 0.3.
 
 
 =head1 SYNOPSIS
@@ -52,7 +52,7 @@ use Data::Dumper qw/Dumper/;
 use Scalar::Util;
 use base qw/DocPerl::Cached/;
 
-our $VERSION = version->new('0.0.1');
+our $VERSION = version->new('0.3.0');
 our @EXPORT = qw//;
 our @EXPORT_OK = qw//;
 
