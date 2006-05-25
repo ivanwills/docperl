@@ -160,7 +160,7 @@ sub cache {
 		}
 		
 		my $super = !$arg{top} ? "$parent$module\:\:" : '';
-		pod( $data->{$module}, $dp, %arg, parent => $super, top => 0, all => "$arg{all}/$module" );
+		cache( $data->{$module}, $dp, %arg, parent => $super, top => 0, all => "$arg{all}/$module" );
 	}
 }
 
