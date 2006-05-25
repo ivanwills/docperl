@@ -198,7 +198,9 @@ sub process {
 	if ( $api{package} ) {
 		$api{version} = eval("require $api{package};\$$api{package}\:\:VERSION");
 		#warn $@ if $@;
-		$api{hirachy} = [ get_hirachy( $api{package} ) ];
+		eval {
+			$api{hirachy} = [ get_hirachy( $api{package} ) ];
+		};
 	}
 	if ( ref $api{modules} ) {
 		$api{modules} = [ sort keys %{ $api{modules} } ];
@@ -229,13 +231,9 @@ sub get_hirachy {
 	my ( $object ) = @_;
 	my @hirachy;
 	
-	return  { class => $object, hirachy => \@hirachy } if $object eq 'Tie::Hash';
-	
-	#warn "getting hirachy of $object\n";
-	eval("use $object");
-	if ( !$@ ) {
-		my $o = bless {}, $object;
-		foreach my $parent ( eval("\@$object\:\:ISA") ) {
+	foreach my $parent ( eval("\@$object\:\:ISA") ) {
+		eval("require $parent");
+		if ( !$@ ) {
 			push @hirachy, get_hirachy( $parent );
 		}
 	}

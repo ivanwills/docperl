@@ -121,13 +121,13 @@ sub compile {
 	
 		#for my $location ( qw/LOCAL / ) {
 		for my $location ( qw/PERL LOCAL INC/ ) {
-			print "Create $location POD\n";
-			pod( $data->{$location}, $dp, location => lc $location, top => 1, map {$_=>1} @$compile );
+			print "Create $location Cache\n";
+			cache( $data->{$location}, $dp, location => lc $location, top => 1, map {$_=>1} @$compile );
 			#die Dumper $data->{$location};
 		}
 }
 
-sub pod {
+sub cache {
 	my ( $data, $dp, %arg ) = @_;
 	my $location = $arg{location};
 	my $parent   = $arg{parent};
@@ -176,19 +176,20 @@ This documentation refers to checksetup.pl version 0.3.
 
 =head1 SYNOPSIS
 
-   checksetup.pl [option] 
+   checksetup.pl [ --version | --help | --man ]
+   checksetup.pl [ -v ] [ -p ] [ -c [ pod||,api||,code ]
    
  OPTIONS:
   -c --compile=opt   Pre compile the pod/api/code (seperate with commas to
-                     compile more than one option)
+                     compile more than one option eg -c pod,code)
   -p --purge         Purge the current cache files.
   
   -v --verbose       Show more detailed option
      --version       Prints the version information
      --help          Prints this help information
      --man           Prints the full documentation for checksetup.pl
-
-
+  
+  Note: Creating cached api files (-c api) can cause checksetup.pl to crash
 
 =head1 DESCRIPTION
 
@@ -212,14 +213,23 @@ to the file system. This may not be possible by default with some web servers/
 operating systems combinations (eg Linux with extra security enabled by default
 in Fedora).
 
+=item API Cache
+
+The generation of the API cache files will load those modules (with require Module)
+to get the version number and the object hirachy. This is usually OK when
+performed once if run from the through the web interface (or with get-api.pl)
+but when run with this script more than one module with the same name may be
+run. This may be due to being included both @INC and paths defined in
+docperl.conf or being installed in more than one place etc. This can some
+times cause checksetup.pl to crash. I am working on a solution for this, but
+for the moment if this happens to you do not try to pre-compile the api files.
+
 =back
 
 =head1 CONFIGURATION AND ENVIRONMENT
 
-A full explanation of any configuration system(s) used by the module, including
-the names and locations of any configuration files, and the meaning of any
-environment variables or properties that can be set. These descriptions must
-also include details of any configuration language used.
+C<checksetup.pl> is controlled by it's command line options (see above) but
+will use data/docperl.conf when creating cached files.
 
 =head1 BUGS AND LIMITATIONS
 
