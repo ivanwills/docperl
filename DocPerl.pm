@@ -55,7 +55,7 @@ use base qw/Exporter/;
 
 our $VERSION = version->new('0.3.0');
 our @EXPORT = qw//;
-our @EXPORT_OK = qw//;
+our @EXPORT_OK = qw/find/;
 
 
 =head3 C<new ( %param )>
@@ -412,7 +412,7 @@ sub _get_files {
 	# for each path find the all files files that match.
 	for my $path ( @$path_ref ) {
 		$vars->{$path} = 1;
-		_find(
+		find(
 			$path,
 			$match,
 			sub {
@@ -454,7 +454,7 @@ sub _get_files {
 }
 
 # recursivly finds files
-sub _find {
+sub find {
 	my ( $path, $match, $action ) = @_;
 	opendir DIR, $path or return;
 	my @files = readdir DIR;
@@ -464,7 +464,7 @@ sub _find {
 		next if $file eq '.' || $file eq '..' or $file =~ /^\d+$/;
 		my $full = "$path/$file";
 		if ( -d $full ) {
-			_find( $full, $match, $action );
+			find( $full, $match, $action );
 		}
 		elsif ( $full =~ /$match/ ) {
 			&$action($full);
