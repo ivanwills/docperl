@@ -2,7 +2,8 @@ package DocPerl::Cached::API;
 
 =head1 NAME
 
-DocPerl::Cached::API - <One-line description of module's purpose>
+DocPerl::Cached::API - Inspects a perl file to find what functions are defined
+modules used/inherited etc
 
 =head1 VERSION
 
@@ -11,33 +12,53 @@ This documentation refers to DocPerl::Cached::API version 0.3.
 
 =head1 SYNOPSIS
 
-   use DocPerl::Cached::API;
-
-   # Brief but working code example(s) here showing the most common usage(s)
-   # This section will be as far as many users bother reading, so make it as
-   # educational and exemplary as possible.
-
+  use DocPerl::Cached::API;
+  
+  # Create a new API variable
+  my $api = DocPerl::Cached::API->new(
+      conf    => {
+          General      => {
+              Data     => '/tmp/',
+          },
+          IncFolders   => {
+              Path     => '',
+          },
+      },
+      source => $file,
+      current_location => '',
+  );
+  
+  # get a hash ref with the information about the API found
+  my $description = $api->process();
+  
+  # $description will contain something like
+  # {
+  #   api => {
+  #      modules   => [a list of modules used],
+  #      parents   => [a list of modules directly inhreited from],
+  #      required  => [a list of modules required],
+  #      vars      => [a list of package variable defined],
+  #      version   => 'File version number',
+  #      class     => [
+  #          { name => 'class method', line => 'line no method defined on' }, ...
+  #      ],
+  #      object    => [
+  #          { name => 'method', line => 'line no method defined on' }, ...
+  #      ],
+  #      func      => [
+  #          { name => 'function', line => 'line no defined' }, ...
+  #      ],
+  #      hirachy   => [ inverted definition of class hirachy ],
+  #   }
+  # };
 
 =head1 DESCRIPTION
 
-A full description of the module and its features.
-
-May include numerous subsections (i.e., =head2, =head3, etc.).
-
+This module inspects perl files and tries to determine what subroutines/
+object methods/class methods and package variables are defined as well as
+the module use()ed, require()d and inherited from.
 
 =head1 SUBROUTINES/METHODS
-
-A separate section listing the public components of the module's interface.
-
-These normally consist of either subroutines that may be exported, or methods
-that may be called on objects belonging to the classes that the module
-provides.
-
-Name the section accordingly.
-
-In an object-oriented module, this section should begin with a sentence (of the
-form "An object of this class represents ...") to give the reader a high-level
-context to help them understand the methods that are subsequently described.
 
 =cut
 
@@ -56,7 +77,7 @@ our $VERSION = version->new('0.3.0');
 our @EXPORT = qw//;
 our @EXPORT_OK = qw//;
 
-=head3 C<display ( $var1, $var2,  )>
+=head3 C<display ( )>
 
 Return: HASHREF - The files API
 
