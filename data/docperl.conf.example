@@ -31,6 +31,8 @@ history_size:	10
 
 Data:			./data
 Touch:			/usr/bin/touch
+#Touch:			c:/cigwin/bin/touch
+#Perl:			c:/Perl/bin/perl.exe
 #Cache:			off
 
 # Set this to a value if you would like to be able to clear the cache from from a web page

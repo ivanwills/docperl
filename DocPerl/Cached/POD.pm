@@ -89,9 +89,10 @@ sub process {
 		"--cachedir=$conf->{General}{Data}/cache",
 		"--css=?page=css.css"
 	);
+	my $perl = $conf->{General}{Perl} || '/usr/bin/perl';
 	# Pod::Html only appears to be able to print to STDOUT so have to call it
 	# as an external program and capture STDOUT
-	my $cmd = "/usr/bin/perl -MPod::Html -e 'pod2html(\"" . join( '", "', @params ) . "\")'";
+	my $cmd = "$perl -MPod::Html -e \"pod2html('" . join( "', '", @params ) . "\')\"";
 	
 	# Create the HTML POD
 	undef $!;
@@ -100,7 +101,7 @@ sub process {
 	
 	# check that the html was created success fully
 	if ( length $pod < 100 ) {
-		return ( pod => "Could not create the POD for $module $!\n$pod\n". Dumper \%ENV );
+		return ( pod => "Could not create the POD for $module $!<br/>\n$pod\n<br/>\n$cmd\n<br/><pre>". Dumper($conf)."</pre><br/>".`pwd` );
 	}
 	
 	# remove final number if one exists (bug with Pod::Html?)
