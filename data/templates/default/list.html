@@ -185,12 +185,10 @@
 				level++;
 				if ( !counter )
 					counter = path;
+				else
+					ul.style.display = 'none';
 				if (!files)
 					files = tree_holder[path];
-				if (!container) {
-					alert('Lost my container! ' + container_id + ' ' + container);
-					return;
-				}
 				
 				for ( var module in files ) {
 					if ( module != '*' ) {
@@ -222,12 +220,10 @@
 						var func = 'create_tree(null, "'+li.id+'", "'+path + '__' + module+'", "'+counter+'")';
 						setTimeout( func, time );
 						//setTimeout( create_tree, time, files[module], li.id, path + '__' + module, counter );
-						//alert(li.id);
 						ul.appendChild( li );
 					}
 				}
 				
-				//alert(count + ' - here - ' + container);
 				container.appendChild( ul );
 				add_count( counter, count );
 				return count;
@@ -414,9 +410,9 @@
 				var ul		= document.getElementById( 'ul__' + id );
 				var link	= document.getElementById( 'plus__' + id );
 				// check the status of the list
-				if ( ul.style && ul.style.display ) {
+				if ( ul.style && ul.style.display == 'block' ) {
 					// list is open so close
-					ul.style.display = '';
+					ul.style.display = 'none';
 					link.removeChild( link.firstChild );
 					link.appendChild( document.createTextNode('+') );
 				}
