@@ -123,20 +123,20 @@
 				// set up each of perl, inc and local
 				if ( group == 0 ) {
 					level = 0;
-					var total_perl = create_tree( perl,	document.getElementById('perl'),	'perl' );
+					var total_perl = create_tree( perl,	'perl',	'perl' );
 					group++;
 					setTimeout( setup_modules, 10 );
 				}
 				else if ( group == 1 ) {
 					level = 0;
 					group++;
-					create_tree( local,	document.getElementById('local'),	'local' );
+					create_tree( local,	'local',	'local' );
 					setTimeout( setup_modules, 30 );
 				}
 				else if ( group == 2 ) {
 					level = 0;
 					group++;
-					create_tree( inc,	document.getElementById('inc'),	'inc' );
+					create_tree( inc,	'inc',	'inc' );
 					setTimeout( setup_modules, 50 );
 				}
 				else if ( group == 3 ) {
@@ -174,8 +174,10 @@
 				counter_span.appendChild( document.createTextNode( '0' ) );
 			}
 			
-			function create_tree ( files, container, path, counter ) {
+			var tree_holder = new Array();
+			function create_tree ( files, container_id, path, counter ) {
 				// need to stick each module into a container
+				var container= document.getElementById(container_id);
 				var ul		 = document.createElement('ul');
 				var count	 = 0;
 				ul.className = 'mod_list';
@@ -183,6 +185,12 @@
 				level++;
 				if ( !counter )
 					counter = path;
+				if (!files)
+					files = tree_holder[path];
+				if (!container) {
+					alert('Lost my container! ' + container_id + ' ' + container);
+					return;
+				}
 				
 				for ( var module in files ) {
 					if ( module != '*' ) {
@@ -210,12 +218,16 @@
 						
 						var time = 50 + Math.floor( Math.random() * 50 );
 						// recurse to get sub elements here
-						setTimeout( create_tree, time, files[module], li, path + '__' + module, counter );
-						
+						tree_holder[path + '__' + module] = files[module];
+						var func = 'create_tree(null, "'+li.id+'", "'+path + '__' + module+'", "'+counter+'")';
+						setTimeout( func, time );
+						//setTimeout( create_tree, time, files[module], li.id, path + '__' + module, counter );
+						//alert(li.id);
 						ul.appendChild( li );
 					}
 				}
 				
+				//alert(count + ' - here - ' + container);
 				container.appendChild( ul );
 				add_count( counter, count );
 				return count;
