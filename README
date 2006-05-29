@@ -1,29 +1,23 @@
 DocPerl
 
-Installation:
+For installations instructions please see the INSTALL file.
 
-DocPerl requires little in the way of installation. You need to place the
-files where ever you want and then set up your web server to execute the
-docperl.cgi script. For apache this may be just adding something like:
+DocPerl provides access to the POD documentation provided by perl files as
+well as showing the code of the files and a summary of the API that a file
+defines.
 
-<Directory "/path/to/docperl">
-	Options +ExecCGI
-    AllowOverride Limit
-    DirectoryIndex docperl.cgi
-    AddHandler cgi-script .cgi
-</Directory>
+DocPerl allows easy browsing of the modules installed on the server that is is
+run from. It can be setup to display your own project's perl files by adding
+the directories that those files are stored in, into the Path parameter of the
+Local section of your docperl.conf file (located in the data directory).
 
-DocPerl needs some perl modules that may not be already installed these
-include:
-Template Toolkit
-Readonly
+For more details on the options that can look at the documentation in
+DocPerl/Config.pod
 
-to install one of the following commands should work
-cpan Template Readonly
-or
-perl -MCPAN -e 'install Template; install Readonly'
-or for active perl users
-(forgotten)
+If you have any problems try the forums at:
+http://sourceforge.net/forum/?group_id=163244
 
-If you have any problems try going to the help forums at
-https://sourceforge.net/forum/forum.php?forum_id=553595
+Please report bugs to:
+http://sourceforge.net/tracker/?func=add&group_id=163244&atid=826975
+
+DocPerl is licenced under the same licence as perl.

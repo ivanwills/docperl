@@ -1,0 +1,56 @@
+Installation:
+
+DocPerl requires little in the way of installation. You need to place the
+files where ever you want and then set up your web server to execute the
+docperl.cgi script. For apache this may be just adding something like:
+
+<Directory "/path/to/docperl">
+	Options +ExecCGI
+    AllowOverride Limit
+    DirectoryIndex docperl.cgi
+    AddHandler cgi-script .cgi
+</Directory>
+
+You should run ./checksetup.pl which tell you what required modules are
+installed or not on your system. Also ./checksetup.pl can be used to create
+pre-cached POD files to speed up usage with the command:
+
+./checksetup.pl -c pod
+
+see
+
+./checksetup.pl -h
+
+for more detais on ./checksetup.pl usage
+
+DocPerl needs some perl modules that may not be already installed these
+include:
+Template Toolkit
+Readonly
+Config::Std
+version
+
+to install one of the following commands should work
+cpan Template Readonly
+or
+perl -MCPAN -e 'install Template; install Readonly'
+or for active perl users
+ppm install Template
+ppm install Readonly
+
+If you have any problems try going to the help forums at
+https://sourceforge.net/forum/forum.php?forum_id=553595
+
+Windows
+
+Currently installation on Windows can be a bit tricky but is possible. You need
+some command line tools that windows does not by default provide:
+touch - used to set cached files times to that of the original file
+rm    - used by checksetup .pl to clear the cache files
+
+These files are available with cygwin (http://sources.redhat.com/cygwin)
+
+
+* If you are using active perl's ppm to get the Template Toolkit modules
+you may encounter some difficulity as ppm install Template does not appear to
+install the Template Toolkit, you will probably need to use CPAN.

@@ -1,0 +1,100 @@
+=head1 NAME
+
+DocPerl::Config - Details on the configuration setting for the DocPerl application
+
+=head1 VERSION
+
+This documentation refers to DocPerl::Cached version 0.3.
+
+=head1 DESCRIPTION
+
+DocPerl's configuration is stored in the file data/docperl.conf which is an ini
+style file. 
+
+=head2 LocalFolders
+
+This sets parameters of the local section
+
+=over 4
+
+=item Path
+
+A colon seperated list of directories to search
+
+=item Exclude
+
+A colon seperated list of directories to exclude from the search path
+
+=item Match
+
+A regular expression to decide which files to include in the list
+
+=back
+
+=head2 IncFolders
+
+The system wide installed perl modules section. Similar to LocalFolders
+execpt Path is added to the @INC path.
+
+=head2 Templates
+
+Sets parameters to be sent to Template Toolkit
+
+=over 4
+
+=item Path
+
+Sets the search path for templates
+
+=item history_size
+
+See Template Toolkit documentation
+
+=back
+
+=head2 Template
+
+This allows you to set general parameters that are passed to all templates
+
+=head2 General
+
+This section sets up parameters that are used for running DocPerl
+
+=over 4
+
+=item Data
+
+Specifies the location of the data directory where templates and the cache are
+stored.
+
+=item Touch
+
+The location of the touch commandline program
+
+=item Perl
+
+The location of ther perl executable (used when creating POD files)
+
+=item Cache
+
+Allows you to turn off caching, which can be usefull you do not have
+permissions to write to the disk.
+
+ 'on' or not set Turns on the cache
+ 'off' turns off caching
+
+=item ClearCache
+
+Allows a user of the web interface to clear the cache (which is usefull when
+new modules are installed and the list page is cached and becomes out of
+date)
+
+ 'on' turns on this feature
+ anything else turns this off
+
+Note: You probably should not turn this on for publicly available sites as
+this could cause a lot of extra load on your server.
+
+=back
+
+=cut

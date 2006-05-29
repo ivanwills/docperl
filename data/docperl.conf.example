@@ -18,13 +18,17 @@ Exclude:		./data
 suffixes:		pod
 suffixes:		pm
 suffixes:		pl
-suffixes:		cgi
+#suffixes:		cgi
 
 # Details of template usage
 [Templates]
 
 Path:			./data/templates/local:./data/templates/default
 history_size:	10
+
+# Parameters always passed to templates
+[Template]
+
 
 # General configuration
 [General]
@@ -36,4 +40,4 @@ Touch:			/usr/bin/touch
 #Cache:			off
 
 # Set this to a value if you would like to be able to clear the cache from from a web page
-#ClearCacje:	on
+#ClearCache:	on

@@ -286,8 +286,8 @@ sub process {
 	my $tmpl = $self->get_templ_object();
 	
 	# process the template
-	$conf->{Templates} ||= {};
-	$tmpl->process( $self->template(), { %$q, %{ $conf->{Templates} }, %vars }, \$out )
+	$conf->{Template} ||= {};
+	$tmpl->process( $self->template(), { %$q, %{ $conf->{Template} }, %vars }, \$out )
 		or error( $tmpl->error );
 	die 'The processed template "'.$self->template().'" contains not data!'.Dumper \%vars if $out =~ /^\s+$/;
 	
