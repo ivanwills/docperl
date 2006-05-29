@@ -124,6 +124,7 @@
 				if ( group == 0 ) {
 					level = 0;
 					var total_perl = create_tree( perl,	'perl',	'perl' );
+					count_tree( perl, 'perl' );
 					group++;
 					setTimeout( setup_modules, 10 );
 				}
@@ -131,12 +132,14 @@
 					level = 0;
 					group++;
 					create_tree( local,	'local',	'local' );
+					count_tree( local, 'local' );
 					setTimeout( setup_modules, 30 );
 				}
 				else if ( group == 2 ) {
 					level = 0;
 					group++;
 					create_tree( inc,	'inc',	'inc' );
+					count_tree( inc, 'inc' );
 					setTimeout( setup_modules, 50 );
 				}
 				else if ( group == 3 ) {
@@ -174,6 +177,23 @@
 				counter_span.appendChild( document.createTextNode( '0' ) );
 			}
 			
+			function count_tree( tree, counter ) {
+				var count = 0;
+				for ( var module in tree ) {
+					if ( module != '*' ) {
+						data = tree[module];
+						var tt = new Array();
+						for ( var t in data )
+							tt.push(t);
+						if ( data && tt.length ) {
+							count_tree( data, counter );
+							count++;
+						}
+					}
+				}
+				add_count( counter, count );
+			}
+			
 			var tree_holder = new Array();
 			function create_tree ( files, container_id, path, counter ) {
 				// need to stick each module into a container
@@ -190,7 +210,14 @@
 				if (!files)
 					files = tree_holder[path];
 				
+				var files_sort = new Array();
 				for ( var module in files ) {
+					files_sort.push(module);
+				}
+				files_sort.sort();
+				
+				for ( var module in files_sort ) {
+					module = files_sort[module];
 					if ( module != '*' ) {
 						var li	= document.createElement('li');
 						li.id	= 'li__' + path + '__' + module;
@@ -218,14 +245,14 @@
 						// recurse to get sub elements here
 						tree_holder[path + '__' + module] = files[module];
 						var func = 'create_tree(null, "'+li.id+'", "'+path + '__' + module+'", "'+counter+'")';
-						setTimeout( func, time );
+						//setTimeout( func, time );
 						//setTimeout( create_tree, time, files[module], li.id, path + '__' + module, counter );
 						ul.appendChild( li );
 					}
 				}
 				
 				container.appendChild( ul );
-				add_count( counter, count );
+				//add_count( counter, count );
 				return count;
 			}
 			
@@ -408,6 +435,10 @@
 			
 			function list_toggle( id ) {
 				var ul		= document.getElementById( 'ul__' + id );
+				if (!ul) {
+					create_tree( null, 'li__'+id, id, 'inc');
+					ul		= document.getElementById( 'ul__' + id );
+				}
 				var link	= document.getElementById( 'plus__' + id );
 				// check the status of the list
 				if ( ul.style && ul.style.display == 'block' ) {
