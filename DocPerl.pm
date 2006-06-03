@@ -225,16 +225,13 @@ sub process {
 	my $page	= $q->{page};
 	my %vars;
 	my $out;
+	my $cache   = DocPerl::Cached->new( %$self );
 	
 	# check if we are meant to clear the cache (and the we are allowed to)
-	if ( $conf->{Templates}{ClearCache} && $q->{clearcache} ) {
-		my $cache = DocPerl::Cached->new( %$self );
-		$cache->clear_cache();
-	}
+	$cache->clear_cache() if $conf->{Templates}{ClearCache} && $q->{clearcache};
 	
 	# create a cache object
-	my $cache      = DocPerl::Cached->new( %$self );
-	my $cache_path = $page;
+	my $cache_path = $page || '';
 	if ( $self->{current_location} ) {
 		$cache_path .= "/$self->{current_location}";
 	}
@@ -255,9 +252,9 @@ sub process {
 		if ( $page !~ /^_/xs && $self->can( $page ) ) {
 			%vars = $self->$page();
 		}
-		elsif ( $page =~ /^[a-zA-Z]\w+$/ ) {
+		elsif ( $page =~ /^(pod|api|code)$/i ) {
 			# try to see if the method is a cached module
-			my $module = 'DocPerl::Cached::'.uc $page;
+			my $module = 'DocPerl::Cached::'.uc $1;
 			eval( "require $module" );
 			if ( $@ ) {
 				warn $@;

@@ -49,7 +49,9 @@ use warnings;
 use version;
 use Carp;
 use Data::Dumper qw/Dumper/;
-use Scalar::Util;
+use Scalar::Util qw/tainted/;
+use File::stat;
+use File::Path;
 use base qw/Exporter/;
 
 our $VERSION = version->new('0.3.0');
@@ -117,41 +119,47 @@ sub _check_cache {
 	my $self	= shift;
 	my %arg		= @_;
 	my $conf	= $self->{conf};
+	my $source = $arg{source};
+	my $cache  = $arg{cache};
 	
 	return '' if $conf->{General}{Cache} && $conf->{General}{Cache} eq 'off';
 	
 	# check that the arguments are supplied
-	croak "Missing required argument - source, file" unless $arg{source};
-	croak "Missing required argument - cache, location" unless $arg{cache};
+	croak "Missing required argument - source, file" unless $source;
+	croak "Missing required argument - cache, location" unless $cache;
+	if ( $source =~ /[.][.]/ || $cache =~ /[.][.]/ ) {
+		warn "possible hack attempt with $source or $cache";
+		return '';
+	}
 	
 	# check if the cache file has a suffix
-	if ( $arg{cache} !~ /\.\w+$/ && $arg{source} ne 1 ) {
+	if ( $cache !~ /\.\w+$/ && $source ne 1 ) {
 		# add the sources suffix
-		my ( $suffix ) = $arg{source} =~ /(\.\w+)$/xs;
-		$arg{cache} .= $suffix;
+		my ( $suffix ) = $source =~ /(\.\w+)$/xs;
+		$cache .= $suffix;
 	}
 	
 	# get the cached file's full name
-	my $file	= "$self->{cache_dir}/$arg{cache}";
+	my $file	= "$self->{cache_dir}/$cache";
 	
 	# check that there is a cache file
 	return '' unless -f $file;
 	
 	# get the file stats for the source and cached files
-	my @source	= stat $arg{source} if $arg{source} ne 1;
-	my @cache	= stat $file;
+	my $source_stat	= stat $source if $source ne 1;
+	my $cache_stat	= stat $file;
 	
 	# check that the last modified times of both files are the same
-	return '' if $arg{source} ne 1 && $source[9] != $cache[9];
+	return '' if $source ne 1 && $source_stat->mtime != $cache_stat->mtime;
 	
 	# read the contents of the cached file
-	open my $cache, '<', $file or warn "Could not read the cache file $file: $!" and return '';
+	open my $cache_fh, '<', $file or warn "Could not read the cache file $file: $!" and return '';
 	my $data;
 	{
 		local $/;
-		$data = <$cache>;
+		$data = <$cache_fh>;
 	}
-	close $cache;
+	close $cache_fh;
 	
 	# return the cached contents
 	return $data;
@@ -169,27 +177,28 @@ Description: Saves some calculated data to a cache file
 
 sub _save_cache {
 	my $self	= shift;
+	my %arg		= @_;
 	my $conf	= $self->{conf};
 	my $touch	= $conf->{General}{Touch};
-	my %arg		= @_;
+	my $source	= $arg{source};
+	my $cache	= $arg{cache};
 	
 	return if $conf->{General}{Cache} && $conf->{General}{Cache} eq 'off';
 	
 	# check that the arguments are supplied
-	croak "Missing required argument - source, file" unless $arg{source};
-	croak "Missing required argument - cache, location" unless $arg{cache};
+	croak "Missing required argument - source, file" unless $source;
+	croak "Missing required argument - cache, location" unless $cache;
 	carp "No cache content to save!" && return unless $arg{content};
-	return unless -f $arg{source};
 	
 	# check if the cache file has a suffix
-	if ( $arg{cache} !~ /\.\w+$/ && $arg{source} ne 1 ) {
+	if ( $cache !~ /\.\w+$/ && $source ne 1 ) {
 		# add the sources suffix
-		my ( $suffix ) = $arg{source} =~ /(\.\w+)$/xs;
-		$arg{cache} .= $suffix;
+		my ( $suffix ) = $source =~ /(\.\w+)$/xs;
+		$cache .= $suffix;
 	}
 	
 	# split up the directory parts of the cache
-	my @parts	= split m{/}, $arg{cache};
+	my @parts	= split m{/}, $cache;
 	my $file	= pop @parts;
 	my $dir		= $self->{cache_dir};
 	
@@ -197,23 +206,33 @@ sub _save_cache {
 	
 	#warn "dir = $dir, ".join ' ', @parts;
 	# make sure that we have all the directories up to the cached file
-	for my $part ( @parts ) {
-		$dir .= "/$part";
-		mkdir $dir or die "Could not create the directory '$dir': $!"
-			unless -d $dir;
+	$dir .= '/'.join '/', @parts;
+	return unless $dir =~ m{^ ( [\w\-\./]+ ) $}xs;
+	eval{ mkpath $1 };
+	if ( $@ ) {
+		warn "Could not create the path $dir: $@";
+		return;
 	}
+	
+	# check that the file is OK
+	return unless $file =~ /^([\w\-\.]+)$/xs;
+	$file = $1;
 	
 	# open the cache file and write the contents
 	#warn "Saving cache file '$dir/$file'\n";
-	open my $cache, '>', "$dir/$file" or warn "Unable to create the cache file '$dir/$file': $!" and return;
-	print {$cache} $arg{content} or warn "No content was able to be added to '$dir/$file': $!" and return;
-	close $cache;
+	my %full = ( "$dir/$file" => 1 );
+	my ($full)= %full;
+	open my $cache_fh, '>', $full or warn "Unable to create the cache file '$full': $!" and return;
+	print {$cache_fh} $arg{content} or warn "No content was able to be added to '$full': $!" and return;
+	close $cache_fh;
 	
 	# touch the file using the source file's time stamps
-	if ( -x $touch && $arg{source} ne 1 ) {
-		my $cmd = "$touch --reference=$arg{source} $dir/$file";
-		warn "Dodgy $cmd" if $cmd =~ /[(]/;
-		system($cmd);
+	if ( $source ne 1  && -x $touch && $source =~ m{^ ( [\w\-\./]+ ) $}xs ) {
+		my $stat = stat $1;
+		my ($atime) = $stat->atime =~ m{^ (\d+) $}xs;
+		my ($mtime) = $stat->mtime =~ m{^ (\d+) $}xs;
+		my ($full)  = "$dir/$file" =~ m{^ ([\w\-\./]+) $}xs;
+		utime $atime, $mtime, $full;
 	}
 	#warn( "$touch --reference=$arg{source} $dir/$file" );
 	

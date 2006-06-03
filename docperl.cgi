@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -t
 
 # Created on: 2006-01-20 07:10:57
 # Create by:  ivanw
@@ -10,6 +10,7 @@ use FindBin qw/$Bin/;
 use CGI;
 use Config::Std;
 use Readonly;
+use lib qw/./;
 use DocPerl;
 
 our $VERSION = version->new('0.3');
@@ -21,6 +22,9 @@ Readonly my $CONFIG		=> "$DATA/docperl.conf";
 #Readonly my $TEMPLATES	=> "$TEMPLATE/local:$TEMPLATE/default";
 
 #$SIG{__DIE__} = sub { error( "Internal error", $@ ) };
+
+# for taint saifty remove the environment's PATH;
+delete $ENV{PATH};
 
 main();
 exit(0);

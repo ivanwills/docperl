@@ -49,8 +49,10 @@ use warnings;
 use version;
 use Carp;
 use Data::Dumper qw/Dumper/;
-use Scalar::Util;
+use Scalar::Util qw/tainted/;
 use base qw/DocPerl::Cached/;
+#use Pod::Html 1.0505;
+use Pod::Html;
 
 our $VERSION = version->new('0.3.0');
 our @EXPORT = qw//;
@@ -80,6 +82,12 @@ sub process {
 	return ( pod => "Could not find $self->{module_file} in ".join ", ", @folders )
 		if !$file || $file eq $self->{module_file};
 	
+	# check $file (for tainting)
+	($file) = $file =~ m{^ ( [\w\-./]+ ) $}xs;
+	($module) = $module =~ m{^ ( [\w\:]+ ) $}xs;
+	
+	return (pod => "File contains dodgy craricters ($file)") unless $file;
+	
 	# construct the list of parameters
 	my @params = (
 		"--infile=$file",
@@ -87,21 +95,23 @@ sub process {
 		"--title=$module",
 		"--index",
 		"--cachedir=$conf->{General}{Data}/cache",
-		"--css=?page=css.css"
+		"--css=?page=css.css",
 	);
-	my $perl = $conf->{General}{Perl} || '/usr/bin/perl';
+	for ( @params ) {
+		warn "Tainted $_" if tainted $_;
+	}
 	# Pod::Html only appears to be able to print to STDOUT so have to call it
 	# as an external program and capture STDOUT
-	my $cmd = "$perl -MPod::Html -e \"pod2html('" . join( "', '", @params ) . "\')\"";
-	
+	tie( *STDOUT, 'POD::STDOUT' );
 	# Create the HTML POD
-	undef $!;
-	my $pod = `$cmd 2>/dev/null`;
-	#warn "$cmd\n$!\n" if $!; undef $!;
+	pod2html( @params );
+	my $pod = $POD::STDOUT::string;
+	my $perl = $conf->{General}{Perl} || '/usr/bin/perl';
+	my $cmd = "$perl -MPod::Html -e \"pod2html('" . join( "', '", @params ) . "\')\"";
 	
 	# check that the html was created success fully
 	if ( length $pod < 100 ) {
-		return ( pod => "Could not create the POD for $module $!<br/>\n$pod\n<br/>\n$cmd\n<br/><pre>". Dumper($conf)."</pre><br/>".`pwd` );
+		return ( pod => "Could not create the POD for $module $!<br/>\n$pod\n<br/>\n$cmd\n<br/><pre>". Dumper($conf)."</pre><br/>" );
 	}
 	
 	# remove final number if one exists (bug with Pod::Html?)
@@ -116,6 +126,14 @@ sub process {
 	return ( pod => $pod );
 }
 
+package POD::STDOUT;
+
+our $string = '';
+
+sub TIEHANDLE { $string = ''; my $s; bless \$s, shift  }
+sub PRINT     { shift; $string .= join $,, @_ }
+sub PRINTF    { shift; $string .= sprintf @_  }
+sub data      { shift; return $string         }
 
 1;
 
