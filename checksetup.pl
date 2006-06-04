@@ -106,6 +106,7 @@ sub main {
 		use Config::Std;
 		use Readonly;
 		read_config $CONFIG, my %config;
+		$config{Templates}{ClearCache} = 'on';
 		use DocPerl;
 		my $dp = DocPerl->new( cgi => { page => 'list', }, conf => \%config, save_data => 1, data => $data, );
 		my %data = $dp->list();
