@@ -110,9 +110,15 @@ sub process {
 	# as an external program and capture STDOUT
 	tie( *STDOUT, 'POD::STDOUT' );
 	# Create the HTML POD
-	pod2html( @params );
+	eval{ pod2html( @params ); };
 	my $pod = $POD::STDOUT::string;
 	untie *STDOUT;
+	
+	# check for errors
+	if ( $@ ) {
+		warn "Error in creating POD: $@";
+		return ( pod => "<html><head><title>Error</title></head><body><h1>Error</h1><p>Error in creating POD from $file</p></html>" );
+	}
 	
 	# check that the html was created success fully
 	if ( length $pod < 100 ) {

@@ -110,7 +110,10 @@ sub init {
 		my $template = $page;
 		if ( $template =~ /\.(\w+)$/ ) {
 			$self->{template}	= $template;
-			$self->{mime}		= "text/$1";
+			my $type			= $1 eq 'css' ? 'css'
+								: $1 eq 'js'  ? 'javascript'
+								:               $1;
+			$self->{mime}		= "text/$type";
 		}
 		else {
 			$self->{template}	= "$template.html";
@@ -288,7 +291,7 @@ sub process {
 		or error( $tmpl->error );
 	die 'The processed template "'.$self->template().'" contains not data!'.Dumper \%vars if $out =~ /^\s+$/;
 	
-	if ( $page ) {
+	if ( $page && (!$self->{source} || -f $self->{source}) ) {
 		#warn "Saving cache of $self->{source}\t$cache_path\n";
 		$cache->_save_cache( cache => $cache_path, source => $self->{source} || 1, content => $out );
 	}
