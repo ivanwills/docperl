@@ -97,21 +97,26 @@ sub process {
 		"--cachedir=$conf->{General}{Data}/cache",
 		"--css=?page=css.css",
 	);
+	
+	# check if any values are tainted
 	for ( @params ) {
 		warn "Tainted $_" if tainted $_;
 	}
+	
+	my $perl = $conf->{General}{Perl} || '/usr/bin/perl';
+	my $cmd  = "$perl -MPod::Html -e \"pod2html('" . join( "', '", @params ) . "\')\"";
+	
 	# Pod::Html only appears to be able to print to STDOUT so have to call it
 	# as an external program and capture STDOUT
 	tie( *STDOUT, 'POD::STDOUT' );
 	# Create the HTML POD
 	pod2html( @params );
 	my $pod = $POD::STDOUT::string;
-	my $perl = $conf->{General}{Perl} || '/usr/bin/perl';
-	my $cmd = "$perl -MPod::Html -e \"pod2html('" . join( "', '", @params ) . "\')\"";
+	untie *STDOUT;
 	
 	# check that the html was created success fully
 	if ( length $pod < 100 ) {
-		return ( pod => "Could not create the POD for $module $!<br/>\n$pod\n<br/>\n$cmd\n<br/><pre>". Dumper($conf)."</pre><br/>" );
+		return ( pod => "Could not create the POD for $module $!<br/><br/>\nGENERATED POD\n$pod\n<br/><br/>\n$cmd\n<br/><pre>". Dumper($conf)."</pre><br/>" );
 	}
 	
 	# remove final number if one exists (bug with Pod::Html?)
@@ -128,12 +133,13 @@ sub process {
 
 package POD::STDOUT;
 
+use base qw/Tie::Handle/;
 our $string = '';
 
-sub TIEHANDLE { $string = ''; my $s; bless \$s, shift  }
-sub PRINT     { shift; $string .= join $,, @_ }
-sub PRINTF    { shift; $string .= sprintf @_  }
-sub data      { shift; return $string         }
+sub TIEHANDLE { $string = ''; my $s; bless \$s, shift      }
+sub PRINT     { shift; no warnings; $string .= join $,, @_ }
+sub PRINTF    { shift; no warnings; $string .= sprintf @_  }
+sub CLOSE     { }
 
 1;
 
