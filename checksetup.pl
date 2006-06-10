@@ -79,7 +79,7 @@ sub main {
 	print "\n";
 	my $conf = "$FindBin::Bin/data/docperl.conf";
 	unless ( -f $conf ) {
-		my $eg = "$FindBin::Bin/data/docperl.conf.expample";
+		my $eg = "$FindBin::Bin/data/docperl.conf.example";
 		die "Serious problem trying to set up config '$conf': Missing $eg\n"
 			unless -f $eg;
 		print "Setting default config. Please check the settings in $conf\n";
