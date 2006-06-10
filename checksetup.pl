@@ -151,7 +151,8 @@ sub cache {
 			if ( $arg{api} ) {
 				$dp->{cgi}{page} = 'api';
 				$dp->{template}  = 'api.html';
-				$dp->process();
+				# Unfortunatly repeated processing of api's can be dangerous to this is now disabled
+				#$dp->process();
 			}
 			if ( $arg{code} ) {
 				$dp->{cgi}{page} = 'code';
