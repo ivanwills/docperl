@@ -29,15 +29,25 @@ history_size:	10
 # Parameters always passed to templates
 [Template]
 
+# Uncomment to show the local modules only (and not the perl documentation or
+# installed modules)
+#LocalOnly:		true
+
+# Set the labels for the various sections on the list page
+LocalLabel:		Local Programs
+IncLabeel:		Installed Modules
+PerlLabel:		Perl
+
+# Uncomment to allow web users to clear the current cache
+# Note: Turining this on is only recomended for non public DocPerl
+#	installations as this could cause a large amount of load to the server
+#	if random people clear the cache for no good reason
+#ClearCache:	on
 
 # General configuration
 [General]
 
+# the location of the data directory
 Data:			./data
-Touch:			/usr/bin/touch
-#Touch:			c:/cigwin/bin/touch
-#Perl:			c:/Perl/bin/perl.exe
 #Cache:			off
 
-# Set this to a value if you would like to be able to clear the cache from from a web page
-#ClearCache:	on
