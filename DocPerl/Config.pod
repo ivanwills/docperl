@@ -11,7 +11,9 @@ This documentation refers to DocPerl::Cached version 0.3.
 DocPerl's configuration is stored in the file data/docperl.conf which is an ini
 style file. 
 
-=head2 LocalFolders
+=head2 Sections
+
+=head3 LocalFolders
 
 This sets parameters of the local section
 
@@ -31,12 +33,12 @@ A regular expression to decide which files to include in the list
 
 =back
 
-=head2 IncFolders
+=head3 IncFolders
 
 The system wide installed perl modules section. Similar to LocalFolders
 execpt Path is added to the @INC path.
 
-=head2 Templates
+=head3 Templates
 
 Sets parameters to be sent to Template Toolkit
 
@@ -52,11 +54,11 @@ See Template Toolkit documentation
 
 =back
 
-=head2 Template
+=head3 Template
 
 This allows you to set general parameters that are passed to all templates
 
-=head2 General
+=head3 General
 
 This section sets up parameters that are used for running DocPerl
 
@@ -66,10 +68,6 @@ This section sets up parameters that are used for running DocPerl
 
 Specifies the location of the data directory where templates and the cache are
 stored.
-
-=item Touch
-
-The location of the touch commandline program
 
 =item Perl
 
@@ -96,5 +94,67 @@ Note: You probably should not turn this on for publicly available sites as
 this could cause a lot of extra load on your server.
 
 =back
+
+=head2 URL Parameters
+
+Here is a summary of the url parameters
+
+=over 4
+
+=item page
+
+This effectivly sets which template is to be used as well as what processing
+needs to be done. Some more important values are:
+
+=over 4
+
+=item list
+
+Shows the module list page
+
+=item pod
+
+Shows the Plain Old Documentation for the module
+
+=item api
+
+Shows the API of the module (includes sub, modules used, module hirachy etc)
+
+=item code
+
+Syntax highlighted version of the module
+
+=back
+
+=item module
+
+Sets the perl module to be displaied. This can be represented in one of two
+forms: either standard perl form (Config::Std) or as a path from the list
+page (inc__c__Config__Std). In path from location does not need to be specified
+
+=item file
+
+The file on the file system
+
+=item location
+
+The section that the file is from (inc,local or perl)
+
+=item source
+
+The relative perl file path (relative to search paths)
+
+=item clearcache
+
+Instructs DocPerl to clear it's cache (if allowed)
+
+=item sidebar
+
+Alters the link taget on the list page so that when the list page is used for
+a firefox sidebar it displays the pages in the correct place.
+
+=item 
+
+=item 
 
 =cut

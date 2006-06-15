@@ -2,12 +2,11 @@ package DocPerl::Cached::CODE;
 
 =head1 NAME
 
-DocPerl::Cached::CODE - <One-line description of module's purpose>
+DocPerl::Cached::CODE - Displays the code of a specified file in syntax highlited HTML
 
 =head1 VERSION
 
 This documentation refers to DocPerl::Cached::CODE version 0.3.
-
 
 =head1 SYNOPSIS
 
@@ -20,10 +19,8 @@ This documentation refers to DocPerl::Cached::CODE version 0.3.
 
 =head1 DESCRIPTION
 
-A full description of the module and its features.
-
-May include numerous subsections (i.e., =head2, =head3, etc.).
-
+This module displays the code of a specified file in HTML with line numbers and
+some syntax high lighting.
 
 =head1 SUBROUTINES/METHODS
 
