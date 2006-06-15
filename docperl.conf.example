@@ -35,7 +35,7 @@ history_size:	10
 
 # Set the labels for the various sections on the list page
 LocalLabel:		Local Programs
-IncLabeel:		Installed Modules
+IncLabel:		Installed Modules
 PerlLabel:		Perl
 
 # Uncomment to allow web users to clear the current cache
