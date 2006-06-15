@@ -57,11 +57,11 @@ function count_tree( tree, counter ) {
 			var tt = new Array();
 			for ( var t in data )
 				tt.push(t);
-			if ( data && tt.length ) {
+			if ( data && tt.length )
 				count_tree( data, counter );
-				count++;
-			}
 		}
+		else if ( tree[module].length > 0 )
+			count++;
 	}
 	add_count( counter, count );
 }
@@ -82,7 +82,6 @@ function create_tree ( files, container_id, path, counter ) {
 	// need to stick each module into a container
 	var container= document.getElementById(container_id);
 	var ul		 = document.createElement('ul');
-	var count	 = 0;
 	ul.className = 'mod_list';
 	ul.id		 = 'ul__'+path;
 	level++;
@@ -117,23 +116,18 @@ function create_tree ( files, container_id, path, counter ) {
 			data = files[module]['*'];
 			if ( data && data.length ) {
 				label = create_module( path + '__' + module, module );
-				count++;
 			}
 			else {
 				label = document.createTextNode( module );
 			}
 			li.appendChild( label );
-			
-			var time = 50 + Math.floor( Math.random() * 50 );
-			// recurse to get sub elements here
 			tree_holder[path + '__' + module] = files[module];
-			var func = 'create_tree(null, "'+li.id+'", "'+path + '__' + module+'", "'+counter+'")';
 			ul.appendChild( li );
 		}
 	}
 	
 	container.appendChild( ul );
-	return count;
+	return ul;
 }
 
 /**	
@@ -383,8 +377,7 @@ function find_in( list, term, name ) {
 function list_toggle( id ) {
 	var ul		= document.getElementById( 'ul__' + id );
 	if (!ul) {
-		create_tree( null, 'li__'+id, id, 'inc');
-		ul		= document.getElementById( 'ul__' + id );
+		ul		= create_tree( null, 'li__'+id, id, 'inc');
 	}
 	var link	= document.getElementById( 'plus__' + id );
 	// check the status of the list
@@ -447,6 +440,26 @@ function path_to_module(path) {
 	var module = path.replace(/__/g, '::');
 	return module.replace( /^(?:\w+)::(?:\w+)::/, '' );
 }
+
+/***** CURRENT LINK *****/
+
+/**	
+ *	@todo	implementation
+ *	@bug	
+ *	
+ *	Sets the current link to a link that the user can click on to see the
+ *	page in its current state.
+ */
+
+function update_current_link() {
+	var link = document.getElementById('current-link');
+	var url  = '?';
+	
+	// add the url to the link
+	link.href = url;
+}
+
+/***** COOKIES *****/
 
 /**	
  *	@param	name:	The name of the cookie wanted
@@ -576,3 +589,20 @@ function get_cookie_number(name, cookie_num) {
 	return result;
 }
 
+/***** DEBUG ******/
+
+var debug_div   = null;
+var debug_found = false;
+function debug(msg) {
+	if ( !debug_div && debug_found )
+		return;
+	if ( !debug_div && !debug_found ) {
+		debug_div = document.getElementById('debug');
+		debug_found = true;
+		return debug(msg);
+	}
+	
+	var div = document.createElement('div');
+	div.appendChild( document.createTextNode(msg) );
+	debug_div.appendChild(div);
+}
