@@ -1,4 +1,4 @@
-#!/usr/bin/perl -t
+#!/usr/bin/perl 
 
 # Created on: 2006-01-20 07:10:57
 # Create by:  ivanw
@@ -17,7 +17,7 @@ our $VERSION = version->new('0.3');
 
 Readonly my $BASE		=> $Bin;
 Readonly my $DATA		=> "$BASE/data";
-Readonly my $CONFIG		=> "$DATA/docperl.conf";
+Readonly my $CONFIG		=> "$BASE/docperl.conf";
 #Readonly my $TEMPLATE	=> "$DATA/templates";
 #Readonly my $TEMPLATES	=> "$TEMPLATE/local:$TEMPLATE/default";
 

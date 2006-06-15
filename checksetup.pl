@@ -16,7 +16,7 @@ use Data::Dumper qw/Dumper/;
 our $VERSION = 0.3;
 
 use lib ($FindBin::Bin);
-my $CONFIG = "$FindBin::Bin/data/docperl.conf";
+my $CONFIG = "$FindBin::Bin/docperl.conf";
 
 my %option = (
 	compile			=> [],
@@ -77,13 +77,12 @@ sub main {
 	}
 	
 	print "\n";
-	my $conf = "$FindBin::Bin/data/docperl.conf";
-	unless ( -f $conf ) {
-		my $eg = "$FindBin::Bin/data/docperl.conf.example";
-		die "Serious problem trying to set up config '$conf': Missing $eg\n"
+	unless ( -f $CONFIG ) {
+		my $eg = "$CONFIG.example";
+		die "Serious problem trying to set up config '$CONFIG': Missing $eg\n"
 			unless -f $eg;
-		print "Setting default config. Please check the settings in $conf\n";
-		copy $eg, $conf;
+		print "Setting default config. Please check the settings in $CONFIG\n";
+		copy $eg, $CONFIG;
 	}
 	else {
 		print "Config Exists\n";
@@ -231,7 +230,7 @@ for the moment if this happens to you do not try to pre-compile the api files.
 =head1 CONFIGURATION AND ENVIRONMENT
 
 C<checksetup.pl> is controlled by it's command line options (see above) but
-will use data/docperl.conf when creating cached files.
+will use docperl.conf when creating cached files.
 
 =head1 BUGS AND LIMITATIONS
 
