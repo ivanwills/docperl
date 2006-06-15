@@ -196,7 +196,6 @@ sub init {
 		# Get the location of the file
 		for my $dir ( @folders ) {
 			for my $suffix ( @suffixes ) {
-				#warn "trying $dir/$file.$suffix";
 				if ( -f "$dir/$file.$suffix" ) {
 					push @files, { file => "$dir/$file.$suffix", suffix => $suffix };
 				}
@@ -208,7 +207,6 @@ sub init {
 		$self->{suffixes} = \@suffixes;
 		$self->{sources}  = \@files;		# all files that match the module name
 		$self->{source}	  = $q->{source} || $files[0]{file};
-		#warn Dumper $self;
 	}
 }
 
@@ -292,11 +290,16 @@ sub process {
 	die 'The processed template "'.$self->template().'" contains not data!'.Dumper \%vars if $out =~ /^\s+$/;
 	
 	if ( $page && (!$self->{source} || -f $self->{source}) ) {
-		#warn "Saving cache of $self->{source}\t$cache_path\n";
 		$cache->_save_cache( cache => $cache_path, source => $self->{source} || 1, content => $out );
 	}
 	
 	return $out;
+}
+
+sub error {
+	my ($message) = @_;
+	#
+	warn $message;
 }
 
 =head3 C<template ( )>
@@ -326,7 +329,9 @@ sub get_templ_object {
 	
 	return $self->{templ} if $self->{templ};
 	
-	$self->{templ} = Template->new( INCLUDE_PATH => $conf->{Templates}{Path}, EVAL_PERL => 1 );
+	my $data = $conf->{General}{Data};
+	my $path = "$conf->{Templates}{Path}:$data/templates/local:$data/templates/default";
+	$self->{templ} = Template->new( INCLUDE_PATH => $path, EVAL_PERL => 1 );
 	die "Could not create the template object!" unless $self->{templ};
 	
 	return $self->{templ};
@@ -361,35 +366,41 @@ sub list {
 	my $conf	= $self->{conf};
 	my %vars;
 	
-	# find all the installed modules in the combined paths
-	$vars{INC} ||= {};
-	$self->_get_files(
-		[ @INC, split /:/, $conf->{IncFolders}{Path}, ],
-		$conf->{IncFolders}{Match},
-		$vars{INC},
-	);
-	
-	# Move any module found in the pod name space to the PERL
-	# location and create the javascript for the list page
-	$vars{PERL} = $vars{INC}{P}{pod};
-	$vars{perl} = $self->_create_js( 'perl', { POD => $vars{PERL} } );
-	
-	# delete the pod documentation and reate the INC javascript
-	delete $vars{INC}{P}{pod};
-	$vars{inc} = $self->_create_js( 'inc', $vars{INC} );
+	if ( !$conf->{Template}{LocalOnly} ) {
+		# find all the installed modules in the combined paths
+		$vars{INC} ||= {};
+		$self->_get_files(
+			[ @INC, split /:/, $conf->{IncFolders}{Path}, ],
+			$conf->{IncFolders}{Match},
+			$vars{INC},
+		);
+		
+		# Move any module found in the pod name space to the PERL
+		# location and create the javascript for the list page
+		$vars{PERL} = $vars{INC}{P}{pod};
+		my $perl = _organise_perl( $vars{INC}{P}{pod} );
+		$vars{perl} = $self->_create_js( 'perl', $perl );
+		#$vars{perl} = $self->_create_js( 'perl', { POD => $vars{PERL} } );
+		
+		# delete the pod documentation and reate the INC javascript
+		delete $vars{INC}{P}{pod};
+		$vars{inc} = $self->_create_js( 'inc', $vars{INC} );
+		$vars{inc_path}		= join "<br/>", ( @INC, split /:/, $conf->{IncFolders}{Path}, );
+	}
 	
 	# find all the programs in the LocalFolders path and create its javascript
 	$vars{LOCAL} ||= {};
+	my @local_folders = split /:/, $conf->{LocalFolders}{Path};
 	$self->_get_files(
-		[ split /:/, $conf->{LocalFolders}{Path}, ],
+		#[ split /:/, $conf->{LocalFolders}{Path}, ],
+		\@local_folders,
 		$conf->{LocalFolders}{Match},
 		$vars{LOCAL},
 	);
 	$vars{local} = $self->_create_js( 'local', $vars{LOCAL} );
 	
 	# create the path info for the list page
-	$vars{inc_path}		= join "<br/>", ( @INC, split /:/, $conf->{IncFolders}{Path}, );
-	$vars{local_path}	= join "<br/>", split /:/, $conf->{IncFolders}{Path};
+	$vars{local_path} = join "<br/>", @local_folders;#split /:/, $conf->{IncFolders}{Path};
 	
 	# remove all unnessesery data
 	unless ( $self->{save_data} ) {
@@ -512,9 +523,44 @@ sub _create_js_object {
 	}
 	$js =~ s/,$//;
 	
-	return "$js}"
+	return "$js}";
 }
 
+# moves the various perl documentation .pod files into their best categories
+sub _organise_perl {
+	my ( $perl ) = @_;
+	my %pod;
+	my %areas = (
+		'Commands'              => { map { 'perl'.$_ => 1, $_ => 1 } qw/a2p doc perl run / },
+		'OS'                    => { map { 'perl'.$_ => 1 } qw/aix amiga apollo beos bs2000 ce cygwin dgux dos ebcdic epoc freebsd hpux hurd irix machten macos macosx mint mpeix netware openbsd os2 os390 os400 plan9 qnx solaris tru64 uts vmesa vms vos win32/ },
+		'Languages'             => { map { 'perl'.$_ => 1 } qw/cn tw ko jp / },
+		'Tutorials'             => { map { 'perl'.$_ => 1 } qw/book boot bot cheat dsc tooc toot trap / },
+		'Internals'             => { map { 'perl'.$_ => 1 } qw/api apio call clib compile filter guts debguts intern / },
+		'Regular Expressions'   => { map { 'perl'.$_ => 1 } qw/re reref requick re / },
+		'Debug'                 => { map { 'perl'.$_ => 1 } qw/debug diag/ },
+		'Licence'               => { map { 'perl'.$_ => 1 } qw/artistic gpl / },
+		'Processes and Threads' => { map { 'perl'.$_ => 1 } qw/fork ipc thrtut / },
+	);
+	
+	for my $module ( keys %{$perl} ) {
+		my $area;
+		for $area ( keys %areas ) {
+			if ( $areas{$area}{$module} ) {
+				$pod{$area}{$module} = $perl->{$module};
+			}
+		}
+		$area = $module =~ /delta$/ ? 'Changes'
+			  : $module =~ /faq/    ? 'FAQ'
+			  : $module =~ /tut/    ? 'Tutorials'
+			  : $module =~ /mod/    ? 'Modules'
+			  : $area               ? undef
+			  :                       'Unsorted';
+		if ( $area ) {
+			$pod{$area}{$module} = $perl->{$module};
+		}
+	}
+	return \%pod;
+}
 
 1;
 
