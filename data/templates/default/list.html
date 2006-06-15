@@ -123,17 +123,21 @@
 				// set up each of perl, inc and local
 				if ( group == 0 ) {
 					level = 0;
+					[% IF LocalOnly %]
+					group = 3;
+					[% ELSE %]
+					group++;
+					[% END %]
+					create_tree( local,	'local',	'local' );
+					count_tree( local, 'local' );
+					setTimeout( setup_modules, 30 );
+				}
+				else if ( group == 1 ) {
+					level = 0;
 					var total_perl = create_tree( perl,	'perl',	'perl' );
 					count_tree( perl, 'perl' );
 					group++;
 					setTimeout( setup_modules, 10 );
-				}
-				else if ( group == 1 ) {
-					level = 0;
-					group++;
-					create_tree( local,	'local',	'local' );
-					count_tree( local, 'local' );
-					setTimeout( setup_modules, 30 );
 				}
 				else if ( group == 2 ) {
 					level = 0;
@@ -198,27 +202,32 @@
 				</ul>
 			</div>
 		</div>
+		[% UNLESS LocalOnly %]
 		<div id="perl_doc">
 			<h2 id="perl_head"><span class="info">i<span>[% perl_path %]</span></span>
 			<a id="plus__perl" href="javascript: section_toggle('perl');" class="mod_expand" title="Hide">-</a>
-			Perl (<span id="perl_count">0</span>)</h2>
+			[% PerlLabel || 'Perl' %] (<span id="perl_count">0</span>)</h2>
 			<div id="perl">
 			</div>
 		</div>
+		[%- END %]
 		<div id="local_doc">
 			<h2 id="local_head"><span class="info">i<span>[% local_path %]</span></span>
 			<a id="plus__local" href="javascript: section_toggle('local');" class="mod_expand" title="Hide">-</a>
-			Local Programs (<span id="local_count">0</span>)</h2>
+			[% LocalLabel || 'Local Programs' %] (<span id="local_count">0</span>)</h2>
 			<div id="local">
 			</div>
 		</div>
+		[% UNLESS LocalOnly %]
 		<div id="inc_doc">
 			<h2 id="inc_head"><span class="info">i<span>[% inc_path %]</span></span>
 			<a id="plus__inc" href="javascript: section_toggle('inc');" class="mod_expand" title="Hide">-</a>
-			Installed Modules (<span id="inc_count">0</span>)</h2>
+			[% IncLabel || 'Installed Modules' %] (<span id="inc_count">0</span>)</h2>
 			<div id="inc">
 			</div>
 		</div>
+		[%- END %]
+		<hr />
 		<a href="http://docperl.sourceforge.net/" target="_blank">DocPerl Home Page</a>
 		[% IF ClearCache -%]
 		<br />
@@ -226,5 +235,10 @@
 		[%- END %]
 		<br />
 		<a href="?page=list&amp;sidebar=1">Bookmark for Firefox sidebar</a>
+		<br />
+		<a href="?" id="current-link" onmouseover="update_current_link();">Bookmark the page</a>
+		[% IF Debug %]
+		<div id="debug"></div>
+		[% END %]
 	</body>
 </html>
