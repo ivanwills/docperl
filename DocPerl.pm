@@ -312,7 +312,7 @@ Description: Gets the template file for the current page
 
 sub template {
 	my $self	= shift;
-	return $self->{template};
+	return $self->{template}.'.tmpl';
 }
 
 =head3 C<get_templ_object ( )>
