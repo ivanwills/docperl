@@ -13,7 +13,7 @@ use Getopt::Long;
 use Pod::Usage;
 use Data::Dumper qw/Dumper/;
 
-our $VERSION = 0.3;
+our $VERSION = 0.4;
 
 use lib ($FindBin::Bin);
 my $CONFIG = "$FindBin::Bin/docperl.conf";

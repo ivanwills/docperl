@@ -13,7 +13,7 @@ use Readonly;
 use lib qw/./;
 use DocPerl;
 
-our $VERSION = version->new('0.3');
+our $VERSION = version->new('0.4');
 
 Readonly my $BASE		=> $Bin;
 Readonly my $DATA		=> "$BASE/data";

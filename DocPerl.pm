@@ -6,7 +6,7 @@ DocPerl - Module for DocPerl stuff
 
 =head1 VERSION
 
-This documentation refers to DocPerl version 0.3.
+This documentation refers to DocPerl version 0.4.
 
 =head1 SYNOPSIS
 
@@ -53,7 +53,7 @@ use Template;
 use DocPerl::Cached;
 use base qw/Exporter/;
 
-our $VERSION = version->new('0.3.0');
+our $VERSION = version->new('0.4.0');
 our @EXPORT = qw//;
 our @EXPORT_OK = qw/find/;
 

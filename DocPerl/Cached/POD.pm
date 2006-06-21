@@ -2,11 +2,11 @@ package DocPerl::Cached::POD;
 
 =head1 NAME
 
-DocPerl::Cached::POD - <One-line description of module's purpose>
+DocPerl::Cached::POD - Generates the HTML Documentation from a files POD
 
 =head1 VERSION
 
-This documentation refers to DocPerl::Cached::POD version 0.3.
+This documentation refers to DocPerl::Cached::POD version 0.4.
 
 
 =head1 SYNOPSIS
@@ -27,18 +27,6 @@ May include numerous subsections (i.e., =head2, =head3, etc.).
 
 =head1 SUBROUTINES/METHODS
 
-A separate section listing the public components of the module's interface.
-
-These normally consist of either subroutines that may be exported, or methods
-that may be called on objects belonging to the classes that the module
-provides.
-
-Name the section accordingly.
-
-In an object-oriented module, this section should begin with a sentence (of the
-form "An object of this class represents ...") to give the reader a high-level
-context to help them understand the methods that are subsequently described.
-
 =cut
 
 # Created on: 2006-03-19 20:31:36
@@ -54,7 +42,7 @@ use base qw/DocPerl::Cached/;
 #use Pod::Html 1.0505;
 use Pod::Html;
 
-our $VERSION = version->new('0.3.0');
+our $VERSION = version->new('0.4.0');
 our @EXPORT = qw//;
 our @EXPORT_OK = qw//;
 

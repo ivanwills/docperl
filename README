@@ -1,6 +1,6 @@
 DocPerl
 
-For installations instructions please see the INSTALL file.
+For installations and upgrading instructions please see the INSTALL file.
 
 DocPerl provides access to the POD documentation provided by perl files as
 well as showing the code of the files and a summary of the API that a file

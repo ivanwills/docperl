@@ -42,8 +42,6 @@ main();
 exit(0);
 
 sub main {
-	my $file = pop @ARGV;
-	my $module;
 
 	Getopt::Long::Configure("bundling");
 	GetOptions(
@@ -54,6 +52,9 @@ sub main {
 		'help',
 		'version'
 	) or pod2usage( 2 );
+	
+	my $file = pop @ARGV;
+	my $module;
 	
 	print "get-api Version = $VERSION\n" and exit(1) if $option{version};
 	pod2usage( -verbose => 2 ) if $option{man};

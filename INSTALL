@@ -1,4 +1,4 @@
-Installation:
+*Installation*
 
 DocPerl requires little in the way of installation. You need to place the
 files where ever you want and then set up your web server to execute the
@@ -15,11 +15,11 @@ You should run ./checksetup.pl which tell you what required modules are
 installed or not on your system. Also ./checksetup.pl can be used to create
 pre-cached POD files to speed up usage with the command:
 
-./checksetup.pl -c pod
+  $ ./checksetup.pl -c pod
 
-see
+or see
 
-./checksetup.pl -h
+  $ ./checksetup.pl -h
 
 for more detais on ./checksetup.pl usage
 
@@ -31,26 +31,43 @@ Config::Std
 version
 
 to install one of the following commands should work
-cpan Template Readonly
+  $ cpan Template Readonly
 or
-perl -MCPAN -e 'install Template; install Readonly'
+  $ perl -MCPAN -e 'install Template; install Readonly'
 or for active perl users
-ppm install Template
-ppm install Readonly
+  $ ppm install Template
+  $ ppm install Readonly
 
 If you have any problems try going to the help forums at
 https://sourceforge.net/forum/forum.php?forum_id=553595
 
-Windows
+*Windows*
 
-Currently installation on Windows can be a bit tricky but is possible. You need
-some command line tools that windows does not by default provide:
-touch - used to set cached files times to that of the original file
-rm    - used by checksetup .pl to clear the cache files
+Installation on windows has now improved a lot, the dependencies on command
+line programs have been removed. The major problems you may now encounter are
+setting setting the perl scripts bang line to you perl location (if you do not
+download the windows zip file or your perl is not installed into C:/Perl).
+Workarrounds are to change the bang line from:
 
-These files are available with cygwin (http://sources.redhat.com/cygwin)
+#!/usr/bin/perl
+
+to
+
+#!"C:/perl/bin/perl.exe"
+
+or where ever your perl is installed. You can set apache to use file
+extenstions instead (see your Apache documentation for details)
 
 
 * If you are using active perl's ppm to get the Template Toolkit modules
 you may encounter some difficulity as ppm install Template does not appear to
 install the Template Toolkit, you will probably need to use CPAN.
+
+*Upgrading*
+
+If you are upgrading from DocPerl version 0.3 or earlier there have been some
+structural changes to DocPerl. Firstly the file docperl.conf has been moved
+from the data directory up one level to the base directory (to allow you to
+set where the data directory is stored). Also the templates have been renamed
+to have the extension .tmpl added to their names so if you have customised
+any templates you will need to add .tmpl to their names.

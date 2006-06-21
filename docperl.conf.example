@@ -12,7 +12,9 @@ suffixes:		cgi
 # Info about extra paths to add to @INC ...
 [IncFolders]
 
+# Add any extra directories to you @INC path here
 Path:			.
+# Set the regular expression for finding files in those directories
 Match:			\.(?:pm|pod)$
 Exclude:		./data
 suffixes:		pod
@@ -23,6 +25,7 @@ suffixes:		pl
 # Details of template usage
 [Templates]
 
+# set the template search path
 Path:			./data/templates/local:./data/templates/default
 history_size:	10
 
