@@ -59,7 +59,7 @@ sub main {
 	my @missing;
 	for my $module ( sort keys %required_modules ) {
 		print $module, (' 'x(24 - length $module) );
-		eval{ eval("require $module") };
+		eval("require $module");
 		if ( $@ ) {
 			print "Missing\n";
 			push @missing, $module;
@@ -102,11 +102,11 @@ sub main {
 	}
 	
 	if ( ref $option{compile} && @{ $option{compile} } ) {
-		use Config::Std;
-		use Readonly;
+		eval('use Config::Std');
+		eval('use Readonly');
 		read_config $CONFIG, my %config;
 		$config{Templates}{ClearCache} = 'on';
-		use DocPerl;
+		eval('use DocPerl');
 		my $dp = DocPerl->new( cgi => { page => 'list', }, conf => \%config, save_data => 1, data => $data, );
 		my %data = $dp->list();
 		
