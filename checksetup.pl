@@ -59,7 +59,7 @@ sub main {
 	my @missing;
 	for my $module ( sort keys %required_modules ) {
 		print $module, (' 'x(24 - length $module) );
-		eval("require $module");
+		eval{ eval("require $module") };
 		if ( $@ ) {
 			print "Missing\n";
 			push @missing, $module;
