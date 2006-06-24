@@ -7,8 +7,6 @@ use strict;
 use warnings;
 use FindBin;
 use File::Copy qw/copy/;
-use Scalar::Util;
-use List::Util;
 use Getopt::Long;
 use Pod::Usage;
 use Data::Dumper qw/Dumper/;
