@@ -130,7 +130,7 @@
 					[% END %]
 					create_tree( local,	'local',	'local' );
 					count_tree( local, 'local' );
-					setTimeout( setup_modules, 30 );
+					setTimeout( setup_modules, 10 );
 				}
 				else if ( group == 1 ) {
 					level = 0;
@@ -144,7 +144,7 @@
 					group++;
 					create_tree( inc,	'inc',	'inc' );
 					count_tree( inc, 'inc' );
-					setTimeout( setup_modules, 50 );
+					setTimeout( setup_modules, 10 );
 				}
 				else if ( group == 3 ) {
 					group++;
@@ -157,12 +157,12 @@
 							display_recent( modules[module] );
 						}
 					}
-					setTimeout( setup_modules, 70 );
+					setTimeout( setup_modules, 10 );
 				}
 				else if ( group == 4 ) {
 					level = 0;
 					group++;
-					setTimeout( setup_modules, 90 );
+					setTimeout( setup_modules, 10 );
 				}
 			}
 		//-->
