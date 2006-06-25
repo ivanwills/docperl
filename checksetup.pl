@@ -61,6 +61,7 @@ sub main {
 		if ( $@ ) {
 			print "Missing\n";
 			push @missing, $module;
+			$required_modules{$module}{missing} = 1;
 		}
 		else {
 			my $version = eval("\$${module}::VERSION");
@@ -86,23 +87,44 @@ sub main {
 		print "Config Exists\n";
 	}
 	
+	# check if we have Config::Std before continuing
+	exit 20 if $required_modules{'Config::Std'}{missing};
+	
+	# read the config file
+	eval('use Config::Std qw/read_config/');
+	my %config;
+	read_config( $CONFIG, \%config );
+	
+	# get the data directory
+	my $data  = $config{General}{Data};
+	unless ( -d $data ) {
+		warn "Cannot find the data directory at '$data' please update docperl.conf to point to the correct location\n";
+		exit 30;
+	}
+	
+	# set up the cache directory
+	my $cache = "$data/cache";
+	unless ( -d $cache ) {
+		print "Creating cache directory, '$cache'\n";
+		mkdir $cache or warn "Could not create the cache directory '$cache': $!\n";
+	}
+	
 	# set up the local directory
-	my $data  = "$FindBin::Bin/data";
 	my $local = "$data/templates/local";
 	unless ( -d $local ) {
+		print "Creating local template directory, '$local'\n";
 		mkdir $local or warn "Could not create the local template directory '$local': $!\n";
 	}
 	print "\n";
 	
+	# purge the cache files (if requested)
 	if ( $option{purge} ) {
 		print "Clearing old cache files\n";
 		system "rm -rf $FindBin::Bin/data/cache/*";
 	}
 	
+	# compile the cache files (if requrested)
 	if ( ref $option{compile} && @{ $option{compile} } ) {
-		eval('use Config::Std');
-		eval('use Readonly');
-		read_config $CONFIG, my %config;
 		$config{Templates}{ClearCache} = 'on';
 		eval('use DocPerl');
 		my $dp = DocPerl->new( cgi => { page => 'list', }, conf => \%config, save_data => 1, data => $data, );
