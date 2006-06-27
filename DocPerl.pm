@@ -535,26 +535,28 @@ sub _organise_perl {
 		'OS'                    => { map { 'perl'.$_ => 1 } qw/aix amiga apollo beos bs2000 ce cygwin dgux dos ebcdic epoc freebsd hpux hurd irix machten macos macosx mint mpeix netware openbsd os2 os390 os400 plan9 qnx solaris tru64 uts vmesa vms vos win32/ },
 		'Languages'             => { map { 'perl'.$_ => 1 } qw/cn tw ko jp / },
 		'Tutorials'             => { map { 'perl'.$_ => 1 } qw/book boot bot cheat dsc tooc toot trap / },
-		'Internals'             => { map { 'perl'.$_ => 1 } qw/api apio call clib compile filter guts debguts intern / },
+		'Internals'             => { map { 'perl'.$_ => 1 } qw/api apio call clib compile filter guts hack iol debguts intern / },
 		'Regular Expressions'   => { map { 'perl'.$_ => 1 } qw/re reref requick re / },
 		'Debug'                 => { map { 'perl'.$_ => 1 } qw/debug diag/ },
 		'Licence'               => { map { 'perl'.$_ => 1 } qw/artistic gpl / },
 		'Processes and Threads' => { map { 'perl'.$_ => 1 } qw/fork ipc thrtut / },
+		'Programming'			=> { map { 'perl'.$_ => 1 } qw/data form func lol number obj op pod podspec port ref sec style sub syn tie unicode unintro var xs/ },
 	);
 	
 	for my $module ( keys %{$perl} ) {
-		my $area;
-		for $area ( keys %areas ) {
+		my $found = 0;
+		for my $area ( keys %areas ) {
 			if ( $areas{$area}{$module} ) {
 				$pod{$area}{$module} = $perl->{$module};
+				$found = 1
 			}
 		}
-		$area = $module =~ /delta$/ ? 'Changes'
-			  : $module =~ /faq/    ? 'FAQ'
-			  : $module =~ /tut/    ? 'Tutorials'
-			  : $module =~ /mod/    ? 'Modules'
-			  : $area               ? undef
-			  :                       'Unsorted';
+		my $area = $module =~ /delta$/ ? 'Changes'
+				 : $module =~ /faq/    ? 'FAQ'
+				 : $module =~ /tut/    ? 'Tutorials'
+				 : $module =~ /mod/    ? 'Modules'
+				 : $found              ? undef
+				 :                       'Unsorted';
 		if ( $area ) {
 			$pod{$area}{$module} = $perl->{$module};
 		}
