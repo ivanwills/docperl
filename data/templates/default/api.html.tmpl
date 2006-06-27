@@ -15,10 +15,10 @@
 			@import url(?page=css.css);
 			pre {
 				padding:			3px;
-				-moz-border-radius:	5px;
 				border-radius:		5px;
 				font-family:		sans-serif;
 				font-size:			8pt;
+				-moz-border-radius:	5px;
 			}
 			table {
 				border:				1px outset;
@@ -44,8 +44,7 @@
 				width:				100%;
 			}
 			td.double_list > table td {
-				border-width:		0px;
-				border-left-width:	1px;
+				border-width:		0px 1px 0px 0px;
 				padding:			2px;
 				margin:				0px;
 				width:				50%;
@@ -61,8 +60,8 @@
 			.hirachy {
 				float:				right;
 				border:				1px solid black;
-				-moz-border-radius:	3px;
 				border-radius:		3px;
+				-moz-border-radius:	3px;
 			}
 			.hirachy > div {
 				border:				1px solid black;
@@ -74,8 +73,8 @@
 				font-family:		sans-serif;
 				padding:			1px 5px 1px 5px;
 				text-align:			center;
-				-moz-border-radius:	3px 3px 0px 0px;
 				border-radius:		3px;
+				-moz-border-radius:	3px 3px 0px 0px;
 			}
 		</style>
 		<script type="text/javascript">
@@ -92,18 +91,20 @@
 				list = api.hirachy
 			%]
 			[% BLOCK class_hirachy %]
-			<ul>
-				[% FOR item = list %]
-				<li>
-					[% item.class %]
-					[%- IF item.hirachy %]
-						[% INCLUDE class_hirachy
-							list = item.hirachy
-						%]
+				[% IF list.size %]
+				<ul>
+					[% FOR item = list %]
+					<li>
+						[% item.class %]
+						[%- IF item.hirachy %]
+							[% INCLUDE class_hirachy
+								list = item.hirachy
+							%]
+						[% END %]
+					</li>
 					[% END %]
-				</li>
+				</ul>
 				[% END %]
-			<ul>
 			[% END %]
 		</div>
 		[% UNLESS api %]
@@ -205,7 +206,7 @@
 						<tr>
 						[% END -%]
 							<td>
-								<a href="?page=code&module=&location=&source=#[% sub.line %]">
+								<a href="?page=code&amp;module=&amp;location=&amp;source=#[% sub.line %]">
 									[% sub.name %]
 								</a>
 							</td>
@@ -233,7 +234,7 @@
 						<tr>
 						[% END -%]
 							<td>
-								<a href="?page=code&module=[% module %]&location=[% location %]&source=[% source %]#line[% sub.line %]">
+								<a href="?page=code&amp;module=[% module %]&amp;location=[% location %]&amp;source=[% source %]#line[% sub.line %]">
 									[% sub.name %]
 								</a>
 							</td>
@@ -261,7 +262,7 @@
 						<tr>
 						[%- END -%]
 							<td>
-								<a href="?page=code&module=[% module %]&location=[% location %]&source=[% source %]#line[% sub.line %]">
+								<a href="?page=code&amp;module=[% module %]&amp;location=[% location %]&amp;source=[% source %]#line[% sub.line %]">
 									[% sub.name %]
 								</a>
 							</td>
@@ -289,7 +290,7 @@
 						<tr>
 						[%- END -%]
 							<td>
-								<a href="?page=code&module=[% module %]&location=[% location %]&source=[% source %]#line[% var.line %]">
+								<a href="?page=code&amp;module=[% module %]&amp;location=[% location %]&amp;source=[% source %]#line[% var.line %]">
 									[% var.name %]
 								</a>
 							</td>

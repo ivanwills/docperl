@@ -100,6 +100,7 @@ sub process {
 		if ( $in_pod || $code_line =~ /^=/ ) {
 			$in_pod = $code_line =~ /^=cut/ ? 0 : 1;
 			$code_line = qq{<span class="pod">$code_line}; #$q->start_span( { -class => "pod" } ) . $code_line;
+			$code_line .= '</span>' unless $in_pod;
 		}
 		elsif ( $code_line and not $here_marker ) {
 			# check if the line has a comment
