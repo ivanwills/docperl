@@ -269,7 +269,7 @@ sub process {
 	}
 	else {
 		# this only occurs when showing frames page
-		$self->{module} = $q->{module} || 'perl__pod__perlfunc';
+		$self->{module} = $q->{module} || $conf->{General}{DefaultModule} || 'perl__pod__perlfunc';
 	}
 	
 	# set up other required params

@@ -54,3 +54,16 @@ PerlLabel:		Perl
 Data:			./data
 #Cache:			off
 
+# DefaultModule
+# Sets the module that will be displaied when DocPerl is run with no parameters
+# 
+# Note: This module must be prefixed with the location (perl/local/inc) and a
+# a place holder (usually the first letter of the module name or the section
+# that the a POD file comes from for the standard perl documentation files.
+# some examples:
+# DefaultModule:	perl_programming_perlfunc
+# DefaultModule:	local__D__DocPerl
+# DefaultModule:	local__z__DocPerl
+# note that the last two examples would produce the same results
+DefaultModule:	perl_programming_perlfunc
+
