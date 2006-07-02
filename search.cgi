@@ -33,9 +33,9 @@ This documentation refers to search.cgi version 0.1.
 
 =head1 SYNOPSIS
 
-   search.cgi?location={pod|api|code}&?
+   search.cgi?type={pod|api|code}&?
    
-  location   Specifys which set of cached files to search.
+  type   Specifys which type of cached files to search.
 
 
 
