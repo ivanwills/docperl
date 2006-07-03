@@ -133,7 +133,16 @@ sub search {
 	my $cache = "$data/cache";
 	my $pod   = "$cache/pod";
 	
-	my %modules = $self->find( $pod ); 
+	my %files = ( $self->find( "$pod/inc" ), $self->find( "$pod/perl" ), $self->find( "$pod/local" ) );
+	my %modules;
+	
+	for my $file ( keys %files ) {
+		my ($type, $module, $extension) = $file =~ m{$pod/(\w+)/(.*)([.]\w+)$};
+		$module =~ s{/}{::}g;
+		$modules{$module} += $files{$file};
+	}
+	
+	return ( map { { $_ => $modules{$_} } } sort { $modules{$b} <=> $modules{$a} } keys %modules )[0..10];
 }
 
 =head3 C<find_files ( $dir )>
@@ -181,11 +190,18 @@ Description:
 
 sub process_file {
 	my $self = shift;
-	my $dbh  = $self->{regex};
+	my $re   = $self->{regex};
 	my ( $file ) = @_;
+	my $count = 0;
 	
 	open my $fh, '<', $file or warn "Could not open the file '$file' for reading: $!\n" and return;
+	{
+		undef $/;
+		my @count = <$fh> =~ /$re/g;
+		$count = @count;
+	}
 	
+	return $count;
 }
 
 
