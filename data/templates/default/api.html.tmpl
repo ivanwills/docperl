@@ -1,3 +1,4 @@
+[% UNLESS ApiColumns %][% ApiColumns = 3 %][% END -%]
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html
 	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
@@ -30,6 +31,9 @@
 				border:				1px inset;
 				font-size:			10pt;
 				padding:			2px;
+			}
+			td {
+				width:				[% 1 / (1 + ApiColumns) * 100  %]%;
 			}
 			th {
 				text-align:			right;
@@ -114,197 +118,127 @@
 			[% IF api.package %]
 			<tr>
 				<th>Package</th>
-				<td>[% module %]</td>
+				<td colspan="[% ApiColumns %]">[% module %]</td>
 			</tr>
 			[% END -%]
 			[% IF api.packages %]
 			<tr>
-				<th>Other Packages</th>
-				<td class="double_list">
-					<table>
-					[% counter = 1 -%]
-					[% FOR package = api.packages -%]
-						[% IF counter % 2 %]
-						<tr>
-						[% END %]
-							<td>[% package %]</td>
-						[% IF !(counter % 2) %]
-						</tr>
-						[% END -%]
-						[% counter = counter + 1 -%]
-					[% END -%]
-					[% IF !(counter % 2) %]
-						[% IF counter > 2 %]<td></td>[% END %]
-						</tr>
-					[% END -%]
-					</table>
-				</td>
+				<th rowspan="[% (api.packages.size - api.packages.size % ApiColumns + ApiColumns) / ApiColumns %]">Modules</th>
+				[% counter = 1 -%]
+				[% FOR package = api.packages %]
+				<td[% IF counter == api.packages.size %] colspan="[% ApiColumns - api.packages.size % ApiColumns + 1 %]"[% END %]>[% package %]</td>
+					[% IF counter % ApiColumns == 0 %]
+			</tr>
+			<tr>
+					[%- END -%]
+					[% counter = counter + 1 -%]
+				[% END %]
 			</tr>
 			[% END -%]
 			[% IF api.version %]
 			<tr>
 				<th>Version</th>
-				<td>[% api.version %]</td>
+				<td colspan="[% ApiColumns %]">[% api.version %]</td>
 			</tr>
 			[% END -%]
 			[% IF api.modules %]
 			<tr>
-				<th>Modules</th>
-				<td class="double_list">
-					<table>
-					[% counter = 1 -%]
-					[% FOR inc_module = api.modules -%]
-						[% IF counter % 2 %]
-						<tr>
-						[% END %]
-							<td>[% inc_module %]</td>
-						[% IF !(counter % 2) %]
-						</tr>
-						[% END -%]
-						[% counter = counter + 1 -%]
-					[% END -%]
-					[% IF !(counter % 2) %]
-						[% IF counter > 2 %]<td></td>[% END %]
-						</tr>
-					[% END -%]
-					</table>
-				</td>
+				<th rowspan="[% (api.modules.size - api.modules.size % ApiColumns + ApiColumns) / ApiColumns %]">Modules</th>
+				[% counter = 1 -%]
+				[% FOR inc_module = api.modules %]
+				<td[% IF counter == api.modules.size %] colspan="[% ApiColumns - api.modules.size % ApiColumns + 1 %]"[% END %]>[% inc_module %]</td>
+					[% IF counter % ApiColumns == 0 %]
+			</tr>
+			<tr>
+					[%- END -%]
+					[% counter = counter + 1 -%]
+				[% END %]
 			</tr>
 			[% END -%]
 			[% IF api.parents -%]
 			<tr>
-				<th>Inherited Modules</th>
-				<td class="double_list">
-					<table>
-					[% counter = 1 -%]
-					[% FOR parent = api.parents -%]
-						[% IF counter % 2 %]
-						<tr>
-						[% END -%]
-							<td>[% parent %]</td>
-						[% IF !(counter % 2) %]
-						</tr>
-						[% END -%]
-						[% counter = counter + 1 -%]
-					[% END -%]
-					[% IF !(counter % 2) %]
-						[% IF counter > 2 %]<td></td>[% END %]
-						</tr>
-					[% END -%]
-					</table>
-				</td>
+				<th rowspan="[% (api.parents.size - api.parents.size % ApiColumns + ApiColumns) / ApiColumns || 1 %]">Inherited Modules</th>
+				[% counter = 1 -%]
+				[% FOR inc_parents = api.parents %]
+				<td[% IF counter == api.parents.size %] colspan="[% ApiColumns - api.parents.size % ApiColumns + 1 %]"[% END %]>[% inc_parents %]</td>
+					[% IF counter % ApiColumns == 0 %]
 			</tr>
-			[% END -%]
+			<tr>
+					[%- END -%]
+					[% counter = counter + 1 -%]
+				[% END -%]
+			</tr>
+			[% END %]
 			[% IF api.class -%]
 			<tr>
-				<th>Class Methods</th>
-				<td class="double_list">
-					<table>
-					[% counter = 1 -%]
-					[% FOR sub = api.class -%]
-						[% IF counter % 2 %]
-						<tr>
-						[% END -%]
-							<td>
-								<a href="?page=code&amp;module=&amp;location=&amp;source=#[% sub.line %]">
-									[% sub.name %]
-								</a>
-							</td>
-						[% IF !(counter % 2) %]
-						</tr>
-						[% END -%]
-						[% counter = counter + 1 -%]
-					[% END -%]
-					[% IF !(counter % 2) %]
-						[% IF counter > 2 %]<td></td>[% END %]
-						</tr>
-					[%- END -%]
-					</table>
+				<th rowspan="[% (api.class.size - api.class.size % ApiColumns + ApiColumns) / ApiColumns || 1 %]">Class Methods</th>
+				[% counter = 1 -%]
+				[% FOR sub = api.class %]
+				<td[% IF counter == api.class.size %] colspan="[% ApiColumns - api.class.size % ApiColumns + 1 %]"[% END %]>
+					<a href="?page=code&amp;module=&amp;location=&amp;source=#[% sub.line %]">
+						[% sub.name %]
+					</a>
 				</td>
+					[% IF counter % ApiColumns == 0 %]
+			</tr>
+			<tr>
+					[%- END -%]
+					[% counter = counter + 1 -%]
+				[% END %]
 			</tr>
 			[% END -%]
 			[% IF api.object -%]
 			<tr>
-				<th>Object Methods</th>
-				<td class="double_list">
-					<table>
-					[% counter = 1 -%]
-					[% FOR sub = api.object -%]
-						[% IF counter % 2 %]
-						<tr>
-						[% END -%]
-							<td>
-								<a href="?page=code&amp;module=[% module %]&amp;location=[% location %]&amp;source=[% source %]#line[% sub.line %]">
-									[% sub.name %]
-								</a>
-							</td>
-						[% IF !(counter % 2) %]
-						</tr>
-						[% END -%]
-						[% counter = counter + 1 -%]
-					[% END -%]
-					[% IF !(counter % 2) %]
-						[% IF counter > 2 %]<td></td>[% END %]
-						</tr>
-					[%- END -%]
-					</table>
+				<th rowspan="[% (api.object.size - api.object.size % ApiColumns + ApiColumns) / ApiColumns || 1 %]">Object Methods</th>
+				[% counter = 1 -%]
+				[% FOR sub = api.object %]
+				<td[% IF counter == api.object.size %] colspan="[% ApiColumns - api.object.size % ApiColumns + 1 %]"[% END %]>
+					<a href="?page=code&amp;module=&amp;location=&amp;source=#[% sub.line %]">
+						[% sub.name %]
+					</a>
 				</td>
+					[% IF counter % ApiColumns == 0 %]
+			</tr>
+			<tr>
+					[%- END -%]
+					[% counter = counter + 1 -%]
+				[% END %]
 			</tr>
 			[% END -%]
 			[% IF api.func -%]
 			<tr>
-				<th>General Subroutines</th>
-				<td class="double_list">
-					<table>
-					[%- counter = 1 -%]
-					[%- FOR sub = api.func -%]
-						[% IF counter % 2 %]
-						<tr>
-						[%- END -%]
-							<td>
-								<a href="?page=code&amp;module=[% module %]&amp;location=[% location %]&amp;source=[% source %]#line[% sub.line %]">
-									[% sub.name %]
-								</a>
-							</td>
-						[% IF !(counter % 2) %]
-						</tr>
-						[% END -%]
-						[% counter = counter + 1 -%]
-					[% END -%]
-					[% IF !(counter % 2) %]
-						[% IF counter > 2 %]<td></td>[% END %]
-						</tr>
-					[%- END -%]
-					</table>
+				<th rowspan="[% (api.func.size - api.func.size % ApiColumns + ApiColumns) / ApiColumns || 1 %]">General Subroutines</th>
+				[% counter = 1 -%]
+				[% FOR sub = api.func %]
+				<td[% IF counter == api.func.size %] colspan="[% ApiColumns - api.func.size % ApiColumns + 1 %]"[% END %]>
+					<a href="?page=code&amp;module=&amp;location=&amp;source=#[% sub.line %]">
+						[% sub.name %]
+					</a>
 				</td>
+					[% IF counter % ApiColumns == 0 %]
+			</tr>
+			<tr>
+					[%- END -%]
+					[% counter = counter + 1 -%]
+				[% END %]
 			</tr>
 			[% END -%]
 			[% IF api.vars -%]
 			<tr>
-				<th>Package Variables</th>
-				<td class="double_list">
-					<table>
-					[%- counter = 1 -%]
-					[%- FOR var = api.vars -%]
-						[% IF counter % 2 %]
-						<tr>
-						[%- END -%]
-							<td>
-								<a href="?page=code&amp;module=[% module %]&amp;location=[% location %]&amp;source=[% source %]#line[% var.line %]">
-									[% var.name %]
-								</a>
-							</td>
-						[% IF !(counter % 2) %]
-						</tr>
-						[% END -%]
-						[% counter = counter + 1 -%]
-					[% END -%]
-					[% IF !(counter % 2) %]
-						[% IF counter > 2 %]<td></td>[% END %]
-						</tr>
-					[%- END -%]
-					</table>
+				<th rowspan="[% (api.vars.size - api.vars.size % ApiColumns + ApiColumns) / ApiColumns || 1 %]">Package Variables</th>
+				[% counter = 1 -%]
+				[% FOR vars = api.vars %]
+				<td[% IF counter == api.vars.size %] colspan="[% ApiColumns - api.vars.size % ApiColumns + 1 %]"[% END %]>
+					<a href="?page=code&amp;module=&amp;location=&amp;source=#[% vars.line %]">
+						[% vars.name %]
+					</a>
 				</td>
+					[% IF counter % ApiColumns == 0 %]
+			</tr>
+			<tr>
+					[%- END -%]
+					[% counter = counter + 1 -%]
+				[% END %]
 			</tr>
 			[% END -%]
 		</table>
