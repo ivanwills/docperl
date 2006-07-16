@@ -4,11 +4,11 @@ DocPerl::Config - Details on the configuration setting for the DocPerl applicati
 
 =head1 VERSION
 
-This documentation refers to DocPerl::Cached version 0.3.
+This documentation refers to DocPerl::Config version 0.5.
 
 =head1 DESCRIPTION
 
-DocPerl's configuration is stored in the file data/docperl.conf which is an ini
+DocPerl's configuration is stored in the file docperl.conf which is an ini
 style file. 
 
 =head2 Sections
