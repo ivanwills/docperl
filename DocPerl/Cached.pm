@@ -179,7 +179,6 @@ sub _save_cache {
 	my $self	= shift;
 	my %arg		= @_;
 	my $conf	= $self->{conf};
-	my $touch	= $conf->{General}{Touch};
 	my $source	= $arg{source};
 	my $cache	= $arg{cache};
 	
@@ -228,14 +227,13 @@ sub _save_cache {
 	close $cache_fh;
 	
 	# touch the file using the source file's time stamps
-	if ( $source ne 1  && -x $touch && $source =~ m{^ ( [\w\-\./]+ ) $}xs ) {
+	if ( $source ne 1  && $source =~ m{^ ( [\w\-\./]+ ) $}xs ) {
 		my $stat = stat $1;
 		my ($atime) = $stat->atime =~ m{^ (\d+) $}xs;
 		my ($mtime) = $stat->mtime =~ m{^ (\d+) $}xs;
 		my ($full)  = "$dir/$file" =~ m{^ ([\w\-\./]+) $}xs;
 		utime $atime, $mtime, $full;
 	}
-	#warn( "$touch --reference=$arg{source} $dir/$file" );
 	
 	return;
 }
