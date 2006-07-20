@@ -175,7 +175,7 @@
 				[% counter = 1 -%]
 				[% FOR sub = api.class %]
 				<td[% IF counter == api.class.size %] colspan="[% ApiColumns - api.class.size % ApiColumns + 1 %]"[% END %]>
-					<a href="?page=code&amp;module=&amp;location=&amp;source=#[% sub.line %]">
+					<a href="?page=code&amp;module=[% module %]&amp;location=[% location %]&amp;source=[% source %]#line[% sub.line %]">
 						[% sub.name %]
 					</a>
 				</td>
@@ -193,7 +193,7 @@
 				[% counter = 1 -%]
 				[% FOR sub = api.object %]
 				<td[% IF counter == api.object.size %] colspan="[% ApiColumns - api.object.size % ApiColumns + 1 %]"[% END %]>
-					<a href="?page=code&amp;module=&amp;location=&amp;source=#[% sub.line %]">
+					<a href="?page=code&amp;module=[% module %]&amp;location=[% location %]&amp;source=[% source %]#line[% sub.line %]">
 						[% sub.name %]
 					</a>
 				</td>
@@ -211,7 +211,7 @@
 				[% counter = 1 -%]
 				[% FOR sub = api.func %]
 				<td[% IF counter == api.func.size %] colspan="[% ApiColumns - api.func.size % ApiColumns + 1 %]"[% END %]>
-					<a href="?page=code&amp;module=&amp;location=&amp;source=#[% sub.line %]">
+					<a href="?page=code&amp;module=[% module %]&amp;location=[% location %]&amp;source=[% source %]#line[% sub.line %]">
 						[% sub.name %]
 					</a>
 				</td>
@@ -229,7 +229,7 @@
 				[% counter = 1 -%]
 				[% FOR vars = api.vars %]
 				<td[% IF counter == api.vars.size %] colspan="[% ApiColumns - api.vars.size % ApiColumns + 1 %]"[% END %]>
-					<a href="?page=code&amp;module=&amp;location=&amp;source=#[% vars.line %]">
+					<a href="?page=code&amp;module=[% module %]&amp;location=[% location %]&amp;source=[% source %]#line[% vars.line %]">
 						[% vars.name %]
 					</a>
 				</td>
