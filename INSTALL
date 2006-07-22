@@ -5,7 +5,7 @@ files where ever you want and then set up your web server to execute the
 docperl.cgi script. For apache this may be just adding something like:
 
 <Directory "/path/to/docperl">
-	Options +ExecCGI
+    Options +ExecCGI
     AllowOverride Limit
     DirectoryIndex docperl.cgi
     AddHandler cgi-script .cgi
