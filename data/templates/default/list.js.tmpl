@@ -58,12 +58,13 @@ function count_tree( tree, counter ) {
 			for ( var t in data )
 				tt.push(t);
 			if ( data && tt.length )
-				count_tree( data, counter );
+				count += count_tree( data, counter );
 		}
 		else if ( tree[module].length > 0 )
 			count++;
 	}
-	add_count( counter, count );
+	//add_count( counter, count );
+	return count;
 }
 
 /**	
