@@ -173,18 +173,13 @@
 	
 		<h1>Perl Documentation</h1>
 		<!--h2>Search</h2-->
-		<center>
-			<!--form action="" onsubmit="search(); return false;"-->
+		<center style="padding-bottom: 1em">
 			<table>
 				<tr>
-					<th>Search&nbsp;:&nbsp;</th>
-					<td><input type="text" name="search" id="search" size="15" onkeyup="search(false);"/></td>
-				</tr>
-				<tr>
-					<td colspan="2" style="text-align: center"><input type="button" value="Find Modules" onclick="search(true);"/></td>
+					<td><input type="text" name="search" id="search" size="15" onkeyup="search(false);" title="Find modules by name"/></td>
+					<td><input type="button" value="Search" onclick="search(true);"/></td>
 				</tr>
 			</table>
-			<!--/form-->
 		</center>
 		<div id="results_doc" style="display:none">
 			<h2 id="results_head">
