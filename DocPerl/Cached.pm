@@ -146,8 +146,8 @@ sub _check_cache {
 	return '' unless -f $file;
 	
 	# get the file stats for the source and cached files
-	my $source_stat	= stat $source if $source ne 1;
-	my $cache_stat	= stat $file;
+	my $source_stat = $source ne 1 ? stat $source : undef;
+	my $cache_stat  = stat $file;
 	
 	# check that the last modified times of both files are the same
 	return '' if $source ne 1 && $source_stat->mtime != $cache_stat->mtime;

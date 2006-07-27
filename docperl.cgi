@@ -15,11 +15,11 @@ use DocPerl;
 
 our $VERSION = version->new('0.4');
 
-Readonly my $BASE		=> $Bin;
-Readonly my $DATA		=> "$BASE/data";
-Readonly my $CONFIG		=> "$BASE/docperl.conf";
-#Readonly my $TEMPLATE	=> "$DATA/templates";
-#Readonly my $TEMPLATES	=> "$TEMPLATE/local:$TEMPLATE/default";
+Readonly my $BASE       => $Bin;
+Readonly my $DATA       => "$BASE/data";
+Readonly my $CONFIG     => "$BASE/docperl.conf";
+#Readonly my $TEMPLATE  => "$DATA/templates";
+#Readonly my $TEMPLATES => "$TEMPLATE/local:$TEMPLATE/default";
 
 #$SIG{__DIE__} = sub { error( "Internal error", $@ ) };
 
@@ -30,8 +30,8 @@ main();
 exit(0);
 
 sub main {
-	my $cgi	 	 = CGI->new();
-	my %cgi	 	 = $cgi->Vars();
+	my $cgi = CGI->new();
+	my %cgi = $cgi->Vars();
 	my $out;
 	
 	# get the configuration info
