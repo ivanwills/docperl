@@ -224,18 +224,20 @@
 		</div>
 		[%- END %]
 		<hr />
-		<a href="http://docperl.sourceforge.net/" target="_blank">DocPerl Home Page</a>
-		[% IF ClearCache -%]
-		<br />
-		<a href="?clearcache=1" target="_top">Clear Cache</a>
-		[%- END %]
-		<br />
-		<a href="?page=list&amp;sidebar=1">Bookmark for Firefox sidebar</a>
-		<br />
-		<a href="?" id="current-link" onmouseover="update_current_link();">Bookmark the page</a>
-		[% IF Debug %]
-		<div id="debug"></div>
-		[% END %]
+		<div style="padding-left: 3px">
+			<a href="http://docperl.sourceforge.net/" target="_blank">DocPerl Home Page</a>
+			[% IF ClearCache -%]
+			<br />
+			<a href="?clearcache=1" target="_top">Clear Cache</a>
+			[%- END %]
+			<br />
+			<a href="?page=list&amp;sidebar=1">Bookmark for Firefox sidebar</a>
+			<br />
+			<a href="?" id="current-link" onmouseover="update_current_link();">Bookmark the page</a>
+			[% IF Debug %]
+			<div id="debug"></div>
+			[% END %]
+		</div>
 		<hr />
 	</body>
 </html>
