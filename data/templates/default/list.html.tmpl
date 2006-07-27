@@ -106,6 +106,7 @@
 			}
 		/* ]]> */-->
 		</style>
+		<script type="text/javascript" src="?page=list.js&amp;sidebar=[% IF sidebar %]1[% ELSE %]0[% END %]"></script>
 		<script type="text/javascript">
 		<!--
 			[% js.pod %]
@@ -131,6 +132,8 @@
 					create_tree( local,	'local',	'local' );
 					add_count( 'local', count_tree( local, 'local' ) );
 					setTimeout( setup_modules, 10 );
+					if ( get_cookie('local') == 'hide' )
+						section_toggle('local');
 				}
 				else if ( group == 1 ) {
 					level = 0;
@@ -138,6 +141,8 @@
 					add_count( 'perl', count_tree( perl, 'perl' ) );
 					group++;
 					setTimeout( setup_modules, 10 );
+					if ( get_cookie('perl') == 'hide' )
+						section_toggle('perl');
 				}
 				else if ( group == 2 ) {
 					level = 0;
@@ -145,6 +150,8 @@
 					create_tree( inc,	'inc',	'inc' );
 					add_count( 'inc', count_tree( inc, 'inc' ) );
 					setTimeout( setup_modules, 10 );
+					if ( get_cookie('inc') == 'hide' )
+						section_toggle('inc');
 				}
 				else if ( group == 3 ) {
 					group++;
@@ -158,6 +165,8 @@
 						}
 					}
 					setTimeout( setup_modules, 10 );
+					if ( get_cookie('recent') == 'hide' )
+						section_toggle('recent');
 				}
 				else if ( group == 4 ) {
 					level = 0;
@@ -167,7 +176,6 @@
 			}
 		//-->
 		</script>
-		<script type="text/javascript" src="?page=list.js&amp;sidebar=[% IF sidebar %]1[% ELSE %]0[% END %]"></script>
 	</head>
 	<body onload="setup_modules();">
 	

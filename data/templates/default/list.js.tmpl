@@ -406,9 +406,9 @@ function list_toggle( id ) {
  *	Toggles a whole section open/closed.
  */
 function section_toggle( section ) {
-	var div		= document.getElementById( section );
-	var head	= document.getElementById( section + '_head' );
-	var link	= document.getElementById( 'plus__' + section );
+	var div  = document.getElementById( section );
+	var head = document.getElementById( section + '_head' );
+	var link = document.getElementById( 'plus__' + section );
 	// check the status of the list
 	if ( div.style && div.style.display ) {
 		// list is closed so open
@@ -417,6 +417,7 @@ function section_toggle( section ) {
 		link.removeChild( link.firstChild );
 		link.appendChild( document.createTextNode('-') );
 		link.title = 'Show';
+		clear_cookie( section );
 	}
 	else {
 		// list is open so close
@@ -425,6 +426,7 @@ function section_toggle( section ) {
 		link.removeChild( link.firstChild );
 		link.appendChild( document.createTextNode('+') );
 		link.title = 'Hide';
+		set_cookie( section, 'hide' );
 	}
 }
 
