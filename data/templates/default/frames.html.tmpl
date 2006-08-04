@@ -4,17 +4,40 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en-AU" xml:lang="en-AU">
 	<head>
 		<title>Perl Module Documentation</title>
-		<meta http-equiv="Content-Type"		content="text/html; charset=utf-8" />
-		<meta http-equiv="Content-Language"	content="en-au" />
-		<meta name="author"		 content="Ivan Wills" />
-		<meta name="copyright"	 content="Copyright (c) 2006 Ivan Wills, All Rights Reserved" />
+		<meta http-equiv="Content-Type"     content="text/html; charset=utf-8" />
+		<meta http-equiv="Content-Language" content="en-au" />
+		<meta name="author"      content="Ivan Wills" />
+		<meta name="copyright"   content="Copyright (c) 2006 Ivan Wills, All Rights Reserved" />
 		<meta name="description" content="" />
-		<meta name="keywords"	 content="" />
+		<meta name="keywords"    content="" />
 		<style type="text/css">
 		</style>
+		<script type="text/javascript">
+		<!--
+			var show = 'perl';
+			function title () {
+				var module = '';
+				var frames = window.frames;
+				for ( var i = 0; i < frames.length; i++ ) {
+					if ( frames[i].name == main && frames[i].document.title )
+						module = frames[i].document.title;
+				}
+				
+				if ( show == 'perl' ) {
+					document.title = 'DocPerl' + ' ' + module;
+					show = 'docperl';
+				}
+				else {
+					document.title = 'Perl Documentation';
+					show = 'perl';
+				}
+				setTimeout( title, 10000 );
+			}
+		//-->
+		</script>
 	</head>
-	<frameset cols="255,*">
-		<frame name="menu"	src="?page=list"></frame>
-		<frame name="main"	src="?page=module&amp;module=[% module %]"></frame>
+	<frameset cols="255,*" onload=" setTimeout( title, 10000 ); ">
+		<frame name="menu" src="?page=list"></frame>
+		<frame name="main" src="?page=module&amp;module=[% module %]"></frame>
 	</frameset>
 </html>

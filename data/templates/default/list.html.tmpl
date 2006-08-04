@@ -172,14 +172,36 @@
 					level = 0;
 					group++;
 					setTimeout( setup_modules, 10 );
+					setTimeout( fade_headding, 10000 );
 				}
+			}
+			var state      = 'perl';
+			var fade_count = 0;
+			var FADE_MAX   = 60;
+			function animate_headding () {
+				var head = document.getElementById('headding');
+				fade_count = 0;
+				if ( state == 'perl' ) {
+					state = 'docperl';
+					head.replaceChild( document.createTextNode('DocPerl'), head.firstChild );
+				}
+				else {
+					state = 'perl';
+					head.replaceChild( document.createTextNode('Perl\240Documentation'), head.firstChild );
+				}
+				setTimeout( fade_headding, 10000 );
+			}
+			function fade_headding () {
+				var head = document.getElementById('headding');
+				head.textContent = '\240' + head.textContent;
+				setTimeout( FADE_MAX == ++fade_count ? animate_headding : fade_headding, 100 );
 			}
 		//-->
 		</script>
 	</head>
 	<body onload="setup_modules();">
 	
-		<h1>Perl Documentation</h1>
+		<h1 id="headding" style="overflow: hidden">Perl&nbsp;Documentation</h1>
 		<!--h2>Search</h2-->
 		<center style="padding-bottom: 1em">
 			<table>
