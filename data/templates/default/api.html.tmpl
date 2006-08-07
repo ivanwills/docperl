@@ -92,17 +92,21 @@
 		<div class="hirachy">
 			<div>Class Inheritance</div>
 			[% INCLUDE class_hirachy
-				list = api.hirachy
+				list  = api.hirachy,
+				first = 1
 			%]
 			[% BLOCK class_hirachy %]
 				[% IF list.size %]
 				<ul>
 					[% FOR item = list %]
 					<li>
-						[% item.class %]
+						[% UNLESS first %]<a href="?page=module&module=[% item.class %]&location=[% location %]" target="main">[% END %]
+							[% item.class %]
+						[% UNLESS first %]</a>[% END %]
 						[%- IF item.hirachy %]
 							[% INCLUDE class_hirachy
-								list = item.hirachy
+								list  = item.hirachy,
+								first = 0
 							%]
 						[% END %]
 					</li>
@@ -123,10 +127,12 @@
 			[% END -%]
 			[% IF api.packages %]
 			<tr>
-				<th rowspan="[% (api.packages.size - api.packages.size % ApiColumns + ApiColumns) / ApiColumns %]">Modules</th>
+				<th rowspan="[% (api.packages.size - api.packages.size % ApiColumns + ApiColumns) / ApiColumns %]">Other Packages</th>
 				[% counter = 1 -%]
 				[% FOR package = api.packages %]
-				<td[% IF counter == api.packages.size %] colspan="[% ApiColumns - api.packages.size % ApiColumns + 1 %]"[% END %]>[% package %]</td>
+				<td[% IF counter == api.packages.size %] colspan="[% ApiColumns - api.packages.size % ApiColumns + 1 %]"[% END %]>
+					[% package %]
+				</td>
 					[% IF counter % ApiColumns == 0 %]
 			</tr>
 			<tr>
@@ -146,7 +152,11 @@
 				<th rowspan="[% (api.modules.size - api.modules.size % ApiColumns + ApiColumns) / ApiColumns %]">Modules</th>
 				[% counter = 1 -%]
 				[% FOR inc_module = api.modules %]
-				<td[% IF counter == api.modules.size %] colspan="[% ApiColumns - api.modules.size % ApiColumns + 1 %]"[% END %]>[% inc_module %]</td>
+				<td[% IF counter == api.modules.size %] colspan="[% ApiColumns - api.modules.size % ApiColumns + 1 %]"[% END %]>
+					<a href="?page=module&module=[% inc_module %]&location=[% location %]" target="main">
+						[% inc_module %]
+					</a>
+				</td>
 					[% IF counter % ApiColumns == 0 %]
 			</tr>
 			<tr>
@@ -160,7 +170,11 @@
 				<th rowspan="[% (api.parents.size - api.parents.size % ApiColumns + ApiColumns) / ApiColumns || 1 %]">Inherited Modules</th>
 				[% counter = 1 -%]
 				[% FOR inc_parents = api.parents %]
-				<td[% IF counter == api.parents.size %] colspan="[% ApiColumns - api.parents.size % ApiColumns + 1 %]"[% END %]>[% inc_parents %]</td>
+				<td[% IF counter == api.parents.size %] colspan="[% ApiColumns - api.parents.size % ApiColumns + 1 %]"[% END %]>
+					<a href="?page=module&module=[% inc_parents %]&location=[% location %]" target="main">
+						[% inc_parents %]
+					</a>
+				</td>
 					[% IF counter % ApiColumns == 0 %]
 			</tr>
 			<tr>
@@ -243,6 +257,7 @@
 			[% END -%]
 		</table>
 		<!--pre>[%# DUMP %]</pre-->
+		<br />
 		<br />
 		<div style="clear:both;font-size:0.8em">
 			<b>Note:</b> This API is just a guess on the meaning of the subroutines in the file.<br />
