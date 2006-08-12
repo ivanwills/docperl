@@ -239,6 +239,14 @@ sub process {
 		eval {
 			$api{hirachy} = [ get_hirachy( $api{package} ) ];
 		};
+		if ( $@ ) {
+			warn $@;
+			$api{hirachy} = $api{parents};
+		}
+		elsif ( !@{ $api{hirachy} } && @{ $api{parients} } ) {
+			warn "Found parents but not hirachy!";
+			$api{hirachy} = $api{parents};
+		}
 	}
 	if ( ref $api{modules} ) {
 		$api{modules} = [ sort keys %{ $api{modules} } ];
