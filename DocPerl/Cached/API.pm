@@ -98,18 +98,31 @@ sub process {
 	
 	# open the file
 	open my $fh, '<', $file or warn "Cannot open $file: $!\n" and return;
-	my %api;
-	my $i = 0;
+	my %api = ( pod => 0 );
+	my $i   = 0;
+	my $pod = 0;
+	my $end = 0;
 	
 	# loop through the file line by line
+	LINE:
 	while ( my $line = <$fh> ) {
 		$i++;
 		
-		# ignore lines starting with a =, {, } or #
-		next if $line =~ /^(?: = | (?: \s* (?: [{] | [}] | [#] ) ) )/xs;
+		if ( $line =~ /^=(\w*)/ || $pod ) {
+			$api{pod}++;
+			my $pod_cmd = $1;
+			$pod = $pod && $pod_cmd eq 'cut' ? 0 : 1;
+			warn "$pod_cmd\n" if $pod_cmd;
+			next LINE;
+		}
+		else { warn $line }
+		
+		# ignore lines starting with a {, } or #
+		next LINE if $line =~ /\s* (?: (?: (?: [{] | [}] ) \s* $ ) | [#] )/xs;
 		
 		# check if we have reached the end of the file
-		last if $line =~ /^__(END|DATA)__/;
+		$end = 1 if $line =~ /^__(END|DATA)__/;
+		next LINE if $end;
 		
 		# if the line starts with the package directive
 		if ( $line =~ /^\s*package ([\w:]+);/ ) {
@@ -130,7 +143,7 @@ sub process {
 							#xm ) {
 			my $parents = $2;
 			my @parents = split /\s+/, $parents;
-			$api{parents} = \@parents;
+			push @{ $api{parents} }, @parents;
 		}
 		
 		# check if the line starts with '@ISA' to indicate inhereted packages
@@ -138,7 +151,12 @@ sub process {
 			my $parents = $1;
 			my @parents = split /,\s*/, $parents;
 			$_ =~ s/'|\s//g for (@parents);    #'
-			$api{parents} = \@parents;
+			push @{ $api{parents} }, @parents;
+		}
+		elsif ( $line =~ / push \s* [(]? \s* \@ISA \s* , \s* (?:['"])? ([\w:]+) (?:['"])? /x ) {
+			my $parents = $1;
+			my @parents = split /,\s*/, $parents;
+			push @{ $api{parents} }, @parents;
 		}
 		elsif ( $line =~ m#^
 							\s* \@ISA \s* = \s* qw
@@ -149,7 +167,7 @@ sub process {
 			#warn "Untested!!!!!!!!!";
 			my $parents = $1;
 			my @parents = split /\s+/, $parents;
-			$api{parents} = \@parents;
+			push @{ $api{parents} }, @parents;
 		}
 		
 		# check for generic module 'use'
@@ -218,7 +236,6 @@ sub process {
 	
 	if ( $api{package} ) {
 		$api{version} = eval("require $api{package};\$$api{package}\:\:VERSION");
-		#warn $@ if $@;
 		eval {
 			$api{hirachy} = [ get_hirachy( $api{package} ) ];
 		};

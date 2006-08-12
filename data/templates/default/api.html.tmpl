@@ -147,6 +147,10 @@
 				<td colspan="[% ApiColumns %]">[% api.version %]</td>
 			</tr>
 			[% END -%]
+			<tr>
+				<th>Contains POD</th>
+				<td colspan="[% ApiColumns %]">[% IF api.pod %][% api.pod %] Lines[% ELSE %]No POD[% END %]</td>
+			</tr>
 			[% IF api.modules %]
 			<tr>
 				<th rowspan="[% (api.modules.size - api.modules.size % ApiColumns + ApiColumns) / ApiColumns %]">Modules</th>
