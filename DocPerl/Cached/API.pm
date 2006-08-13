@@ -98,7 +98,7 @@ sub process {
 	
 	# open the file
 	open my $fh, '<', $file or warn "Cannot open $file: $!\n" and return;
-	my %api = ( pod => 0 );
+	my %api = ( pod => 0, parents => [] );
 	my $i   = 0;
 	my $pod = 0;
 	my $end = 0;
@@ -112,16 +112,15 @@ sub process {
 			$api{pod}++;
 			my $pod_cmd = $1;
 			$pod = $pod && $pod_cmd eq 'cut' ? 0 : 1;
-			warn "$pod_cmd\n" if $pod_cmd;
 			next LINE;
 		}
-		else { warn $line }
 		
 		# ignore lines starting with a {, } or #
-		next LINE if $line =~ /\s* (?: (?: (?: [{] | [}] ) \s* $ ) | [#] )/xs;
+		next LINE if $line =~ /^\s* (?: (?: (?: [{] | [}] ) \s* $ ) | [#] )/xs;
 		
 		# check if we have reached the end of the file
 		$end = 1 if $line =~ /^__(END|DATA)__/;
+		# lines after the end/data can only add to POD stat
 		next LINE if $end;
 		
 		# if the line starts with the package directive
@@ -153,11 +152,6 @@ sub process {
 			$_ =~ s/'|\s//g for (@parents);    #'
 			push @{ $api{parents} }, @parents;
 		}
-		elsif ( $line =~ / push \s* [(]? \s* \@ISA \s* , \s* (?:['"])? ([\w:]+) (?:['"])? /x ) {
-			my $parents = $1;
-			my @parents = split /,\s*/, $parents;
-			push @{ $api{parents} }, @parents;
-		}
 		elsif ( $line =~ m#^
 							\s* \@ISA \s* = \s* qw
 							(?: [|] | [/] | [(] | [{] | \[ )
@@ -169,6 +163,11 @@ sub process {
 			my @parents = split /\s+/, $parents;
 			push @{ $api{parents} }, @parents;
 		}
+		elsif ( $line =~ / push \s* [(]? \s* \@ISA \s* , \s* (?:['"])? ([\w:]+) (?:['"])? /x ) {
+			my $parents = $1;
+			my @parents = split /,\s*/, $parents;
+			push @{ $api{parents} }, @parents;
+		}
 		
 		# check for generic module 'use'
 		elsif ( my ($module) = $line =~ /^\s*use\s+([\w:]*)/ ) {
@@ -177,9 +176,6 @@ sub process {
 		
 		# check for generic module 'require'
 		elsif ( my ($require) = $line =~ /^\s*require\s+([\w:]*)/ ) {
-			
-			#			my ($require) = $line =~ /require\s+([\w:]*)/;
-			#			warn $line;
 			$api{required}{$require}++;
 		}
 		
@@ -230,6 +226,7 @@ sub process {
 	}
 	close $fh;
 	
+	delete $api{parents} unless @{ $api{parents} };
 	my @paths = split /:/, $location eq 'local' ? $conf->{LocalFolders}{Path} : $conf->{IncFolders}{Path};
 	my $last = @INC - 1;
 	push @INC, @paths;
@@ -243,9 +240,9 @@ sub process {
 			warn $@;
 			$api{hirachy} = $api{parents};
 		}
-		elsif ( !@{ $api{hirachy} } && @{ $api{parients} } ) {
+		elsif ( !@{ $api{hirachy}[0]{hirachy} } && $api{parents} ) {
 			warn "Found parents but not hirachy!";
-			$api{hirachy} = $api{parents};
+			$api{hirachy}[0]{hirachy} = [ map {{ class => $_ }} @{$api{parents}} ];
 		}
 	}
 	if ( ref $api{modules} ) {
