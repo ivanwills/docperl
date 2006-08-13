@@ -233,6 +233,7 @@ sub process {
 	
 	if ( $api{package} ) {
 		$api{version} = eval("require $api{package};\$$api{package}\:\:VERSION");
+		warn $@ if $@;
 		eval {
 			$api{hirachy} = [ get_hirachy( $api{package} ) ];
 		};
@@ -273,11 +274,16 @@ then cascades down to the next level etc).
 sub get_hirachy {
 	my ( $object ) = @_;
 	my @hirachy;
+	my @parents = eval("\@$object\:\:ISA");
+	warn $@ if $@;
 	
-	foreach my $parent ( eval("\@$object\:\:ISA") ) {
+	foreach my $parent ( @parents ) {
 		eval("require $parent");
 		if ( !$@ ) {
 			push @hirachy, get_hirachy( $parent );
+		}
+		else {
+			push @hirachy, { class => $parent };
 		}
 	}
 	
