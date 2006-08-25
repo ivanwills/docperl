@@ -82,38 +82,41 @@ var tree_holder = new Array();
 function create_tree ( files, container_id, path, counter ) {
 	// need to stick each module into a container
 	var container= document.getElementById(container_id);
-	var ul		 = document.createElement('ul');
+	var ul       = document.createElement('ul');
 	ul.className = 'mod_list';
-	ul.id		 = 'ul__'+path;
+	ul.id        = 'ul__'+path;
 	level++;
+
 	if ( !counter )
 		counter = path;
 	else
 		ul.style.display = 'none';
 	if (!files)
 		files = tree_holder[path];
-	
+
 	var files_sort = new Array();
 	for ( var module in files ) {
 		files_sort.push(module);
 	}
 	files_sort.sort();
-	
+
 	for ( var module in files_sort ) {
 		module = files_sort[module];
 		if ( module != '*' ) {
-			var li	= document.createElement('li');
-			li.id	= 'li__' + path + '__' + module;
+			var li   = document.createElement('li');
+			li.id    = 'li__' + path + '__' + module;
+			var data = files[module];
+			var num  = 0;
 			var label;
-			var data	= files[module];
-			var num		= 0;
+
+			// should this just be 'num = data.size;' ?
 			for ( var sub in data ) {
 				num++;
 			}
-			
+
 			// the javascript contains only one element if there are no sub directories
 			li.appendChild( create_plus( num >= 2 ? path + '__' + module : null ) );
-			
+
 			data = files[module]['*'];
 			if ( data && data.length ) {
 				label = create_module( path + '__' + module, module );
@@ -121,6 +124,8 @@ function create_tree ( files, container_id, path, counter ) {
 			else {
 				label = document.createTextNode( module );
 			}
+
+			// 
 			li.appendChild( label );
 			tree_holder[path + '__' + module] = files[module];
 			ul.appendChild( li );
@@ -142,8 +147,8 @@ function create_tree ( files, container_id, path, counter ) {
  */
 function create_module(path, module) {
 	var display = path_to_module(path);
-	var label	= document.createElement('a');
-	label.href	= '?page=module&module=' + path;
+	var label   = document.createElement('a');
+	label.href  = '?page=module&module=' + path;
 	label.title = display;
 	label.setAttribute( 'onclick', 'javascript: click_module("' + path + '");' );
 	label.setAttribute( 'target', '[% IF !sidebar %]main[% ELSE %]_content[% END %]' );
@@ -441,7 +446,7 @@ function section_toggle( section ) {
  */
 function path_to_module(path) {
 	var module = path.replace(/__/g, '::');
-	return module.replace( /^(?:\w+)::(?:\w+)::/, '' );
+	return module.replace( /^(?:[^:]+)::(?:[^:]+)::/, '' );
 }
 
 /***** CURRENT LINK *****/
