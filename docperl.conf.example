@@ -28,6 +28,8 @@ suffixes:		pl
 # set the template search path
 Path:			./data/templates/local:./data/templates/default
 history_size:	10
+# this sets the time between title changes (in milli seconds)
+animation:		60000
 
 # Parameters always passed to templates
 [Template]

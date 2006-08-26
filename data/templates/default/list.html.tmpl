@@ -1,4 +1,5 @@
 [% UNLESS history_size %][% history_size = 10 %][% END -%]
+[% UNLESS animation %][% animation = 60000 %][% END -%]
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html
 	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
@@ -172,7 +173,7 @@
 					level = 0;
 					group++;
 					setTimeout( setup_modules, 10 );
-					setTimeout( fade_headding, 10000 );
+					setTimeout( fade_headding, [% animation %] );
 				}
 			}
 			var state      = 'perl';
@@ -189,7 +190,7 @@
 					state = 'perl';
 					head.replaceChild( document.createTextNode('Perl\240Documentation'), head.firstChild );
 				}
-				setTimeout( fade_headding, 10000 );
+				setTimeout( fade_headding, [% animation %] );
 			}
 			function fade_headding () {
 				var head = document.getElementById('headding');
