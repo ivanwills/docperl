@@ -13,31 +13,18 @@ This documentation refers to DocPerl::Cached version 0.4.
 
    use DocPerl::Cached;
 
-   # Brief but working code example(s) here showing the most common usage(s)
-   # This section will be as far as many users bother reading, so make it as
-   # educational and exemplary as possible.
+   # create a new object
+   my $cached = DocPerl::Cached->new( conf => { General => { Data => '/path/to/data' }, );
 
+   # clear the cached files
+   $cached->clear( '' );
 
 =head1 DESCRIPTION
 
-A full description of the module and its features.
+DocPerl::Cached provides a base for DocPerl classses that produce complex html
+pages that need to be cached for performance.
 
-May include numerous subsections (i.e., =head2, =head3, etc.).
-
-
-=head1 SUBROUTINES/METHODS
-
-A separate section listing the public components of the module's interface.
-
-These normally consist of either subroutines that may be exported, or methods
-that may be called on objects belonging to the classes that the module
-provides.
-
-Name the section accordingly.
-
-In an object-oriented module, this section should begin with a sentence (of the
-form "An object of this class represents ...") to give the reader a high-level
-context to help them understand the methods that are subsequently described.
+=head1 METHODS
 
 =cut
 
@@ -54,29 +41,29 @@ use File::stat;
 use File::Path;
 use base qw/Exporter/;
 
-our $VERSION = version->new('0.4.0');
-our @EXPORT = qw//;
+our $VERSION   = version->new('0.4.0');
+our @EXPORT    = qw//;
 our @EXPORT_OK = qw//;
 
 
-=head3 C<sub ( $search,  )>
+=head3 C<sub ( %args )>
 
-Param: C<$search> - type (detail) - description
+Arg: C<$search> - type (detail) - description
 
-Return: DocPerl::Cached - 
+Return: DocPerl::Cached - A new DocPerl::Cached object
 
-Description: 
+Description: Creates and initialises a new DocPerl::Cached or inherited object
 
 =cut
 
 sub new {
 	my $caller = shift;
 	my $class  = (ref $caller) ? ref $caller : $caller;
-	my %param  = @_;
-	my $self   = \%param;
+	my %args   = @_;
+	my $self   = \%args ;
 	
-	croak "Missing parameter conf" unless $param{conf};
-	my $conf = $param{conf};
+	croak "Missing args conf" unless $args{conf};
+	my $conf = $args{conf};
 	$self->{cache_dir} = "$conf->{General}{Data}/cache";
 	
 	bless $self, $class;
@@ -93,7 +80,7 @@ packages for any initialisation that they need.
 =cut
 
 sub init {
-	my $self	= shift;
+	my $self = shift;
 	
 	return;
 }
@@ -116,9 +103,9 @@ modified times are different. Returning the cache contents if they match.
 =cut
 
 sub _check_cache {
-	my $self	= shift;
-	my %arg		= @_;
-	my $conf	= $self->{conf};
+	my $self   = shift;
+	my %arg    = @_;
+	my $conf   = $self->{conf};
 	my $source = $arg{source};
 	my $cache  = $arg{cache};
 	
@@ -140,7 +127,7 @@ sub _check_cache {
 	}
 	
 	# get the cached file's full name
-	my $file	= "$self->{cache_dir}/$cache";
+	my $file = "$self->{cache_dir}/$cache";
 	
 	# check that there is a cache file
 	return '' unless -f $file;
@@ -176,11 +163,11 @@ Description: Saves some calculated data to a cache file
 =cut
 
 sub _save_cache {
-	my $self	= shift;
-	my %arg		= @_;
-	my $conf	= $self->{conf};
-	my $source	= $arg{source};
-	my $cache	= $arg{cache};
+	my $self   = shift;
+	my %arg    = @_;
+	my $conf   = $self->{conf};
+	my $source = $arg{source};
+	my $cache  = $arg{cache};
 	
 	return if $conf->{General}{Cache} && $conf->{General}{Cache} eq 'off';
 	
@@ -198,9 +185,9 @@ sub _save_cache {
 	}
 	
 	# split up the directory parts of the cache
-	my @parts	= split m{/}, $cache;
-	my $file	= pop @parts;
-	my $dir		= $self->{cache_dir};
+	my @parts = split m{/}, $cache;
+	my $file  = pop @parts;
+	my $dir   = $self->{cache_dir};
 	
 	warn "The cache file '$dir/$file' does not have a suffix" unless $file =~ /\./;
 	
@@ -242,15 +229,13 @@ sub _save_cache {
 
 Param: C<$dir> - string (detail) - The cache directory to clear
 
-Return:  - 
-
-Description: 
+Description: Clears all the cache files.
 
 =cut
 
 sub clear_cache {
-	my $self	= shift;
-	my $dir		= shift || $self->{cache_dir};
+	my $self = shift;
+	my $dir  = shift || $self->{cache_dir};
 	
 	system( "rm -rf $dir/*" );
 }
