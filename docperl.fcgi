@@ -16,10 +16,7 @@ use DocPerl;
 our $VERSION = version->new('0.4');
 
 Readonly my $BASE       => $Bin;
-Readonly my $DATA       => "$BASE/data";
 Readonly my $CONFIG     => "$BASE/docperl.conf";
-#Readonly my $TEMPLATE  => "$DATA/templates";
-#Readonly my $TEMPLATES => "$TEMPLATE/local:$TEMPLATE/default";
 
 #$SIG{__DIE__} = sub { error( "Internal error", $@ ) };
 
@@ -42,10 +39,10 @@ sub main {
 	$config{template} ||= {};
 	
 	# create a new doc perl object
-	my $dp = DocPerl->new( cgi => \%cgi, conf => \%config, data => $DATA, );
+	my $docperl = DocPerl->new( cgi => \%cgi, conf => \%config, );
 	
-	print $cgi->header( $dp->mime() );
-	print $dp->process();
+	print $cgi->header( $docperl->mime() );
+	print $docperl->process();
 }
 
 # catastrofic error page

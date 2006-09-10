@@ -10,38 +10,32 @@ This documentation refers to DocPerl version 0.4.
 
 =head1 SYNOPSIS
 
+   # Load the DocPerl module
    use DocPerl;
    
-   # Brief but working code example(s) here showing the most common usage(s)
-   # This section will be as far as many users bother reading, so make it as
-   # educational and exemplary as possible.
+   # create a new DocPerl Object
+   my $docperl = DocPerl->new(
+       cgi       => $cgi_params,
+       conf      => $config_params,
+       save_data => 0,
+   );
+   
+   # print CGI headders
+   print $cgi->headder( $docperl->mime() );
 
+   # print the DocPerl document
+   print $docperl->process();
 
 =head1 DESCRIPTION
 
-A full description of the module and its features.
+This module provides the basic controll of DocPerl.
 
-May include numerous subsections (i.e., =head2, =head3, etc.).
-
-
-=head1 SUBROUTINES/METHODS
-
-A separate section listing the public components of the module's interface.
-
-These normally consist of either subroutines that may be exported, or methods
-that may be called on objects belonging to the classes that the module
-provides.
-
-Name the section accordingly.
-
-In an object-oriented module, this section should begin with a sentence (of the
-form "An object of this class represents ...") to give the reader a high-level
-context to help them understand the methods that are subsequently described.
+=head1 METHODS
 
 =cut
 
 # Created on: 2006-01-31 19:59:04
-# Create by:  ivan
+# Create by:  Ivan Wills
 
 use strict;
 use warnings;
@@ -66,6 +60,8 @@ C<cgi> - CGI - the cgi object.
 
 C<conf> - Config::Std - The configuration object
 
+C<save_data> - bool - Flags that the data built up in the list function should be kept because this object will be reused other wise it will be removed to save on the passing arround unnessesary data.
+
 Return: DocPerl - A new DocPerl object.
 
 Description: Creates a new DocPerl object with the template file name and mime
@@ -79,8 +75,8 @@ sub new {
 	my %param  = @_;
 	my $self   = \%param;
 
-	carp "Need cgi parameters"	unless $self->{cgi};
-	carp "Need conf parameters"	unless $self->{conf};
+	carp "Need cgi parameters"  unless $self->{cgi};
+	carp "Need conf parameters" unless $self->{conf};
 	
 	bless $self, $class;
 	
@@ -100,30 +96,30 @@ cgi parameters.
 =cut
 
 sub init {
-	my $self	= shift;
-	my $q		= $self->{cgi};
-	my $conf	= $self->{conf};
-	my $page	= $q->{page};
+	my $self = shift;
+	my $q    = $self->{cgi};
+	my $conf = $self->{conf};
+	my $page = $q->{page};
 	
 	# initialise the template name and mime type
 	if ( $page ) {
 		my $template = $page;
 		if ( $template =~ /\.(\w+)$/ ) {
-			$self->{template}	= $template;
-			my $type			= $1 eq 'css' ? 'css'
-								: $1 eq 'js'  ? 'javascript'
-								:               $1;
-			$self->{mime}		= "text/$type";
+			$self->{template} = $template;
+			my $type          = $1 eq 'css' ? 'css'
+			                  : $1 eq 'js'  ? 'javascript'
+			                  :               $1;
+			$self->{mime}     = "text/$type";
 		}
 		else {
-			$self->{template}	= "$template.html";
-			$self->{mime}		= "text/html";
+			$self->{template} = "$template.html";
+			$self->{mime}     = "text/html";
 		}
 	}
 	else {
 		# if no page is given the default template is to create the frames page
-		$self->{template}	= "frames.html";
-		$self->{mime}		= "text/html";
+		$self->{template} = "frames.html";
+		$self->{mime}     = "text/html";
 	}
 	
 	# check if a module has been passed as a CGI parameter
@@ -142,25 +138,25 @@ sub init {
 			$self->{current_location} = $1;
 			
 			# store the perl module name
-			$self->{module}		 = $module;
+			$self->{module}      = $module;
 			$self->{module_file} = $module;
 			
 			# store the module file name
-			$self->{module}		 =~ s{__}{::}gxs;
+			$self->{module}      =~ s{__}{::}gxs;
 			$self->{module_file} =~ s{__}{/}gxs;
 		}
 		elsif ( $q->{module} =~ m{^link/(.+)(?:[.]html)$} ) {
-			$self->{current_location}	= $q->{location};
-			$self->{module}				= $1;
-			$self->{module_file}		= $1;
+			$self->{current_location} = $q->{location};
+			$self->{module}           = $1;
+			$self->{module_file}      = $1;
 			
 			$self->{module} =~ s{/}{::}gxs;
 		}
 		else {
 			# extract the cgi parameters
-			$self->{current_location}	= $q->{location};
-			$self->{module}				= $q->{module};
-			$self->{module_file}		= $q->{module};
+			$self->{current_location} = $q->{location};
+			$self->{module}           = $q->{module};
+			$self->{module_file}      = $q->{module};
 			
 			# Convert the module_file parameter to a more file like name
 			# ie convert double colons to forward slashes (:: -> /)
@@ -206,7 +202,7 @@ sub init {
 		$self->{folders}  = \@folders;
 		$self->{suffixes} = \@suffixes;
 		$self->{sources}  = \@files;		# all files that match the module name
-		$self->{source}	  = $q->{source} || $files[0]{file};
+		$self->{source}   = $q->{source} || $files[0]{file};
 	}
 }
 
@@ -220,10 +216,10 @@ parameters that contain the information to be used by the template system.
 =cut
 
 sub process {
-	my $self	= shift;
-	my $conf	= $self->{conf};
-	my $q		= $self->{cgi};
-	my $page	= $q->{page};
+	my $self = shift;
+	my $conf = $self->{conf};
+	my $q    = $self->{cgi};
+	my $page = $q->{page};
 	my %vars;
 	my $out;
 	my $cache   = DocPerl::Cached->new( %$self );
@@ -273,12 +269,12 @@ sub process {
 	}
 	
 	# set up other required params
-	$vars{DUMP}		= Dumper( \%vars );
-	$vars{module}	= $self->{module};
-	$vars{file}		= $self->{module_file};
-	$vars{location}	= $self->{current_location};
-	$vars{sources}	= $self->{sources};
-	$vars{source}	= $self->{source};
+	$vars{DUMP}     = Dumper( \%vars );
+	$vars{module}   = $self->{module};
+	$vars{file}     = $self->{module_file};
+	$vars{location} = $self->{current_location};
+	$vars{sources}  = $self->{sources};
+	$vars{source}   = $self->{source};
 	
 	# get the template object
 	my $tmpl = $self->get_templ_object();
@@ -311,7 +307,7 @@ Description: Gets the template file for the current page
 =cut
 
 sub template {
-	my $self	= shift;
+	my $self = shift;
 	return $self->{template}.'.tmpl';
 }
 
@@ -324,8 +320,8 @@ Description: Gets (or creates then gets) the template toolkit object.
 =cut
 
 sub get_templ_object {
-	my $self	= shift;
-	my $conf	= $self->{conf};
+	my $self = shift;
+	my $conf = $self->{conf};
 	
 	return $self->{templ} if $self->{templ};
 	
@@ -346,7 +342,7 @@ Description: Gets the mime type of the current template file
 =cut
 
 sub mime {
-	my $self	= shift;
+	my $self = shift;
 	return $self->{mime} || 'text/html';
 }
 
@@ -361,9 +357,9 @@ information.
 =cut
 
 sub list {
-	my $self	= shift;
-	my $q		= $self->{cgi};
-	my $conf	= $self->{conf};
+	my $self = shift;
+	my $q    = $self->{cgi};
+	my $conf = $self->{conf};
 	my %vars;
 	
 	if ( !$conf->{Template}{LocalOnly} ) {
@@ -378,14 +374,14 @@ sub list {
 		# Move any module found in the pod name space to the PERL
 		# location and create the javascript for the list page
 		$vars{PERL} = $vars{INC}{P}{pod};
-		my $perl = _organise_perl( $vars{INC}{P}{pod} );
+		my $perl    = _organise_perl( $vars{INC}{P}{pod} );
 		$vars{perl} = $self->_create_js( 'perl', $perl );
 		#$vars{perl} = $self->_create_js( 'perl', { POD => $vars{PERL} } );
 		
 		# delete the pod documentation and reate the INC javascript
 		delete $vars{INC}{P}{pod};
-		$vars{inc} = $self->_create_js( 'inc', $vars{INC} );
-		$vars{inc_path}		= join "<br/>", ( @INC, split /:/, $conf->{IncFolders}{Path}, );
+		$vars{inc}      = $self->_create_js( 'inc', $vars{INC} );
+		$vars{inc_path} = join "<br/>", ( @INC, split /:/, $conf->{IncFolders}{Path}, );
 	}
 	
 	# find all the programs in the LocalFolders path and create its javascript
@@ -416,7 +412,8 @@ sub list {
 
 # gets the files listed in a specified path
 sub _get_files {
-	my $self	= shift;
+	my $self       = shift;
+	my $conf       = $self->{conf};
 	my $cgi_module = $self->{cgi}{module};
 	my ( $path_ref, $match, $vars ) = @_;
 	
@@ -430,7 +427,7 @@ sub _get_files {
 				my ( $full ) = @_;
 				
 				# ignore any file in the data directory
-				return if $full =~ /^$self->{data}/ || $full =~ m{^\./data};
+				return if $full =~ /^$conf->{General}{Data}/ || $full =~ m{^\./data};
 				
 				my ($inc, $module, $first_letter) = $full =~ m{^ ($path) / ((.).*) \. \w+ $}xs;
 				
@@ -467,6 +464,7 @@ sub _get_files {
 # recursivly finds files
 sub find {
 	my ( $path, $match, $action ) = @_;
+	
 	opendir DIR, $path or return;
 	my @files = readdir DIR;
 	close DIR;
@@ -487,11 +485,9 @@ sub find {
 # ie converts $vars to a javascript object syntax (the closest thing to
 # a perl hash in javascript).
 sub _create_js {
-	my $self	= shift;
-	#my $dbh	= $self->{-dbh};
-	#my $q		= $self->{-cgi};
-	#my $set	= $self->{-set};
+	my $self = shift;
 	my ( $name, $vars,  ) = @_;
+	
 	my $js = "var $name = {";
 	
 	for my $module ( sort keys %{ $vars } ) {
@@ -506,8 +502,9 @@ sub _create_js {
 
 # Recursivly creates a javascript object form a perl hash reference
 sub _create_js_object {
-	my $self	= shift;
+	my $self = shift;
 	my ( $name, $vars,  ) = @_;
+	
 	return '' unless ref $vars;
 	
 	my $js = "'$name':{'*':new Array(";
@@ -540,7 +537,7 @@ sub _organise_perl {
 		'Debug'                 => { map { 'perl'.$_ => 1 } qw/debug diag/ },
 		'Licence'               => { map { 'perl'.$_ => 1 } qw/artistic gpl / },
 		'Processes and Threads' => { map { 'perl'.$_ => 1 } qw/fork ipc thrtut / },
-		'Programming'			=> { map { 'perl'.$_ => 1 } qw/data form func lol number obj op pod podspec port ref sec style sub syn tie unicode unintro var xs/ },
+		'Programming'           => { map { 'perl'.$_ => 1 } qw/data form func lol number obj op pod podspec port ref sec style sub syn tie unicode unintro var xs/ },
 	);
 	
 	for my $module ( keys %{$perl} ) {
@@ -552,11 +549,11 @@ sub _organise_perl {
 			}
 		}
 		my $area = $module =~ /delta$/ ? 'Changes'
-				 : $module =~ /faq/    ? 'FAQ'
-				 : $module =~ /tut/    ? 'Tutorials'
-				 : $module =~ /mod/    ? 'Modules'
-				 : $found              ? undef
-				 :                       'Unsorted';
+		         : $module =~ /faq/    ? 'FAQ'
+		         : $module =~ /tut/    ? 'Tutorials'
+		         : $module =~ /mod/    ? 'Modules'
+		         : $found              ? undef
+		         :                       'Unsorted';
 		if ( $area ) {
 			$pod{$area}{$module} = $perl->{$module};
 		}
