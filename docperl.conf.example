@@ -1,35 +1,47 @@
-# This section allows for the getting of documentation of files not in the @INC path
+# LocalFolders
+# This section allows for setting of options for the 'Local Programs' section
+# on the DocPerl side bar.
 [LocalFolders]
 
+# Path - Sets the directories to find "local" perl files
 Path:			.
-Match:			\.(?:pm|pl|pod|cgi)$
-Exclude:		./data
-suffixes:		pod
-suffixes:		pm
-suffixes:		pl
-suffixes:		cgi
 
-# Info about extra paths to add to @INC ...
+# Match - A regular expression to determine which files to consider as Perl file
+Match:			\.(?:pm|pl|pod|cgi)$
+
+# Exclude: directories to exclude from the search path
+Exclude:		./data
+
+
+# IncFolders
+# This section specifies the options for the Files shown in the 'Inastalled
+# Modules' section. The default files affected are those in standard Perl
+# path.
 [IncFolders]
 
-# Add any extra directories to you @INC path here
+# Path - Add any extra directories to you @INC path here
 Path:			.
-# Set the regular expression for finding files in those directories
-Match:			\.(?:pm|pod)$
-Exclude:		./data
-suffixes:		pod
-suffixes:		pm
-suffixes:		pl
-#suffixes:		cgi
 
-# Details of template usage
+# Match - Set the regular expression for finding files in those directories
+# By default it is limited to Perl modules and POD files
+Match:			\.(?:pm|pod)$
+
+# Exclude: directories to exclude from the search path
+Exclude:		./data
+
+# Templates
+# These parameters are passed to all of the templates.
 [Templates]
 
 # set the template search path
 Path:			./data/templates/local:./data/templates/default
-history_size:	10
-# this sets the time between title changes (in milli seconds)
-animation:		60000
+
+# Set to a true value to allow web users to clear the cached documents
+# this could be a performance hist as it would enable a malicious to force the
+# recreation of all documents. Should be ok to enable for lightly used systems
+# which modules change regularly.
+ClearCache		0
+
 
 # Parameters always passed to templates
 [Template]
@@ -38,9 +50,21 @@ animation:		60000
 # installed modules)
 #LocalOnly:		true
 
+# Sets the number of links shown in the recent modules section of the list page
+history_size:	10
+
+# this sets the time between title changes (in milli seconds)
+animation:		60000
+
 # Set the labels for the various sections on the list page
+
+# The label for the local file section
 LocalLabel:		Local Programs
+
+# The label for the installed modules section
 IncLabel:		Installed Modules
+
+# The label for the perl modules documentation section
 PerlLabel:		Perl
 
 # Uncomment to allow web users to clear the current cache
@@ -49,11 +73,14 @@ PerlLabel:		Perl
 #	if random people clear the cache for no good reason
 #ClearCache:	on
 
+
 # General configuration
 [General]
 
 # the location of the data directory
 Data:			./data
+
+# Enable/Disable cacheing
 #Cache:			off
 
 # DefaultModule
