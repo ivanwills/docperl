@@ -6,7 +6,7 @@ DocPerl::Cached::CODE - Displays the code of a specified file in syntax highlite
 
 =head1 VERSION
 
-This documentation refers to DocPerl::Cached::CODE version 0.4.
+This documentation refers to DocPerl::Cached::CODE version 0.6.0.
 
 =head1 SYNOPSIS
 
@@ -49,7 +49,7 @@ use Data::Dumper qw/Dumper/;
 use Scalar::Util;
 use base qw/DocPerl::Cached/;
 
-our $VERSION = version->new('0.4.0');
+our $VERSION = version->new('0.6.0');
 our @EXPORT = qw//;
 our @EXPORT_OK = qw//;
 

@@ -6,7 +6,7 @@ DocPerl::Cached::POD - Generates the HTML Documentation from a files POD
 
 =head1 VERSION
 
-This documentation refers to DocPerl::Cached::POD version 0.4.
+This documentation refers to DocPerl::Cached::POD version 0.6.0.
 
 
 =head1 SYNOPSIS
@@ -42,7 +42,7 @@ use base qw/DocPerl::Cached/;
 #use Pod::Html 1.0505;
 use Pod::Html;
 
-our $VERSION = version->new('0.4.0');
+our $VERSION = version->new('0.6.0');
 our @EXPORT = qw//;
 our @EXPORT_OK = qw//;
 

@@ -7,7 +7,7 @@ easily installable and working better solution.
 
 =head1 VERSION
 
-This documentation refers to DocPerl::Search::Simple version 0.1.
+This documentation refers to DocPerl::Search::Simple version 0.6.0.
 
 
 =head1 SYNOPSIS
@@ -54,7 +54,7 @@ use List::Util;
 use Data::Dumper qw/Dumper/;
 use base qw/Exporter/;
 
-our $VERSION = version->new('0.0.1');
+our $VERSION = version->new('0.6.0');
 our @EXPORT = qw//;
 our @EXPORT_OK = qw//;
 

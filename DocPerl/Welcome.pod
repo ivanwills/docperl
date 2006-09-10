@@ -1,0 +1,15 @@
+=head1 Welcome to DocPerl
+
+=head1 Things to do?
+
+=head2 Useful Links
+
+=over 4
+
+=item *
+
+L<perlfunc>
+
+=back
+
+=cut
