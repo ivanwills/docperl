@@ -17,20 +17,22 @@ use lib ($FindBin::Bin);
 my $CONFIG = "$FindBin::Bin/docperl.conf";
 
 my %option = (
-	compile			=> [],
-	purge			=> 0,
-	verbose 		=> 0,
-	man				=> 0,
-	help			=> 0,
-	VERSION			=> 0,
+	compile => [],
+	purge   => 0,
+	verbose => 0,
+	man     => 0,
+	help    => 0,
+	VERSION => 0,
 );
 
 my %required_modules = (
-	Readonly		=> { },
-	Template		=> { },
-	'Config::Std'	=> { },
-	'Pod::Html'		=> { },
-	version			=> { },
+	Readonly      => { },
+	Template      => { },
+	'Config::Std' => { },
+	'Pod::Html'   => { },
+	version       => { },
+	'File::stat'  => { },
+	'File::Path'  => { },
 );
 
 main();
@@ -127,7 +129,7 @@ sub main {
 	if ( ref $option{compile} && @{ $option{compile} } ) {
 		$config{Templates}{ClearCache} = 'on';
 		eval('use DocPerl');
-		my $dp = DocPerl->new( cgi => { page => 'list', }, conf => \%config, save_data => 1, data => $data, );
+		my $dp = DocPerl->new( cgi => { page => 'list', }, conf => \%config, save_data => 1, );
 		my %data = $dp->list();
 		
 		my @compile = map { split /,/ } @{ $option{compile} };
