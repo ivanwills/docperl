@@ -15,8 +15,8 @@ use DocPerl;
 
 our $VERSION = version->new('0.6.0');
 
-Readonly my $BASE       => $Bin;
-Readonly my $CONFIG     => "$BASE/docperl.conf";
+Readonly my $BASE   => $Bin;
+Readonly my $CONFIG => "$BASE/docperl.conf";
 
 #$SIG{__DIE__} = sub { error( "Internal error", $@ ) };
 

@@ -58,7 +58,7 @@ This module inspects perl files and tries to determine what subroutines/
 object methods/class methods and package variables are defined as well as
 the module use()ed, require()d and inherited from.
 
-=head1 SUBROUTINES/METHODS
+=head1 METHODS
 
 =cut
 
@@ -73,8 +73,8 @@ use Data::Dumper qw/Dumper/;
 use Scalar::Util;
 use base qw/DocPerl::Cached/;
 
-our $VERSION = version->new('0.6.0');
-our @EXPORT = qw//;
+our $VERSION   = version->new('0.6.0');
+our @EXPORT    = qw//;
 our @EXPORT_OK = qw//;
 
 =head3 C<display ( )>
@@ -88,11 +88,11 @@ inheritance tree if any of the module.
 =cut
 
 sub process {
-	my $self	= shift;
-	my $conf	= $self->{conf};
-	my $location= $self->{current_location};
-	my $source	= $self->{source} || '';
-	my $file	= $source;
+	my $self     = shift;
+	my $conf     = $self->{conf};
+	my $location = $self->{current_location};
+	my $source   = $self->{source} || '';
+	my $file     = $source;
 	
 	return unless -f $file;
 	

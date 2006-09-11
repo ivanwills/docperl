@@ -22,19 +22,7 @@ This documentation refers to DocPerl::Cached::CODE version 0.6.0.
 This module displays the code of a specified file in HTML with line numbers and
 some syntax high lighting.
 
-=head1 SUBROUTINES/METHODS
-
-A separate section listing the public components of the module's interface.
-
-These normally consist of either subroutines that may be exported, or methods
-that may be called on objects belonging to the classes that the module
-provides.
-
-Name the section accordingly.
-
-In an object-oriented module, this section should begin with a sentence (of the
-form "An object of this class represents ...") to give the reader a high-level
-context to help them understand the methods that are subsequently described.
+=head1 METHODS
 
 =cut
 
@@ -49,53 +37,49 @@ use Data::Dumper qw/Dumper/;
 use Scalar::Util;
 use base qw/DocPerl::Cached/;
 
-our $VERSION = version->new('0.6.0');
-our @EXPORT = qw//;
+our $VERSION   = version->new('0.6.0');
+our @EXPORT    = qw//;
 our @EXPORT_OK = qw//;
 
 
-=head3 C<process ( $var1, $var2,  )>
+=head3 C<process ( )>
 
-Param: C<$var1> - type (detail) - description
+Return: HASH - The processed code lines as HTML
 
-Param: C<$var2> - type (detail) - description
-
-Return:  - 
-
-Description: 
+Description: Convers the source file to HTML for display
 
 =cut
 
 sub process {
-	my $self		= shift;
-	my $q			= $self->{cgi};
-	my $code		= $self->{source};
-	my $in_pod		= 0;
-	my $here_marker	= '';
+	my $self        = shift;
+	my $q           = $self->{cgi};
+	my $code        = $self->{source};
+	my $in_pod      = 0;
+	my $here_marker = '';
 	my $here_style;
 	my @lines;
-	
+
 	return unless -f $code;
-	
+
 	open my $file, '<', $code or warn "Could not open the file '$code': $!" and return;
-	
+
 	while ( my $line = <$file> ) {
 		# convert tabs into spaces of width 4
 		my $code_line = to_spaces( $line, 4 );
-		
+
 		my $j         = $.;
 		my $line_no   = qq{<a name="line$j" class="line_no"> $j </a> };# $q->a( { -name => "line$j", -class => "line_no" }, " $j " ) . "  ";
-		
+
 		# Quote all special characters
 		$code_line =~ s/&/&amp;/gxs;
 		$code_line =~ s/</&lt;/gxs;
 		$code_line =~ s/>/&gt;/gxs;
-		
+
 		# check if the line we are currently passing is a here doc line
 		if ( $here_marker ) {
 			#$code_line = qq{<span class="pod">$code_line}; #$q->start_span( { -class => "pod" } ) . $code_line;
 		}
-		
+
 		# check if we are currently processing POD
 		if ( $in_pod || $code_line =~ /^=/ ) {
 			$in_pod = $code_line =~ /^=cut/ ? 0 : 1;
@@ -105,7 +89,7 @@ sub process {
 		elsif ( $code_line and not $here_marker ) {
 			# check if the line has a comment
 			my ( $code, $char, $comment ) = $code_line =~ /(?:^ | (.*?) ([^\$]) ) # (.*)$/xs;
-			
+
 			# check if the line is that sort of line
 			if ( not $code and not $char and not $comment ) {
 				$code    = $code_line;
@@ -115,7 +99,7 @@ sub process {
 			elsif ($comment) {
 				$comment = qq{<span class="comment">#$comment</span>}; #$q->span( { -class => "comment" }, "#$comment" );
 			}
-			
+
 			# tag the various parts of perl code
 			if ($code) {
 				# tag opperators
@@ -138,40 +122,39 @@ sub process {
 				$code =~ s/(\s)(not|or\s+not|or|and\s+not|and)(\s)/$1<span class="logic">$2<\/span>$3/gxs;
 				$code =~ s/(->|\s)(new)(\(|\s)/$1<span class="builtin">$2<\/span>$3/gxs;
 			}
-			
+
 			# reassemble the line of code
 			$code_line = $code;
 			$code_line .= $char    if $char;
 			$code_line .= $comment if $comment;
 		}
-		
+
 		# Check if the line contains a heredoc reference
 		if ( $line and $line =~ /<<(['"])(\w+)\1/ ) {
 			$here_style  = $1;
 			$here_marker = $2;
 		}
-		
+
 		# close the pod span if one started
 		if ( $in_pod ) {
 			$code_line .= qq{</span>}; #$q->end_span();
 		}
-		
+
 		# mark the line as such
 		$code_line = qq{<span class="line">$code_line</span>}; #$q->span( { -class => "line" }, $code_line );
 		$code_line =~ s/(?:\r?\n)+//gxs;
-		
-		
+
 		# check if the here doc has ended
 		if ( $here_marker and $line and $line =~ /^$here_marker/ ) {
 			$here_marker = undef;
 		}
-		
+
 		# add the line to the array
 		push @lines, "$line_no$code_line";
 	}
-	
+
 	close $file;
-	
+
 	return lines => \@lines;
 }
 

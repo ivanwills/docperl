@@ -25,7 +25,7 @@ A full description of the module and its features.
 May include numerous subsections (i.e., =head2, =head3, etc.).
 
 
-=head1 SUBROUTINES/METHODS
+=head1 METHODS
 
 =cut
 
@@ -168,16 +168,6 @@ modules that use source code filters are mutually incompatible).
 
 =head1 BUGS AND LIMITATIONS
 
-A list of known problems with the module, together with some indication of
-whether they are likely to be fixed in an upcoming release.
-
-Also, a list of restrictions on the features the module does provide: data types
-that cannot be handled, performance issues and the circumstances in which they
-may arise, practical limitations on the size of data sets, special cases that
-are not (yet) handled, etc.
-
-The initial template usually just has:
-
 There are no known bugs in this module.
 
 Please report problems to Ivan Wills (ivan.wills@gmail.com).
@@ -187,13 +177,11 @@ Patches are welcome.
 =head1 AUTHOR
 
 Ivan Wills - (ivan.wills@gmail.com)
-<Author name(s)>  (<contact address>)
 
 =head1 LICENSE AND COPYRIGHT
 
 Copyright (c) 2006 Ivan Wills (101 Miles St Bald Hills QLD Australia 4036).
 All rights reserved.
-
 
 This module is free software; you can redistribute it and/or modify it under
 the same terms as Perl itself. See L<perlartistic>.  This program is
