@@ -25,20 +25,7 @@ Performs a simple text search for a list of words in the cached documentation
 files. (Hopefully this will be replaced by something like KinoSearch or
 VectorSearch) 
 
-=head1 SUBROUTINES/METHODS
-
-A separate section listing the public components of the module's interface.
-
-These normally consist of either subroutines that may be exported, or methods
-that may be called on objects belonging to the classes that the module
-provides.
-
-Name the section accordingly.
-
-In an object-oriented module, this section should begin with a sentence (of the
-form "An object of this class represents ...") to give the reader a high-level
-context to help them understand the methods that are subsequently described.
-
+=head1 METHODS
 
 =cut
 
@@ -54,8 +41,8 @@ use List::Util;
 use Data::Dumper qw/Dumper/;
 use base qw/Exporter/;
 
-our $VERSION = version->new('0.6.0');
-our @EXPORT = qw//;
+our $VERSION   = version->new('0.6.0');
+our @EXPORT    = qw//;
 our @EXPORT_OK = qw//;
 
 
@@ -138,7 +125,7 @@ sub search {
 	
 	for my $file ( keys %files ) {
 		my ($type, $module, $extension) = $file =~ m{$pod/(\w+)/(.*)([.]\w+)$};
-		$module =~ s{/}{::}g;
+		$module           =~ s{/}{::}g;
 		$modules{$module} += $files{$file};
 	}
 	
@@ -189,16 +176,16 @@ Description:
 =cut
 
 sub process_file {
-	my $self = shift;
-	my $re   = $self->{regex};
-	my ( $file ) = @_;
-	my $count = 0;
+	my $self   = shift;
+	my $re     = $self->{regex};
+	my ($file) = @_;
+	my $count  = 0;
 	
 	open my $fh, '<', $file or warn "Could not open the file '$file' for reading: $!\n" and return;
 	{
 		undef $/;
 		my @count = <$fh> =~ /$re/g;
-		$count = @count;
+		$count    = @count;
 	}
 	
 	return $count;
