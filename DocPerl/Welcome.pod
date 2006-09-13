@@ -8,7 +8,15 @@
 
 =item *
 
-L<perlfunc>
+L<perlfunc>: Perl function documentation
+
+=item *
+
+L<http://sourceforge.net/tracker/?group_id=163244&atid=826975>: Bug reporting
+
+=item *
+
+L<http://docperl.sourceforge.net>: DocPerl home page
 
 =back
 
