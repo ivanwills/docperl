@@ -1,4 +1,4 @@
-# LocalFolders
+## LocalFolders
 # This section allows for setting of options for the 'Local Programs' section
 # on the DocPerl side bar.
 [LocalFolders]
@@ -13,7 +13,7 @@ Match:			\.(?:pm|pl|pod|cgi)$
 Exclude:		./data
 
 
-# IncFolders
+## IncFolders
 # This section specifies the options for the Files shown in the 'Inastalled
 # Modules' section. The default files affected are those in standard Perl
 # path.
@@ -29,7 +29,7 @@ Match:			\.(?:pm|pod)$
 # Exclude: directories to exclude from the search path
 Exclude:		./data
 
-# Templates
+## Templates
 # These parameters are passed to all of the templates.
 [Templates]
 
@@ -43,6 +43,7 @@ Path:			./data/templates/local:./data/templates/default
 ClearCache		0
 
 
+## Template
 # Parameters always passed to templates
 [Template]
 
@@ -74,6 +75,7 @@ PerlLabel:		Perl
 #ClearCache:	on
 
 
+## General
 # General configuration
 [General]
 
@@ -90,9 +92,9 @@ Data:			./data
 # a place holder (usually the first letter of the module name or the section
 # that the a POD file comes from for the standard perl documentation files.
 # some examples:
-# DefaultModule:	perl_programming_perlfunc
-# DefaultModule:	local__D__DocPerl
-# DefaultModule:	local__z__DocPerl
+#DefaultModule:	perl__Tutorials__perlcheat
+#DefaultModule:	local__D__DocPerl
+#DefaultModule:	local__D__DocPerl__Welcome
 # note that the last two examples would produce the same results
-DefaultModule:	perl_programming_perlfunc
+DefaultModule:	perl__Programming__perlfunc
 
