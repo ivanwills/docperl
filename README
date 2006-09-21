@@ -14,6 +14,15 @@ Local section of your docperl.conf file (located in the data directory).
 For more details on the options that can look at the documentation in
 DocPerl/Config.pod
 
+If you would like DocPerl to use pre generated POD files instead of creating
+them on the fly the first time they are needed you can use the following
+command:
+
+$ ./checksetup.pl -c pod
+
+Note: this will generate a lot of error which can generally be ignored (they
+are caused by bad or missing POD in the standard perl module files)
+
 If you have any problems try the forums at:
 http://sourceforge.net/forum/?group_id=163244
 
