@@ -42,8 +42,7 @@ use base qw/DocPerl::Cached/;
 #use Pod::Html 1.0505;
 use Pod::Html;
 
-our $VERSION = version->new('0.6.0');
-our @EXPORT = qw//;
+our $VERSION   = version->new('0.6.0');
 our @EXPORT_OK = qw//;
 
 =head3 C<process ( )>
@@ -57,25 +56,25 @@ when this object was created.
 =cut
 
 sub process {
-	my $self	= shift;
-	my $conf	= $self->{conf};
-	my $module	= $self->{module};
-	my $file	= $self->{source} || '';
-	my @folders	= $self->{folders};
+	my $self    = shift;
+	my $conf    = $self->{conf};
+	my $module  = $self->{module};
+	my $file    = $self->{source} || '';
+	my @folders = $self->{folders};
 	my @suffixes;
-	
-	croak "No location supplied" unless $self->{current_location};
-	
+
+	croak 'No location supplied' if !$self->{current_location};
+
 	# check that we found the proper file
-	return ( pod => "Could not find $self->{module_file} in ".join ", ", @folders )
+	return ( pod => "Could not find $self->{module_file} " . ( !$file ? 'no file' : 'in ' . join ', ', @folders ) )
 		if !$file || $file eq $self->{module_file};
-	
+
 	# check $file (for tainting)
-	($file) = $file =~ m{^ ( [\w\-./]+ ) $}xs;
-	($module) = $module =~ m{^ ( [\w\:]+ ) $}xs;
-	
-	return (pod => "File contains dodgy craricters ($file)") unless $file;
-	
+	($file)   = $file   =~ m{\A ( [\w\-./]+ ) \Z}xms;
+	($module) = $module =~ m{\A ( [\w\:]+ ) \Z}xms;
+
+	return ( pod => "File contains dodgy craricters ($file)" ) if !$file;
+
 	# construct the list of parameters
 	my @params = (
 		"--infile=$file",
@@ -83,44 +82,54 @@ sub process {
 		"--title=$module",
 		"--index",
 		"--cachedir=$conf->{General}{Data}/cache",
-		"--css=?page=css.css",
+		'--css=?page=css.css',
 	);
-	
+
 	# check if any values are tainted
-	for ( @params ) {
-		warn "Tainted $_" if tainted $_;
+	for (@params) {
+		carp "Tainted $_" if tainted $_;
 	}
-	
+
 	my $perl = $conf->{General}{Perl} || '/usr/bin/perl';
-	my $cmd  = "$perl -MPod::Html -e \"pod2html('" . join( "', '", @params ) . "\')\"";
-	
+	my $cmd = "$perl -MPod::Html -e \"pod2html('" . join( "', '", @params ) . "\')\"";
+
 	# Pod::Html only appears to be able to print to STDOUT so have to call it
 	# as an external program and capture STDOUT
-	tie( *STDOUT, 'POD::STDOUT' );
+	tie *STDOUT, 'POD::STDOUT';
+
 	# Create the HTML POD
-	eval{ pod2html( @params ); };
+	eval { pod2html(@params); };
 	my $pod = $POD::STDOUT::string;
 	untie *STDOUT;
-	
+
 	# check for errors
-	if ( $@ ) {
-		warn "Error in creating POD: $@";
-		return ( pod => "<html><head><title>Error</title></head><body><h1>Error</h1><p>Error in creating POD from $file</p></html>" );
+	if ($@) {
+		carp "Error in creating POD: $@";
+		return ( pod =>
+				"<html><head><title>Error</title></head><body><h1>Error</h1><p>Error in creating POD from $file</p></html>"
+		);
 	}
-	
+
 	# check that the html was created success fully
 	if ( length $pod < 100 ) {
-		return ( pod => "Could not create the POD for $module $!<br/><br/>\nGENERATED POD\n$pod\n<br/><br/>\n$cmd\n<br/><pre>". Dumper($conf)."</pre><br/>" );
+		return ( pod =>
+				  "Could not create the POD for $module $!<br/><br/>\nGENERATED POD\n$pod\n<br/><br/>\n$cmd\n<br/><pre>"
+				. Dumper($conf)
+				. '</pre><br/>' );
 	}
-	
+
 	# remove final number if one exists (bug with Pod::Html?)
-	$pod =~ s/\d$//s if $pod =~ /\d$/s;
+	if ( $pod =~ /\d$/xms ) {
+		$pod =~ s/\d$//xms;
+	}
+
 	# try to get rid of gaps between pre tags
-	$pod =~ s{</pre>(\s*)<pre>}{$1}ixsg;
+	$pod =~ s{</pre>(\s*)<pre>}{$1}ixmsg;
+
 	# convert relative links to work with DocPerl structure
 	my $location = $self->{current_location} || 'inc';
-	$pod =~ s{href="/}{target="main" href="?page=module&location=$location&module=link/}gxs;
-	
+	$pod =~ s{href="/}{target="main" href="?page=module&location=$location&module=link/}gxms;
+
 	# return the processed documentation
 	return ( pod => $pod );
 }
@@ -130,10 +139,10 @@ package POD::STDOUT;
 use base qw/Tie::Handle/;
 our $string = '';
 
-sub TIEHANDLE { $string = ''; my $s; bless \$s, shift      }
-sub PRINT     { shift; no warnings; $string .= join $,, @_ }
-sub PRINTF    { shift; no warnings; $string .= sprintf @_  }
-sub CLOSE     { }
+sub TIEHANDLE { $string = ''; my $s; return bless \$s, shift      }
+sub PRINT     { shift; no warnings; $string .= join $,, @_; return }
+sub PRINTF    { shift; no warnings; $string .= sprintf @_; return  }
+sub CLOSE     { return }
 
 1;
 
