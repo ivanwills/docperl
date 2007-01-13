@@ -42,9 +42,7 @@ use File::Path;
 use base qw/Exporter/;
 
 our $VERSION   = version->new('0.6.0');
-our @EXPORT    = qw//;
 our @EXPORT_OK = qw//;
-
 
 =head3 C<sub ( %args )>
 
@@ -58,17 +56,17 @@ Description: Creates and initialises a new DocPerl::Cached or inherited object
 
 sub new {
 	my $caller = shift;
-	my $class  = (ref $caller) ? ref $caller : $caller;
+	my $class  = ( ref $caller ) ? ref $caller : $caller;
 	my %args   = @_;
-	my $self   = \%args ;
-	
-	croak "Missing args conf" unless $args{conf};
+	my $self   = \%args;
+
+	croak 'Missing args conf' if !$args{conf};
 	my $conf = $args{conf};
 	$self->{cache_dir} = "$conf->{General}{Data}/cache";
-	
+
 	bless $self, $class;
 	$self->init();
-	
+
 	return $self;
 }
 
@@ -81,11 +79,13 @@ packages for any initialisation that they need.
 
 sub init {
 	my $self = shift;
-	
+
 	return;
 }
 
-sub process { carp "process should not be called directly from DocPerl::Cached is should be called from a drived object" }
+sub process {
+	return carp 'process should not be called directly from DocPerl::Cached is should be called from a drived object';
+}
 
 =head3 C<_check_cache ( %args )>
 
@@ -108,46 +108,47 @@ sub _check_cache {
 	my $conf   = $self->{conf};
 	my $source = $arg{source};
 	my $cache  = $arg{cache};
-	
+
 	return '' if $conf->{General}{Cache} && $conf->{General}{Cache} eq 'off';
-	
+
 	# check that the arguments are supplied
-	croak "Missing required argument - source, file" unless $source;
-	croak "Missing required argument - cache, location" unless $cache;
-	if ( $source =~ /[.][.]/ || $cache =~ /[.][.]/ ) {
-		warn "possible hack attempt with $source or $cache";
+	croak 'Missing required argument - source, file'    if !$source;
+	croak 'Missing required argument - cache, location' if !$cache;
+	if ( $source =~ /[.][.]/xms || $cache =~ /[.][.]/xms ) {
+		carp "possible hack attempt with $source or $cache";
 		return '';
 	}
-	
+
 	# check if the cache file has a suffix
-	if ( $cache !~ /\.\w+$/ && $source ne 1 ) {
+	if ( $cache !~ /\.\w+$/xms && $source ne '1' ) {
+
 		# add the sources suffix
-		my ( $suffix ) = $source =~ /(\.\w+)$/xs;
+		my ($suffix) = $source =~ /(\.\w+)$/xms;
 		$cache .= $suffix;
 	}
-	
+
 	# get the cached file's full name
 	my $file = "$self->{cache_dir}/$cache";
-	
+
 	# check that there is a cache file
-	return '' unless -f $file;
-	
+	return '' if !-f $file;
+
 	# get the file stats for the source and cached files
-	my $source_stat = $source ne 1 ? stat $source : undef;
+	my $source_stat = $source ne '1' ? stat $source : undef;
 	my $cache_stat  = stat $file;
-	
+
 	# check that the last modified times of both files are the same
-	return '' if $source ne 1 && $source_stat->mtime != $cache_stat->mtime;
-	
+	return '' if $source ne '1' && $source_stat->mtime != $cache_stat->mtime;
+
 	# read the contents of the cached file
-	open my $cache_fh, '<', $file or warn "Could not read the cache file $file: $!" and return '';
+	open my $cache_fh, '<', $file or carp "Could not read the cache file $file: $!" and return '';
 	my $data;
 	{
-		local $/;
+		local $/ = undef;
 		$data = <$cache_fh>;
 	}
 	close $cache_fh;
-	
+
 	# return the cached contents
 	return $data;
 }
@@ -168,60 +169,61 @@ sub _save_cache {
 	my $conf   = $self->{conf};
 	my $source = $arg{source};
 	my $cache  = $arg{cache};
-	
+
 	return if $conf->{General}{Cache} && $conf->{General}{Cache} eq 'off';
-	
+
 	# check that the arguments are supplied
-	croak "Missing required argument - source, file" unless $source;
-	croak "Source file does exist '$source'" if $source ne 1 && ! -f $source;
-	croak "Missing required argument - cache, location" unless $cache;
-	carp "No cache content to save!" && return unless $arg{content};
-	
+	croak 'Missing required argument - source, file'    if !$source;
+	croak "Source file does exist '$source'"            if $source ne '1' && !-f $source;
+	croak 'Missing required argument - cache, location' if !$cache;
+	carp 'No cache content to save!' && return if !$arg{content};
+
 	# check if the cache file has a suffix
-	if ( $cache !~ /\.\w+$/ && $source ne 1 ) {
+	if ( $cache !~ /\.\w+$/xms && $source ne '1' ) {
+
 		# add the sources suffix
-		my ( $suffix ) = $source =~ /(\.\w+)$/xs;
+		my ($suffix) = $source =~ /(\.\w+)$/xms;
 		$cache .= $suffix;
 	}
-	
+
 	# split up the directory parts of the cache
-	my @parts = split m{/}, $cache;
+	my @parts = split m{/}xms, $cache;
 	my $file  = pop @parts;
 	my $dir   = $self->{cache_dir};
-	
-	warn "The cache file '$dir/$file' does not have a suffix" unless $file =~ /\./;
-	
-	#warn "dir = $dir, ".join ' ', @parts;
+
+	carp "The cache file '$dir/$file' does not have a suffix" if $file !~ /\./xms;
+
+	#carp "dir = $dir, ".join ' ', @parts;
 	# make sure that we have all the directories up to the cached file
-	$dir .= '/'.join '/', @parts;
-	return unless $dir =~ m{^ ( [\w\-\./]+ ) $}xs;
-	eval{ mkpath $1 };
-	if ( $@ ) {
-		warn "Could not create the path $dir: $@";
+	$dir .= '/' . join '/', @parts;
+	return if $dir !~ m{^ ( [\w\-\./]+ ) $}xms;
+	eval { mkpath $1 };
+	if ($@) {
+		carp "Could not create the path $dir: $@";
 		return;
 	}
-	
+
 	# check that the file is OK
-	return unless $file =~ /^([\w\-\.]+)$/xs;
+	return if $file !~ /\A([\w\-\.]+)\Z/xms;
 	$file = $1;
-	
+
 	# open the cache file and write the contents
-	#warn "Saving cache file '$dir/$file'\n";
+	#carp "Saving cache file '$dir/$file'\n";
 	my %full = ( "$dir/$file" => 1 );
-	my ($full)= %full;
-	open my $cache_fh, '>', $full or warn "Unable to create the cache file '$full': $!" and return;
-	print {$cache_fh} $arg{content} or warn "No content was able to be added to '$full': $!" and return;
+	my ($full) = %full;
+	open my $cache_fh, '>', $full or carp "Unable to create the cache file '$full': $!" and return;
+	print {$cache_fh} $arg{content} or carp "No content was able to be added to '$full': $!" and return;
 	close $cache_fh;
-	
+
 	# touch the file using the source file's time stamps
-	if ( $source ne 1  && $source =~ m{^ ( [\w\-\./]+ ) $}xs ) {
+	if ( $source ne '1' && $source =~ m{\A ( [\w\-\./]+ ) \Z}xms ) {
 		my $stat = stat $1;
-		my ($atime) = $stat->atime =~ m{^ (\d+) $}xs;
-		my ($mtime) = $stat->mtime =~ m{^ (\d+) $}xs;
-		my ($full)  = "$dir/$file" =~ m{^ ([\w\-\./]+) $}xs;
+		my ($atime) = $stat->atime =~ m{\A (\d+) \Z}xms;
+		my ($mtime) = $stat->mtime =~ m{\A (\d+) \Z}xms;
+		my ($full)  = "$dir/$file" =~ m{\A ([\w\-\./]+) \Z}xms;
 		utime $atime, $mtime, $full;
 	}
-	
+
 	return;
 }
 
@@ -236,11 +238,15 @@ Description: Clears all the cache files.
 sub clear_cache {
 	my $self = shift;
 	my $dir  = shift || $self->{cache_dir};
-	
-	system( "rm -rf $dir/*" );
+
+	system "rm -rf $dir/*";
+
+	return;
 }
 
 sub DESTROY {
+
+	return;
 }
 
 1;
