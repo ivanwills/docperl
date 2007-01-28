@@ -289,8 +289,7 @@ sub list {
 
 		# find all the installed modules in the combined paths
 		$vars{INC} ||= {};
-		$self->_get_files( [ @INC, split /:/xms, $conf->{IncFolders}{Path}, ], $conf->{IncFolders}{Match}, $vars{INC},
-		);
+		$self->_get_files( [ @INC, split /:/xms, $conf->{IncFolders}{Path}, ], $conf->{IncFolders}{Match}, $vars{INC} );
 
 		# Move any module found in the pod name space to the PERL
 		# location and create the javascript for the list page
@@ -366,9 +365,7 @@ sub _get_files {
 				my $tmp = $vars->{$first_letter};
 
 				for my $part ( split m{/}xms, $module ) {
-					if ( !$tmp->{$path} || !ref $tmp->{$path} eq 'HASH' ) {
-						$tmp->{$part} = {};
-					}
+					$tmp->{$part} ||= {};
 					$tmp = $tmp->{$part};
 				}
 
