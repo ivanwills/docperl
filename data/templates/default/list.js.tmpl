@@ -5,18 +5,18 @@
  *	@version	0.4
  *	@created	2006-06-01
  *	@todo	Add AJAX stuff for file content searching
- *	@bug	
- *	
+ *	@bug
+ *
  *	This file contains the javascript for controlling the module list in DocPerl.
- *	
+ *
  */
 
-/**	
+/**
  *	@param	counter:	The counter to increment
  *	@param	amount: 	The amount to increment the counter by
- *	@todo	
- *	@bug	
- *	
+ *	@todo
+ *	@bug
+ *
  *	Increments the counter by amount (which could be negative)
  */
 function add_count( counter, amount ) {
@@ -27,26 +27,26 @@ function add_count( counter, amount ) {
 	counter_span.appendChild( document.createTextNode( counter_value ) );
 }
 
-/**	
+/**
  *	@param	counter:	the counter to reset
- *	@todo	
- *	@bug	
- *	
+ *	@todo
+ *	@bug
+ *
  *	Resets a counter to zero
  */
 function reset_count( counter ) {
 	var counter_span = document.getElementById( counter + '_count' );
-	
+
 	counter_span.removeChild( counter_span.firstChild );
 	counter_span.appendChild( document.createTextNode( '0' ) );
 }
 
-/**	
+/**
  *	@param	tree:	the module tree to count
  *	@param	counter:	The counter associated with the tree
- *	@todo	
- *	@bug	
- *	
+ *	@todo
+ *	@bug
+ *
  *	Counts the modules in a tree
  */
 function count_tree( tree, counter ) {
@@ -67,15 +67,15 @@ function count_tree( tree, counter ) {
 	return count;
 }
 
-/**	
- *	@param	files:	
- *	@param	container_id:	
+/**
+ *	@param	files:
+ *	@param	container_id:
  *	@param	path:	The path of the tree
  *	@param	counter:	The counter associated with this tree.
- *	@return	:	
- *	@todo	
- *	@bug	
- *	
+ *	@return	:
+ *	@todo
+ *	@bug
+ *
  *	Creates a <ul> tree of modules
  */
 var tree_holder = new Array();
@@ -98,7 +98,9 @@ function create_tree ( files, container_id, path, counter ) {
 	for ( var module in files ) {
 		files_sort.push(module);
 	}
-	files_sort.sort();
+	files_sort.sort( function (a,b) {
+		return a.toLowerCase() == b.toLowerCase() ? 0 : ( a.toLowerCase() > b.toLowerCase() ? 1 : -1 );
+	});
 
 	for ( var module in files_sort ) {
 		module = files_sort[module];
@@ -125,24 +127,24 @@ function create_tree ( files, container_id, path, counter ) {
 				label = document.createTextNode( module );
 			}
 
-			// 
+			//
 			li.appendChild( label );
 			tree_holder[path + '__' + module] = files[module];
 			ul.appendChild( li );
 		}
 	}
-	
+
 	container.appendChild( ul );
 	return ul;
 }
 
-/**	
+/**
  *	@param	path:	The full module path
  *	@param	module:	The module name.
  *	@return	<a>:	The anchor tag linking to the module information
- *	@todo	
- *	@bug	
- *	
+ *	@todo
+ *	@bug
+ *
  *	Creates the module link
  */
 function create_module(path, module) {
@@ -153,20 +155,20 @@ function create_module(path, module) {
 	label.setAttribute( 'onclick', 'javascript: click_module("' + path + '");' );
 	label.setAttribute( 'target', '[% IF !sidebar %]main[% ELSE %]_content[% END %]' );
 	label.appendChild( document.createTextNode( module ) );
-	
+
 	return label;
 }
 
-/**	
+/**
  *	@param	path:	The path to expand to (if no path supplied then a place
  *					holder element is created).
  *	@return	<a>|<div>:	Javascript linking anchor tag if there is a path or a
  *						place holder division other wise.
- *	@todo	
- *	@bug	
- *	
+ *	@todo
+ *	@bug
+ *
  *	Creates the expansion/collapse element for the lists if there are sub
- *	modules and a place holder element if there are no sub modules. 
+ *	modules and a place holder element if there are no sub modules.
  */
 function create_plus(path) {
 	var plus;
@@ -186,15 +188,15 @@ function create_plus(path) {
 		plus.style.cssText	= 'border-width: 0px;';
 		plus.appendChild( document.createTextNode( '.' ) );
 	}
-	
+
 	return plus;
 }
 
-/**	
+/**
  *	@param	path:	The path that the user clicked on.
- *	@todo	
- *	@bug	
- *	
+ *	@todo
+ *	@bug
+ *
  *	Event called when the user clicks on a module name. Adds the path to the
  *	recent modules list.
  */
@@ -223,11 +225,11 @@ function click_module( path ) {
 	display_recent(path);
 }
 
-/**	
+/**
  *	@param	path:	The path to add to the recent list
- *	@todo	
- *	@bug	
- *	
+ *	@todo
+ *	@bug
+ *
  *	Adds a path to the recent module list.
  */
 function display_recent(path) {
@@ -237,48 +239,48 @@ function display_recent(path) {
 	var name		= path_to_module(path);
 	recent_doc.style.cssText = '';
 	recent_doc.style.display = 'block';
-	
+
 	var li	= document.createElement('li');
 	li.appendChild( create_plus() );
 	li.appendChild( create_module( path, name ) );
-	
+
 	recent_ul.appendChild( li );
 	add_count( 'recent', 1 );
 }
 
-/**	
+/**
  *	@param	force:	A forces the search for module names less than 4 characters long
- *	@todo	
- *	@bug	
- *	
+ *	@todo
+ *	@bug
+ *
  *	Searches the all modules names to find those that match the search term
  */
 function search(force) {
 	var term		= document.getElementById('search').value;
 	var results_doc	= document.getElementById('results_doc');
-	
+
 	if ( !force && term.length < 4 )
 		return;
 	if ( !term ) {
 		results_doc.style.cssText = 'display:none';
 		return;
 	}
-	
+
 	var terms		= term.split(/\s+/);
 	var results		= document.getElementById('results');
 	var ul			= document.createElement('ul');
 	results_doc.style.cssText = '';
-	
+
 	while (results.firstChild)
 		results.removeChild(results.firstChild);
-	
+
 	ul.id = 'ul__results';
 	results.appendChild(ul);
 	reset_count('results');
-	
+
 	for ( var i in terms ) {
 		var term = terms[i];
-		
+
 		var list = show_found( new Array(perl.POD), term, 'perl__', 'POD' );
 		if ( list )
 			ul.appendChild( list );
@@ -291,15 +293,15 @@ function search(force) {
 	}
 }
 
-/**	
+/**
  *	@param	list:	This is the list to search
  *	@param	term:	The search tearm
  *	@param	base:	The display list id base
  *	@param	name:	The display name for the list of found modules
  *	@return	<li>:	A list item containg a list of all found items
- *	@todo	
- *	@bug	
- *	
+ *	@todo
+ *	@bug
+ *
  *	Creates list items for found modules
  */
 function show_found( list, term, base, name ) {
@@ -311,58 +313,58 @@ function show_found( list, term, base, name ) {
 	ul_sub.id	= 'ul__' + path;
 	li.appendChild( create_plus(path) );
 	li.appendChild( document.createTextNode(name) );
-	
+
 	for ( var i in list ) {
 		var item	= list[i];
 		var found	= find_in( item, term );
-		
+
 		if ( found.length ) {
 			count += found.length;
-			
+
 			for ( var item in found ) {
 				var li_sub	= document.createElement('li');
 				var name	= found[item];
 				name = name.replace( /::/g, '__' );
-				
+
 				li_sub.appendChild( create_plus() );
 				li_sub.appendChild( create_module( path + '__' + name, found[item] ) );
 				ul_sub.appendChild(li_sub);
 			}
 		}
 	}
-	
+
 	if ( !count )
 		return null;
-	
+
 	add_count( 'results', count );
 	li.appendChild(ul_sub);
-	
+
 	return li;
 }
 
-/**	
+/**
  *	@param	list:	The list to search through
  *	@param	term:	The search term to compare with
  *	@param	name:	The name of the module that represents list
  *	@return	Array:	Array of found modules
- *	@todo	
- *	@bug	
- *	
+ *	@todo
+ *	@bug
+ *
  *	Recurses through the list trying to find modules that match term
  */
 function find_in( list, term, name ) {
 	var next	= name ? name + '::' : '';
 	var found	= new Array();
 	var regex	= new RegExp( term, 'i' );
-	
+
 	for ( var item in list ) {
 		var module = next + item;
-		
+
 		// Check if the node is actually a module and if it matches the re
 		if ( list[item]['*'] && list[item]['*'].length && module.match( regex ) ) {
 			found.push( module );
 		}
-		
+
 		// itterate to sub modules
 		if ( item != '*' ) {
 			var matches = find_in( list[item], term, module );
@@ -373,11 +375,11 @@ function find_in( list, term, name ) {
 	return found;
 }
 
-/**	
+/**
  *	@param	id:	The id of the list to toggle
- *	@todo	
- *	@bug	
- *	
+ *	@todo
+ *	@bug
+ *
  *	Toggles open/close the list identified by id
  */
 function list_toggle( id ) {
@@ -403,11 +405,11 @@ function list_toggle( id ) {
 	}
 }
 
-/**	
+/**
  *	@param	section:	The section to toggle open/closed
- *	@todo	
- *	@bug	
- *	
+ *	@todo
+ *	@bug
+ *
  *	Toggles a whole section open/closed.
  */
 function section_toggle( section ) {
@@ -435,12 +437,12 @@ function section_toggle( section ) {
 	}
 }
 
-/**	
+/**
  *	@param	path:	The path to convert to a module name
  *	@return	string:	The propper module name
- *	@todo	
- *	@bug	
- *	
+ *	@todo
+ *	@bug
+ *
  *	Converts a path (which is in the form of {section}__{group}__module) into
  *	a standard module name.
  */
@@ -451,10 +453,10 @@ function path_to_module(path) {
 
 /***** CURRENT LINK *****/
 
-/**	
+/**
  *	@todo	implementation
- *	@bug	
- *	
+ *	@bug
+ *
  *	Sets the current link to a link that the user can click on to see the
  *	page in its current state.
  */
@@ -462,19 +464,19 @@ function path_to_module(path) {
 function update_current_link() {
 	var link = document.getElementById('current-link');
 	var url  = '?';
-	
+
 	// add the url to the link
 	link.href = url;
 }
 
 /***** COOKIES *****/
 
-/**	
+/**
  *	@param	name:	The name of the cookie wanted
  *	@return	string:	The value of the cokkie
- *	@todo	
- *	@bug	
- *	
+ *	@todo
+ *	@bug
+ *
  *	Gets the value of a cookie called name
  */
 function get_cookie(name) {
@@ -483,27 +485,27 @@ function get_cookie(name) {
 	var search_name		= " " + name + "=";
 	var start_of_cookie	= my_cookie.indexOf(search_name);
 	var end_of_cookie;
-	
+
 	if (start_of_cookie != -1) {
 		start_of_cookie += search_name.length;
 		// skip past cookie name
 		end_of_cookie = my_cookie.indexOf(";",start_of_cookie);
 		result = unescape(my_cookie.substring(start_of_cookie, end_of_cookie));
 	}
-	
+
 	return result
 }
 
-/**	
+/**
  *	@param	name:	The name of the cookie to set
  *	@param	value:	The value the should have
  *	@param	expires:	The time that the cookie expires (Date object)
  *	@param	path:	The path of the cookie
  *	@param	domain:	The domain of the cookie
  *	@param	secure:	Flags that the cookie should be secure
- *	@todo	
- *	@bug	
- *	
+ *	@todo
+ *	@bug
+ *
  *	Sets a cookie with the supplied parameters
  */
 function set_cookie(name, value, expires, path, domain, secure) {
@@ -515,14 +517,14 @@ function set_cookie(name, value, expires, path, domain, secure) {
 	document.cookie	 = new_cookie;
 }
 
-/**	
+/**
  *	@param	name:	The cookie to delete
  *	@param	path:	The path of the cookie
  *	@param	domain:	The domaing of the cookie
  *	@param	secure:	Flags if the cookie should be secure
- *	@todo	
- *	@bug	
- *	
+ *	@todo
+ *	@bug
+ *
  *	Clears/deletes a cookie from the system.
  */
 function clear_cookie(name, path, domain, secure) {
@@ -532,24 +534,24 @@ function clear_cookie(name, path, domain, secure) {
 	set_cookie(name, "ImOutOfHere", expDate, path, domain, secure)
 }
 
-/**	
+/**
  *	@param	cookie:	The cookie to check for existance
  *	@return	bool:	True if the cookie exists false other wise
- *	@todo	
- *	@bug	
- *	
+ *	@todo
+ *	@bug
+ *
  *	Determines the existance of a cookie
  */
 function exists_cookie(cookie) {
 	return (get_cookie(cookie) == null) ? false : true;
 }
 
-/**	
+/**
  *	@param	name:	The cookie to count
  *	@return	int:	The number of cookies with the name name
- *	@todo	
- *	@bug	
- *	
+ *	@todo
+ *	@bug
+ *
  *	Counts the number of cookies with the name 'name' (ie path, domain, etc are different)
  */
 function get_cookie_count(name) {
@@ -558,7 +560,7 @@ function get_cookie_count(name) {
 	var search_name		= " " + name + "=";
 	var name_length		= search_name.length;
 	var start_of_cookie	= myCookie.indexOf(search_name);
-	
+
 	while (start_of_cookie != -1) {
 		result += 1;
 		start_of_cookie = my_cookie.indexOf(search_name, start_of_cookie + name_length);
@@ -566,13 +568,13 @@ function get_cookie_count(name) {
 	return result;
 }
 
-/**	
+/**
  *	@param	name:	The name of the cookie
  *	@param	cookie_num:	The order of the cookie to get
  *	@return	string:	The value of the cookie
- *	@todo	
- *	@bug	
- *	
+ *	@todo
+ *	@bug
+ *
  *	For cookies with many entries this gets the one numberd cookie_num.
  */
 function get_cookie_number(name, cookie_num) {
@@ -583,11 +585,11 @@ function get_cookie_number(name, cookie_num) {
 		var search_name		= " " + name + "=";
 		var name_length		= search_name.length;
 		var start_of_cookie	= my_cookie.indexOf(search_name);
-		
+
 		for (cntr = 1; cntr < cookie_number; cntr++) {
 			start_of_cookie = my_cookie.indexOf(search_name, start_of_cookie + name_length);
 		}
-		
+
 		if (start_of_cookie != 1) {
 			start_of_cookie	 += name_length; // skip past cookie name
 			var end_of_cookie = my_cookie.indexOf(";", start_of_cookie);
@@ -609,7 +611,7 @@ function debug(msg) {
 		debug_found = true;
 		return debug(msg);
 	}
-	
+
 	var div = document.createElement('div');
 	div.appendChild( document.createTextNode(msg) );
 	debug_div.appendChild(div);
