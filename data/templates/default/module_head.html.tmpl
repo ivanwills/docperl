@@ -40,7 +40,7 @@
 		</style>
 		<script type="text/javascript">
 		<!--
-			
+
 		//-->
 		</script>
 	</head>
@@ -56,7 +56,9 @@
 	[%- END -%]
 				</td>
 				<td><a target="contents" title="View source code" href="?page=code&amp;module=[% module %]&amp;file=[% file %]&amp;location=[% location %]&amp;source=[% source.file %]">CODE</a></td>
+	[%- IF location != 'local' %]
 				<td><a target="contents" title="See latest documentation on CPAN" href="http://search.cpan.org/search?query=[% module %]&amp;mode=module"> CPAN</a></td>
+	[%- END -%]
 			</tr>
 [%- END -%]
 		</table>
