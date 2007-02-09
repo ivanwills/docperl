@@ -1,5 +1,230 @@
 package DocPerl::Cached::API;
 
+# Created on: 2006-03-19 20:32:12
+# Create by:  ivan
+# $Id$
+# # $Revision$, $HeadURL$, $Date$
+# # $Revision$, $Source$, $Date$
+
+use strict;
+use warnings;
+use version;
+use Carp;
+use Data::Dumper qw/Dumper/;
+use Scalar::Util;
+use English '-no_match_vars';
+use base qw/DocPerl::Cached/;
+
+our $VERSION   = version->new('0.6.0');
+our @EXPORT_OK = qw//;
+
+sub process {
+	my $self     = shift;
+	my $conf     = $self->{conf};
+	my $location = $self->{current_location};
+	my $source   = $self->{source} || '';
+	my $file     = $source;
+
+	return if !-f $file;
+
+	# open the file
+	open my $fh, '<', $file or carp "Cannot open $file: $!\n" and return;
+	my %api = ( pod => 0, parents => [] );
+	my $i   = 0;
+	my $pod = 0;
+	my $end = 0;
+
+	# loop through the file line by line
+LINE:
+	while ( my $line = <$fh> ) {
+		$i++;
+
+		if ( $line =~ /\A=(\w*)/xms || $pod ) {
+			$api{pod}++;
+			my $pod_cmd = $1;
+			$pod = $pod && $pod_cmd eq 'cut' ? 0 : 1;
+			next LINE;
+		}
+
+		# ignore lines starting with a {, } or #
+		next LINE if $line =~ /^\s* (?: (?: (?: [{] | [}] ) \s* $ ) | [#] )/xms;
+
+		# check if we have reached the end of the file
+		if ( $line =~ /^__(END|DATA)__/xms ) {
+			$end = 1;
+		}
+
+		# lines after the end/data can only add to POD stat
+		next LINE if $end;
+
+		# if the line starts with the package directive
+		if ( $line =~ /^\s*package ([\w:]+);/xms ) {
+			if ( $api{package} ) {
+				push @{ $api{packages} }, $1;
+			}
+			else {
+				$api{package} = $1;
+			}
+		}
+
+		# check if the line starts with 'use base' to indicate inhereted packages
+		elsif (
+			$line =~ m#\A
+					\s* use \s+ base \s+ qw
+					( [\|/({\[] )
+					\s*([\w:]+)\s*
+					( [\|/)}\]] )
+					#xms
+			) {
+			my $parents = $2;
+			my @parents = split /\s+/xms, $parents;
+			push @{ $api{parents} }, @parents;
+		}
+
+		# check if the line starts with '@ISA' to indicate inhereted packages
+		elsif ( $line =~ / \@ISA \s* = \s* \( ([^)]+) \)  /xms ) {
+			my $parents = $1;
+			my @parents = split /,\s*/xms, $parents;
+			for my $parent (@parents) {
+				$parent =~ s/'|\s//gxms;    #'
+			}
+			push @{ $api{parents} }, @parents;
+		}
+		elsif (
+			$line =~ m#^
+					\s* \@ISA \s* = \s* qw
+					(?: [|] | [/] | [(] | [{] | \[ )
+					\s*(.*)\s*
+					(?: [|] | [/] | [)] | [}] | \] )
+					#xms
+			) {
+			my $parents = $1;
+			my @parents = split /\s+/xms, $parents;
+			push @{ $api{parents} }, @parents;
+		}
+		elsif ( $line =~ / push \s* [(]? \s* \@ISA \s* , \s* (?:['"])? ([\w:]+) (?:['"])? /xms ) {
+			my $parents = $1;
+			my @parents = split /,\s*/xms, $parents;
+			push @{ $api{parents} }, @parents;
+		}
+
+		# check for generic module 'use'
+		elsif ( my ($module) = $line =~ /^\s*use\s+([\w:]*)/xms ) {
+			$api{modules}{$module}++;
+		}
+
+		# check for generic module 'require'
+		elsif ( my ($require) = $line =~ /^\s*require\s+([\w:]*)/xms ) {
+			$api{required}{$require}++;
+		}
+
+		# check for package variables
+		elsif ( my ($var) = $line =~ /^\s*our\s+([\$\%\@]\w+)/xms ) {
+			$api{vars}{$var} = $INPUT_LINE_NUMBER;
+		}
+
+		# check for sub directives
+		elsif ( my ($func) = $line =~ /^\s*sub\s+(\w+)/xms ) {
+			my $method     = 0;
+			my $found_line = $i;
+			my $line;
+			my $sub_line_no = 0;
+			while ( $sub_line_no < 10 && ( $line = <$fh> ) ) {
+				$i++;
+				if ( my ($require) = $line =~ /require\s+([\w:]*)/xms ) {
+					$api{required}{$require}++;
+				}
+
+				# if the line is of the from $self = shift then assume sub is a method
+				if ( $line =~ /}/xms ) {
+					$sub_line_no = 11;
+				}
+
+				# if the line is of the form $class = shift or $caller = shift assume sub is a class method
+				elsif ( $line =~ /\$(class|caller)\s*=\s*shift;/xms ) {
+					$api{class}{$func} = $found_line;
+					$method = 1;
+				}
+
+				# stop if we come accross a closing bracket
+				elsif ( $line =~ /\$(self|this)\s*=\s*shift;/xms ) {
+					$api{object}{$func} = $found_line;
+					$method = 1;
+				}
+
+				# alternate object opener $this = shift form
+				elsif ( $line =~ /my\s*\(\s*\$(self|this)[^\)]*\)\s*=\s*\@_;/xms ) {
+					$api{object}{$func} = $found_line;
+					$method = 1;
+				}
+
+				$sub_line_no++;
+			}
+
+			# if no a class or object method add to functions
+			if ( !$method ) {
+				$api{func}{$func} = $found_line;
+			}
+		}
+	}
+	close $fh;
+
+	if ( !@{ $api{parents} } ) {
+		delete $api{parents};
+	}
+	my @paths = split /:/xms, $location eq 'local' ? $conf->{LocalFolders}{Path} : $conf->{IncFolders}{Path};
+	my $inc_path_size = @INC - 1;
+	push @INC, @paths;
+
+	if ( $api{package} ) {
+		$api{version} = eval "require $api{package};\$$api{package}\:\:VERSION";
+		carp $EVAL_ERROR if $EVAL_ERROR;
+		eval { $api{hirachy} = [ get_hirachy( $api{package} ) ]; };
+		if ($EVAL_ERROR) {
+			carp $EVAL_ERROR;
+			$api{hirachy} = $api{parents};
+		}
+		elsif ( !@{ $api{hirachy}[0]{hirachy} } && $api{parents} ) {
+			carp 'Found parents but not hirachy!';
+			$api{hirachy}[0]{hirachy} = [ map { { class => $_ } } @{ $api{parents} } ];
+		}
+	}
+	if ( ref $api{modules} ) {
+		$api{modules} = [ sort keys %{ $api{modules} } ];
+	}
+	for my $type (qw/class object func vars/) {
+		if ( ref $api{$type} ) {
+			$api{$type} = [ map { { name => $_, line => $api{$type}{$_} } } sort keys %{ $api{$type} } ];
+		}
+	}
+	@INC = @INC[ 0 .. $inc_path_size ];
+
+	return ( api => \%api );
+}
+
+sub get_hirachy {
+	my ($object) = @_;
+	my @hirachy;
+	my @parents = eval "\@$object\:\:ISA";
+	carp $EVAL_ERROR if $EVAL_ERROR;
+
+	foreach my $parent (@parents) {
+		eval "require $parent";
+		if ( !$EVAL_ERROR ) {
+			push @hirachy, get_hirachy($parent);
+		}
+		else {
+			push @hirachy, { class => $parent };
+		}
+	}
+
+	return { class => $object, hirachy => \@hirachy };
+}
+
+1;
+
+__END__
+
 =head1 NAME
 
 DocPerl::Cached::API - Inspects a perl file to find what functions are defined
@@ -13,7 +238,7 @@ This documentation refers to DocPerl::Cached::API version 0.6.0.
 =head1 SYNOPSIS
 
   use DocPerl::Cached::API;
-  
+
   # Create a new API variable
   my $api = DocPerl::Cached::API->new(
       conf    => {
@@ -27,10 +252,10 @@ This documentation refers to DocPerl::Cached::API version 0.6.0.
       source => $file,
       current_location => '',
   );
-  
+
   # get a hash ref with the information about the API found
   my $description = $api->process();
-  
+
   # $description will contain something like
   # {
   #   api => {
@@ -58,24 +283,7 @@ This module inspects perl files and tries to determine what subroutines/
 object methods/class methods and package variables are defined as well as
 the module use()ed, require()d and inherited from.
 
-=head1 METHODS
-
-=cut
-
-# Created on: 2006-03-19 20:32:12
-# Create by:  ivan
-
-use strict;
-use warnings;
-use version;
-use Carp;
-use Data::Dumper qw/Dumper/;
-use Scalar::Util;
-use base qw/DocPerl::Cached/;
-
-our $VERSION   = version->new('0.6.0');
-our @EXPORT    = qw//;
-our @EXPORT_OK = qw//;
+=head1 SUBROUTINES/METHODS
 
 =head3 C<display ( )>
 
@@ -84,180 +292,6 @@ Return: HASHREF - The files API
 Description: Processes a file to find out what modules it uses, what subs it
 declares (and weather they are class or object methods or plain subs) and the
 inheritance tree if any of the module.
-
-=cut
-
-sub process {
-	my $self     = shift;
-	my $conf     = $self->{conf};
-	my $location = $self->{current_location};
-	my $source   = $self->{source} || '';
-	my $file     = $source;
-	
-	return unless -f $file;
-	
-	# open the file
-	open my $fh, '<', $file or warn "Cannot open $file: $!\n" and return;
-	my %api = ( pod => 0, parents => [] );
-	my $i   = 0;
-	my $pod = 0;
-	my $end = 0;
-	
-	# loop through the file line by line
-	LINE:
-	while ( my $line = <$fh> ) {
-		$i++;
-		
-		if ( $line =~ /^=(\w*)/ || $pod ) {
-			$api{pod}++;
-			my $pod_cmd = $1;
-			$pod = $pod && $pod_cmd eq 'cut' ? 0 : 1;
-			next LINE;
-		}
-		
-		# ignore lines starting with a {, } or #
-		next LINE if $line =~ /^\s* (?: (?: (?: [{] | [}] ) \s* $ ) | [#] )/xs;
-		
-		# check if we have reached the end of the file
-		$end = 1 if $line =~ /^__(END|DATA)__/;
-		# lines after the end/data can only add to POD stat
-		next LINE if $end;
-		
-		# if the line starts with the package directive
-		if ( $line =~ /^\s*package ([\w:]+);/ ) {
-			if ( $api{package} ) {
-				push @{ $api{packages} }, $1;
-			}
-			else {
-				$api{package} = $1;
-			}
-		}
-		
-		# check if the line starts with 'use base' to indicate inhereted packages
-		elsif ( $line =~ m#^
-							\s* use \s+ base \s+ qw
-							( [\|/({\[] )
-							\s*([\w:]+)\s*
-							( [\|/)}\]] )
-							#xm ) {
-			my $parents = $2;
-			my @parents = split /\s+/, $parents;
-			push @{ $api{parents} }, @parents;
-		}
-		
-		# check if the line starts with '@ISA' to indicate inhereted packages
-		elsif ( $line =~ / \@ISA \s* = \s* \( ([^)]+) \)  /x ) {
-			my $parents = $1;
-			my @parents = split /,\s*/, $parents;
-			$_ =~ s/'|\s//g for (@parents);    #'
-			push @{ $api{parents} }, @parents;
-		}
-		elsif ( $line =~ m#^
-							\s* \@ISA \s* = \s* qw
-							(?: [|] | [/] | [(] | [{] | \[ )
-							\s*(.*)\s*
-							(?: [|] | [/] | [)] | [}] | \] )
-							#xm ) {
-			#warn "Untested!!!!!!!!!";
-			my $parents = $1;
-			my @parents = split /\s+/, $parents;
-			push @{ $api{parents} }, @parents;
-		}
-		elsif ( $line =~ / push \s* [(]? \s* \@ISA \s* , \s* (?:['"])? ([\w:]+) (?:['"])? /x ) {
-			my $parents = $1;
-			my @parents = split /,\s*/, $parents;
-			push @{ $api{parents} }, @parents;
-		}
-		
-		# check for generic module 'use'
-		elsif ( my ($module) = $line =~ /^\s*use\s+([\w:]*)/ ) {
-			$api{modules}{$module}++;
-		}
-		
-		# check for generic module 'require'
-		elsif ( my ($require) = $line =~ /^\s*require\s+([\w:]*)/ ) {
-			$api{required}{$require}++;
-		}
-		
-		# check for package variables
-		elsif ( my ($var) = $line =~ /^\s*our\s+([\$\%\@]\w+)/xs ) {
-			$api{vars}{$var} = $.;
-		}
-		
-		# check for sub directives
-		elsif ( my ($func) = $line =~ /^\s*sub\s+(\w+)/ ) {
-			my $method     = 0;
-			my $found_line = $i;
-			my $line;
-			for ( my $sub_line_no = 0 ; $sub_line_no < 10 and $line = <$fh> ; $sub_line_no++ ) {
-				$i++;
-				if ( my ($require) = $line =~ /require\s+([\w:]*)/ ) {
-					$api{required}{$require}++;
-				}
-				
-				# if the line is of the from $self = shift then assume sub is a method
-				if ( $line =~ /}/ ) {
-					$sub_line_no = 11;
-				}
-				
-				# if the line is of the form $class = shift or $caller = shift assume sub is a class method
-				elsif ( $line =~ /\$(class|caller)\s*=\s*shift;/ ) {
-					$api{class}{$func} = $found_line;
-					$method = 1;
-				}
-				
-				# stop if we come accross a closing bracket
-				elsif ( $line =~ /\$(self|this)\s*=\s*shift;/ ) {
-					$api{object}{$func} = $found_line;
-					$method = 1;
-				}
-				
-				# alternate object opener $this = shift form
-				elsif ( $line =~ /my\s*\(\s*\$(self|this)[^\)]*\)\s*=\s*\@_;/ ) {
-					$api{object}{$func} = $found_line;
-					$method = 1;
-				}
-				
-			}
-			
-			# if no a class or object method add to functions
-			$api{func}{$func} = $found_line unless $method;
-		}
-	}
-	close $fh;
-	
-	delete $api{parents} unless @{ $api{parents} };
-	my @paths = split /:/, $location eq 'local' ? $conf->{LocalFolders}{Path} : $conf->{IncFolders}{Path};
-	my $last = @INC - 1;
-	push @INC, @paths;
-	
-	if ( $api{package} ) {
-		$api{version} = eval("require $api{package};\$$api{package}\:\:VERSION");
-		warn $@ if $@;
-		eval {
-			$api{hirachy} = [ get_hirachy( $api{package} ) ];
-		};
-		if ( $@ ) {
-			warn $@;
-			$api{hirachy} = $api{parents};
-		}
-		elsif ( !@{ $api{hirachy}[0]{hirachy} } && $api{parents} ) {
-			warn "Found parents but not hirachy!";
-			$api{hirachy}[0]{hirachy} = [ map {{ class => $_ }} @{$api{parents}} ];
-		}
-	}
-	if ( ref $api{modules} ) {
-		$api{modules} = [ sort keys %{ $api{modules} } ];
-	}
-	for my $type ( qw/class object func vars/ ) {
-		if ( ref $api{$type} ) {
-			$api{$type} = [ map { { name => $_, line => $api{$type}{$_} } } sort keys %{ $api{$type} } ];
-		}
-	}
-	@INC = @INC[0 .. $last];
-	
-	return ( api => \%api );
-}
 
 =head3 C<get_hirachy ( $object )>
 
@@ -268,31 +302,6 @@ Return: HASHREF - That describes the object hirachy of $object
 Description: This function finds out the object hirachy of the passed object
 $object by using the object (use $object) and looking at it's ISA array. (it
 then cascades down to the next level etc).
-
-=cut
-
-sub get_hirachy {
-	my ( $object ) = @_;
-	my @hirachy;
-	my @parents = eval("\@$object\:\:ISA");
-	warn $@ if $@;
-	
-	foreach my $parent ( @parents ) {
-		eval("require $parent");
-		if ( !$@ ) {
-			push @hirachy, get_hirachy( $parent );
-		}
-		else {
-			push @hirachy, { class => $parent };
-		}
-	}
-	
-	return { class => $object, hirachy => \@hirachy };
-}
-
-1;
-
-__END__
 
 =head1 DIAGNOSTICS
 
