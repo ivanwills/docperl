@@ -6,18 +6,32 @@
 use strict;
 use warnings;
 use version;
+use FindBin qw/$Bin/;
 use Data::Dumper qw/Dumper/;
 use CGI;
+use Config::Std;
+use Readonly;
+use lib qw/./;
+use DocPerl::Search::Simple;
 
 our $VERSION = version->new('0.1');
-my $cgi = CGI->new();
+
+Readonly my $BASE   => $Bin;
+Readonly my $CONFIG => "$BASE/docperl.conf";
+
+# for taint saifty remove the environment's PATH;
+delete $ENV{PATH};
 
 main();
 exit(0);
 
 sub main {
+	my $cgi = CGI->new();
+	read_config $CONFIG, my %config;
 
-	print $cgi->head('text/xml');
+	print $cgi->header('text/xml');
+	my $search = DocPerl::Search::Simple->new( conf => \%config, type => $cgi->param('type') || $ARGV[1] || undef );
+	my @files = $search->search( terms => $cgi->param('terms') || $ARGV[0] || 'test', );
 	print '<search></search>';
 }
 
@@ -34,7 +48,7 @@ This documentation refers to search.cgi version 0.1.
 =head1 SYNOPSIS
 
    search.cgi?type={pod|api|code}&?
-   
+
   type   Specifys which type of cached files to search.
 
 
