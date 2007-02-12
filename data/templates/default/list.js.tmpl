@@ -256,8 +256,8 @@ function display_recent(path) {
  *	Searches the all modules names to find those that match the search term
  */
 function search(force) {
-	var term		= document.getElementById('search').value;
-	var results_doc	= document.getElementById('results_doc');
+	var term        = document.getElementById('search').value;
+	var results_doc = document.getElementById('results_doc');
 
 	if ( !force && term.length < 4 )
 		return;
@@ -266,9 +266,9 @@ function search(force) {
 		return;
 	}
 
-	var terms		= term.split(/\s+/);
-	var results		= document.getElementById('results');
-	var ul			= document.createElement('ul');
+	var terms   = term.split(/\s+/);
+	var results = document.getElementById('results');
+	var ul      = document.createElement('ul');
 	results_doc.style.cssText = '';
 
 	while (results.firstChild)
@@ -281,13 +281,13 @@ function search(force) {
 	for ( var i in terms ) {
 		var term = terms[i];
 
-		var list = show_found( new Array(perl.POD), term, 'perl__', 'POD' );
+		var list = show_found( new Array(perl.POD), term, 'perl', 'POD' );
 		if ( list )
 			ul.appendChild( list );
-		list = show_found( local, term, 'local__', 'Local' );
+		list = show_found( local, term, 'local', 'Local' );
 		if ( list )
 			ul.appendChild( list );
-		list = show_found( inc, term, 'inc__', 'Installed' );
+		list = show_found( inc, term, 'inc', 'Installed' );
 		if ( list )
 			ul.appendChild( list );
 	}
