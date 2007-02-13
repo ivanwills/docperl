@@ -44,7 +44,7 @@ use base qw/Exporter/;
 our $VERSION   = version->new('0.6.0');
 our @EXPORT_OK = qw//;
 
-=head3 C<sub ( %args )>
+=head3 C<new ( %args )>
 
 Arg: C<$search> - type (detail) - description
 

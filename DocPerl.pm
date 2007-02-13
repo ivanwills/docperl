@@ -199,7 +199,7 @@ sub process {
 		if ( $page !~ /^_/xms && $self->can($page) ) {
 			%vars = $self->$page();
 		}
-		elsif ( $page =~ /^(pod|api|code)$/xmsi ) {
+		elsif ( $page =~ /^(pod|text|api|code)$/xmsi ) {
 
 			# try to see if the method is a cached module
 			my $module = 'DocPerl::Cached::' . uc $1;

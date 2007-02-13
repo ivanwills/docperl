@@ -50,6 +50,7 @@
 			<tr>
 				<th>[% IF !first %][% first = 1 %][% module %][% END %]</th>
 				<td><a target="contents" title="Documentation [% module %]"  href="?page=pod&amp;module=[% module %]&amp;file=[% file %]&amp;location=[% location %]&amp;source=[% source.file %]"> POD </a></td>
+				<td><a target="contents" title="Documentation [% module %]"  href="?page=text&amp;module=[% module %]&amp;file=[% file %]&amp;location=[% location %]&amp;source=[% source.file %]"> Text </a></td>
 				<td>
 	[%- UNLESS source.suffix == 'pod' -%]
 				<a target="contents" title="Functions defined, modules used, inheritance etc" href="?page=api&amp;module=[% module %]&amp;file=[% file %]&amp;location=[% location %]&amp;source=[% source.file %]"> API </a>
