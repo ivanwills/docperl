@@ -98,3 +98,16 @@ Data:           ./data
 # note that the last two examples would produce the same results
 DefaultModule:  perl__Programming__perlfunc
 
+## Search settings
+[Search]
+
+# Choose the search engine to use
+# The options are:
+#   Grep - Fast for simple text and when the POD cache size is large
+#   Perl - Slower but allows more complicated search terms (and works when
+#          the grep command is not available eg in Windows)
+Engine:         Perl
+
+# the location of the grep command (needed when using the Grep Engine)
+grep:           /bin/grep
+

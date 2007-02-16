@@ -1,85 +1,50 @@
-#!/usr/bin/perl
+package DocPerl::Search::Perl;
 
-# Created on: 2006-06-25 05:55:36
+# Created on: 2007-02-16 20:28:48
+# Create by:  ivan
+# $Id$
+# $Revision$, $HeadURL$, $Date$
+# $Revision$, $Source$, $Date$
+
+# Created on: 2007-02-16 20:28:48
 # Create by:  ivan
 
 use strict;
 use warnings;
 use version;
-use FindBin qw/$Bin/;
+use Carp;
+use Scalar::Util;
+use List::Util;
 use Data::Dumper qw/Dumper/;
-use CGI;
-use Config::Std;
-use Readonly;
-use lib qw/./;
-use DocPerl::Search::Grep;
-use DocPerl::Search::Simple;
+use English qw/ -no_match_vars /;
+use base qw/DocPerl::Search/;
 
-our $VERSION = version->new('0.1');
+our $VERSION     = version->new('0.0.1');
+our @EXPORT_OK   = qw//;
+our %EXPORT_TAGS = ();
+#our @EXPORT      = qw//;
 
-Readonly my $BASE   => $Bin;
-Readonly my $CONFIG => "$BASE/docperl.conf";
 
-# for taint saifty remove the environment's PATH;
-delete $ENV{PATH};
+1;
 
-main();
-exit(0);
-
-sub main {
-	my $cgi = CGI->new();
-	read_config $CONFIG, my %config;
-
-	my $engine = $config{'Search'}{'Engine'} eq 'Grep' && -x $config{'Search'}{'grep'} ? 'DocPerl::Search::Grep' : 'DocPerl::Search::Perl';
-	my $search = $engine->new( conf => \%config, type => $cgi->param('type') || $ARGV[1] || undef );
-	my $terms  = $cgi->param('terms') || $ARGV[0] || 'test';
-	my @files  = $search->search( terms => $terms, );
-	my $type   = $cgi->param('type') || 'xml';
-
-	if ( $type eq 'jason' ) {
-		jason($cgi, $terms, @files);
-	}
-	else {
-		xml($cgi, $terms, @files);
-	}
-
-	return;
-}
-
-sub jason {
-	my ( $cgi, $terms, @files ) = @_;
-	print $cgi->header('text/jason');
-	print "{terms:'$terms',results:['";
-	print join "','", @files;
-	print "']}";
-}
-
-sub xml {
-	my ( $cgi, $terms, @files ) = @_;
-	print $cgi->header('text/xml');
-	print "<search>\n\t<terms>$terms</terms>\n\t<results>\n";
-	for my $file (@files) {
-		print "\t\t<file>$file</file>\n";
-	}
-	print "\t</results>\n</search>\n";
-}
-
-__DATA__
+__END__
 
 =head1 NAME
 
-search.cgi - Searches the POD, API's and Code cached DocPerl files
+DocPerl::Search::Perl - <One-line description of module's purpose>
 
 =head1 VERSION
 
-This documentation refers to search.cgi version 0.1.
+This documentation refers to DocPerl::Search::Perl version 0.1.
+
 
 =head1 SYNOPSIS
 
-   search.cgi?type={pod|api|code}&?
+   use DocPerl::Search::Perl;
 
-  type   Specifys which type of cached files to search.
-
+   # Brief but working code example(s) here showing the most common usage(s)
+   # This section will be as far as many users bother reading, so make it as
+   # educational and exemplary as possible.
 
 
 =head1 DESCRIPTION
@@ -102,6 +67,15 @@ Name the section accordingly.
 In an object-oriented module, this section should begin with a sentence (of the
 form "An object of this class represents ...") to give the reader a high-level
 context to help them understand the methods that are subsequently described.
+
+
+=head3 C<sub ( $search, )>
+
+Param: C<$search> - type (detail) - description
+
+Return: DocPerl::Search::Perl -
+
+Description:
 
 =head1 DIAGNOSTICS
 
@@ -132,6 +106,16 @@ modules that use source code filters are mutually incompatible).
 
 =head1 BUGS AND LIMITATIONS
 
+A list of known problems with the module, together with some indication of
+whether they are likely to be fixed in an upcoming release.
+
+Also, a list of restrictions on the features the module does provide: data types
+that cannot be handled, performance issues and the circumstances in which they
+may arise, practical limitations on the size of data sets, special cases that
+are not (yet) handled, etc.
+
+The initial template usually just has:
+
 There are no known bugs in this module.
 
 Please report problems to Ivan Wills (ivan.wills@gmail.com).
@@ -141,11 +125,13 @@ Patches are welcome.
 =head1 AUTHOR
 
 Ivan Wills - (ivan.wills@gmail.com)
+<Author name(s)>  (<contact address>)
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright (c) 2006 Ivan Wills (101 Miles St Bald Hills QLD Australia 4036).
+Copyright (c) 2007 Ivan Wills (101 Miles St Bald Hills QLD Australia 4036).
 All rights reserved.
+
 
 This module is free software; you can redistribute it and/or modify it under
 the same terms as Perl itself. See L<perlartistic>.  This program is
