@@ -18,6 +18,7 @@ my $CONFIG = "$FindBin::Bin/docperl.conf";
 
 my %option = (
 	compile => [],
+	shrink  => 0,
 	purge   => 0,
 	verbose => 0,
 	man     => 0,
@@ -45,12 +46,13 @@ sub main {
 		\%option,
 		'compile|c=s@',
 		'purge|p!',
+		'shrink|s!',
 		'verbose|v!',
 		'man',
 		'help',
 		'version'
 	) or pod2usage( 2 );
-	
+
 	print "checksetup.pl Version = $VERSION\n" and exit(1) if $option{version};
 	pod2usage( -verbose => 2 ) if $option{man};
 	pod2usage( -verbose => 1 ) if $option{help};
@@ -76,7 +78,7 @@ sub main {
 		print "\$ perl -MCPAN -e 'install ", join( "'\n\$ perl -MCPAN -e 'install ", @missing ), "'\n\n";
 		print "Windows/ActivePerl users try useing ppm\n";
 	}
-	
+
 	print "\n";
 	unless ( -f $CONFIG ) {
 		my $eg = "$CONFIG.example";
@@ -88,29 +90,29 @@ sub main {
 	else {
 		print "Config Exists\n";
 	}
-	
+
 	# check if we have Config::Std before continuing
 	exit 20 if $required_modules{'Config::Std'}{missing};
-	
+
 	# read the config file
 	eval('use Config::Std qw/read_config/');
 	my %config;
 	read_config( $CONFIG, \%config );
-	
+
 	# get the data directory
 	my $data  = $config{General}{Data};
 	unless ( -d $data ) {
 		warn "Cannot find the data directory at '$data' please update docperl.conf to point to the correct location\n";
 		exit 30;
 	}
-	
+
 	# set up the cache directory
 	my $cache = "$data/cache";
 	unless ( -d $cache ) {
 		print "Creating cache directory, '$cache'\n";
 		mkdir $cache or warn "Could not create the cache directory '$cache': $!\n";
 	}
-	
+
 	# set up the local directory
 	my $local = "$data/templates/local";
 	unless ( -d $local ) {
@@ -118,29 +120,115 @@ sub main {
 		mkdir $local or warn "Could not create the local template directory '$local': $!\n";
 	}
 	print "\n";
-	
+
 	# purge the cache files (if requested)
 	if ( $option{purge} ) {
 		print "Clearing old cache files\n";
 		system "rm -rf $FindBin::Bin/data/cache/*";
 	}
-	
+
+	# create shrunken versions of files
+	if ( $option{shrink} ) {
+		print "Shrinking CSS and Javascript files ...\n";
+		shrink_file($data, 'list.js.tmpl', 'js');
+		shrink_file($data, 'css.css.tmpl', 'css');
+	}
+
 	# compile the cache files (if requrested)
 	if ( ref $option{compile} && @{ $option{compile} } ) {
 		$config{Templates}{ClearCache} = 'on';
 		eval('use DocPerl');
 		my $dp = DocPerl->new( cgi => { page => 'list', }, conf => \%config, save_data => 1, );
 		my %data = $dp->list();
-		
+
 		my @compile = map { split /,/ } @{ $option{compile} };
 		compile( \%data, $dp, \@compile );
 		system("chmod o+w -R $FindBin::Bin/data/cache");
 	}
 }
 
+sub shrink_file {
+	my ( $data, $template, $type ) = @_;
+
+	# shrink the JS template
+	my $js = "$data/templates/default/$template";
+	open my $fh, '<', $js;
+
+	if ( !$fh ) {
+		warn "Could not open the javascript template file $js! $!\n";
+	}
+	else {
+		my $text;
+		{
+			local $/ = undef;
+			$text = <$fh>;
+		}
+		close $fh;
+
+		$text = $type eq 'js' ? shrink_js($text) : shrink_css($text);
+
+		## save the template to the local template dir
+		$js = "$data/templates/local/$template";
+		if ( length $text && open $fh, '>', $js ) {
+			print {$fh} $text;
+			close $fh;
+		}
+	}
+
+}
+
+sub shrink_js {
+	my ( $text ) = @_;
+
+	## remove the unnessesary text
+	# multi line comments
+	$text =~ s{/[*][*] .*? [*]/\n*}{}gxms;
+	# end of line comments
+	$text =~ s{\s*//[^\n]*\n}{\n}gxms;
+	# multiple new lines
+	$text =~ s/\n\n+/\n/gxms;
+	# new line after statements
+	$text =~ s/;\n\s+/;/gxms;
+	# white space arround brackets
+	$text =~ s/\s* ( [(){] ) \s*/$1/gxms;
+	$text =~ s/\s*{\n/{/gxms;
+	$text =~ s/\s* ( [^\w\s'] ) \s*/$1/gxms;
+	$text =~ s/\n}/}/gxms;
+	$text =~ s/}\n([^f])/$1/gxms;
+	# multiple white space
+	$text =~ s/\s\s+/ /gxms;
+
+	return $text;
+}
+
+sub shrink_css {
+	my ( $text ) = @_;
+
+	## remove the unnessesary text
+	# multi line comments
+	$text =~ s{/[*] .*? [*]/\n*}{}gxms;
+	# end of line comments
+	$text =~ s{\s*//[^\n]*\n}{\n}gxms;
+	# multiple new lines
+	$text =~ s/\n\n+/\n/gxms;
+	# new line after statements
+	$text =~ s/;\n\s+/;/gxms;
+	# white space arround brackets
+	$text =~ s/\s* ( [(){] ) \s*/$1/gxms;
+	$text =~ s/\s*{\n/{/gxms;
+	$text =~ s/\s* ( [^\w\s'] ) \s*/$1/gxms;
+	$text =~ s/\n}/}/gxms;
+	$text =~ s/}\n([^f])/$1/gxms;
+	# multiple white space
+	$text =~ s/\s\s+/ /gxms;
+	$text =~ s/;}/}/gxms;
+
+	return $text;
+}
+
 sub compile {
 	my ( $data, $dp, $compile ) = @_;
-	
+
 		#for my $location ( qw/LOCAL / ) {
 		for my $location ( qw/PERL LOCAL INC/ ) {
 			print "Create $location Cache\n";
@@ -155,13 +243,13 @@ sub cache {
 	my $parent   = $arg{parent};
 	$parent    ||= '';
 	$arg{all}  ||= '';
-	
+
 	for my $module ( keys %{ $data } ) {
 		next unless $module;
 		next if $module eq '*';
 		next if $data->{$module} == 1;
-		
-		# check that the module is not the numeral 1 (just an alphabetic place holder)	
+
+		# check that the module is not the numeral 1 (just an alphabetic place holder)
 		# and that there is an actual file for it (ie not just a name space prefix)
 		if ( !$arg{top} && $data->{$module}{'*'}[0] ) {
 			$dp->{cgi} = { page => 'pod', module => "$parent$module", location => $location, source => $data->{$module}{'*'}[0] };
@@ -181,7 +269,7 @@ sub cache {
 				$dp->process();
 			}
 		}
-		
+
 		my $super = !$arg{top} ? "$parent$module\:\:" : '';
 		cache( $data->{$module}, $dp, %arg, parent => $super, top => 0, all => "$arg{all}/$module" );
 	}
@@ -201,17 +289,19 @@ This documentation refers to checksetup.pl version 0.6.0.
 
    checksetup.pl [ --version | --help | --man ]
    checksetup.pl [ -v ] [ -p ] [ -c [ pod||,api||,code ]
-   
+
  OPTIONS:
-  -c --compile=opt   Pre compile the pod/api/code (seperate with commas to
-                     compile more than one option eg -c pod,code)
-  -p --purge         Purge the current cache files.
-  
-  -v --verbose       Show more detailed option
-     --version       Prints the version information
-     --help          Prints this help information
-     --man           Prints the full documentation for checksetup.pl
-  
+  -c --compile=opt Pre compile the pod/api/code (seperate with commas to
+                   compile more than one option eg -c pod,code)
+  -p --purge       Purge the current cache files.
+  -s --shrink      Shrink the size of the js & css files (makes them less
+                   readable but smaller)
+
+  -v --verbose     Show more detailed option
+     --version     Prints the version information
+     --help        Prints this help information
+     --man         Prints the full documentation for checksetup.pl
+
   Note: Creating cached api files (-c api) can cause checksetup.pl to crash
 
 =head1 DESCRIPTION
