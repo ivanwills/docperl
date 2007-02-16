@@ -481,15 +481,15 @@ function update_current_link() {
  */
 function get_cookie(name) {
 	var result			= null;
-	var my_cookie		= " " + document.cookie + "; ";
-	var search_name		= " " + name + "=";
+	var my_cookie		= ' ' + document.cookie + '; ';
+	var search_name		= ' ' + name + '=';
 	var start_of_cookie	= my_cookie.indexOf(search_name);
 	var end_of_cookie;
 
 	if (start_of_cookie != -1) {
 		start_of_cookie += search_name.length;
 		// skip past cookie name
-		end_of_cookie = my_cookie.indexOf(";",start_of_cookie);
+		end_of_cookie = my_cookie.indexOf(';',start_of_cookie);
 		result = unescape(my_cookie.substring(start_of_cookie, end_of_cookie));
 	}
 
@@ -509,11 +509,11 @@ function get_cookie(name) {
  *	Sets a cookie with the supplied parameters
  */
 function set_cookie(name, value, expires, path, domain, secure) {
-	var expString	 = expires	== null	? "" : ("; expires=" + expires.toGMTString());
-	var pathString	 = path		== null	? "" : ("; path=" + path);
-	var domainString = domain	== null	? "" : ("; domain=" + domain);
-	var secureString = secure	== true	? "; secure" : "";
-	var new_cookie	 = name + "=" + escape(value) + expString + pathString + domainString + secureString;
+	var expString	 = expires	== null	? '' : ('; expires=' + expires.toGMTString());
+	var pathString	 = path		== null	? '' : ('; path=' + path);
+	var domainString = domain	== null	? '' : ('; domain=' + domain);
+	var secureString = secure	== true	? '; secure' : '';
+	var new_cookie	 = name + '=' + escape(value) + expString + pathString + domainString + secureString;
 	document.cookie	 = new_cookie;
 }
 
@@ -531,7 +531,7 @@ function clear_cookie(name, path, domain, secure) {
 	var ThreeDays	= 3 * 24 * 60 * 60 * 1000;
 	var expDate		= new Date();
 	expDate.setTime(expDate.getTime() - ThreeDays);
-	set_cookie(name, "ImOutOfHere", expDate, path, domain, secure)
+	set_cookie(name, 'ImOutOfHere', expDate, path, domain, secure)
 }
 
 /**
@@ -556,8 +556,8 @@ function exists_cookie(cookie) {
  */
 function get_cookie_count(name) {
 	var result			= 0;
-	var my_cookie		= " " + document.cookie + ";";
-	var search_name		= " " + name + "=";
+	var my_cookie		= ' ' + document.cookie + ';';
+	var search_name		= ' ' + name + '=';
 	var name_length		= search_name.length;
 	var start_of_cookie	= myCookie.indexOf(search_name);
 
@@ -581,8 +581,8 @@ function get_cookie_number(name, cookie_num) {
 	var result = null;
 	if (cookie_num >= 1) {
 		var cntr			= 0;
-		var my_cookie		= " " + document.cookie + ";";
-		var search_name		= " " + name + "=";
+		var my_cookie		= ' ' + document.cookie + ';';
+		var search_name		= ' ' + name + '=';
 		var name_length		= search_name.length;
 		var start_of_cookie	= my_cookie.indexOf(search_name);
 
@@ -592,7 +592,7 @@ function get_cookie_number(name, cookie_num) {
 
 		if (start_of_cookie != 1) {
 			start_of_cookie	 += name_length; // skip past cookie name
-			var end_of_cookie = my_cookie.indexOf(";", start_of_cookie);
+			var end_of_cookie = my_cookie.indexOf(';', start_of_cookie);
 			result = unescape(my_cookie.substring(start_of_cookie, end_of_cookie));
 		}
 	}
