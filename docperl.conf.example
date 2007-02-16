@@ -40,7 +40,7 @@ Path:           ./data/templates/local:./data/templates/default
 # this could be a performance hist as it would enable a malicious to force the
 # recreation of all documents. Should be ok to enable for lightly used systems
 # which modules change regularly.
-ClearCache      0
+ClearCache:     0
 
 
 ## Template
