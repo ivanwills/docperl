@@ -4,13 +4,13 @@
 [LocalFolders]
 
 # Path - Sets the directories to find "local" perl files
-Path:			.
+Path:           .
 
 # Match - A regular expression to determine which files to consider as Perl file
-Match:			\.(?:pm|pl|pod|cgi)$
+Match:          \.(?:pm|pl|pod|cgi)$
 
 # Exclude: directories to exclude from the search path
-Exclude:		./data
+Exclude:        ./data
 
 
 ## IncFolders
@@ -20,27 +20,27 @@ Exclude:		./data
 [IncFolders]
 
 # Path - Add any extra directories to you @INC path here
-Path:			.
+Path:           .
 
 # Match - Set the regular expression for finding files in those directories
 # By default it is limited to Perl modules and POD files
-Match:			\.(?:pm|pod)$
+Match:          \.(?:pm|pod)$
 
 # Exclude: directories to exclude from the search path
-Exclude:		./data
+Exclude:        ./data
 
 ## Templates
 # These parameters are passed to all of the templates.
 [Templates]
 
 # set the template search path
-Path:			./data/templates/local:./data/templates/default
+Path:           ./data/templates/local:./data/templates/default
 
 # Set to a true value to allow web users to clear the cached documents
 # this could be a performance hist as it would enable a malicious to force the
 # recreation of all documents. Should be ok to enable for lightly used systems
 # which modules change regularly.
-ClearCache		0
+ClearCache      0
 
 
 ## Template
@@ -49,30 +49,30 @@ ClearCache		0
 
 # Uncomment to show the local modules only (and not the perl documentation or
 # installed modules)
-#LocalOnly:		true
+#LocalOnly:     true
 
 # Sets the number of links shown in the recent modules section of the list page
-history_size:	10
+history_size:   10
 
 # this sets the time between title changes (in milli seconds)
-animation:		60000
+animation:      60000
 
 # Set the labels for the various sections on the list page
 
 # The label for the local file section
-LocalLabel:		Local Programs
+LocalLabel:     Local Programs
 
 # The label for the installed modules section
-IncLabel:		Installed Modules
+IncLabel:       Installed Modules
 
 # The label for the perl modules documentation section
-PerlLabel:		Perl
+PerlLabel:      Perl
 
 # Uncomment to allow web users to clear the current cache
 # Note: Turining this on is only recomended for non public DocPerl
-#	installations as this could cause a large amount of load to the server
-#	if random people clear the cache for no good reason
-#ClearCache:	on
+#   installations as this could cause a large amount of load to the server
+#   if random people clear the cache for no good reason
+#ClearCache:    on
 
 
 ## General
@@ -80,21 +80,21 @@ PerlLabel:		Perl
 [General]
 
 # the location of the data directory
-Data:			./data
+Data:           ./data
 
 # Enable/Disable cacheing
-#Cache:			off
+#Cache:         off
 
 # DefaultModule
 # Sets the module that will be displaied when DocPerl is run with no parameters
-# 
+#
 # Note: This module must be prefixed with the location (perl/local/inc) and a
 # a place holder (usually the first letter of the module name or the section
 # that the a POD file comes from for the standard perl documentation files.
 # some examples:
-#DefaultModule:	perl__Tutorials__perlcheat
-#DefaultModule:	local__D__DocPerl
-#DefaultModule:	local__D__DocPerl__Welcome
+#DefaultModule: perl__Tutorials__perlcheat
+#DefaultModule: local__D__DocPerl
+#DefaultModule: local__D__DocPerl__Welcome
 # note that the last two examples would produce the same results
-DefaultModule:	perl__Programming__perlfunc
+DefaultModule:  perl__Programming__perlfunc
 
