@@ -31,10 +31,10 @@ sub main {
 	read_config $CONFIG, my %config;
 
 	my $engine = $config{'Search'}{'Engine'} eq 'Grep' && -x $config{'Search'}{'grep'} ? 'DocPerl::Search::Grep' : 'DocPerl::Search::Perl';
-	my $search = $engine->new( conf => \%config, type => $cgi->param('type') || $ARGV[1] || undef );
 	my $terms  = $cgi->param('terms') || $ARGV[0] || 'test';
+	my $type   = $cgi->param('type')  || $ARGV[1] || 'xml';
+	my $search = $engine->new( conf => \%config, );
 	my @files  = $search->search( terms => $terms, );
-	my $type   = $cgi->param('type') || 'xml';
 
 	if ( $type eq 'jason' ) {
 		jason($cgi, $terms, @files);
@@ -49,9 +49,9 @@ sub main {
 sub jason {
 	my ( $cgi, $terms, @files ) = @_;
 	print $cgi->header('text/jason');
-	print "{terms:'$terms',results:['";
-	print join "','", @files;
-	print "']}";
+	print "{terms:'$terms',results:[";
+	print join ",", map { "{$_->[1]:'$_->[0]'}" } @files;
+	print "]}\n";
 }
 
 sub xml {
@@ -59,7 +59,7 @@ sub xml {
 	print $cgi->header('text/xml');
 	print "<search>\n\t<terms>$terms</terms>\n\t<results>\n";
 	for my $file (@files) {
-		print "\t\t<file>$file</file>\n";
+		print "\t\t<file area=\"$file->[1]\">$file->[0]</file>\n";
 	}
 	print "\t</results>\n</search>\n";
 }

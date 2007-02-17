@@ -30,30 +30,34 @@ sub search {
 	my $self = shift;
 	my %args = @_;
 	my $conf = $self->{'conf'};
-
 	my %rank;
-	# check if the text is only strings and/or white space so that we can use the fast grep version
-	my $F   = $args{'terms'} =~ /\A[\w\s]+\Z/xms ? '-F' : '';
-	my $cmd = "$conf->{'Search'}{'grep'} $F -cR '$args{'terms'}' $conf->{'General'}{'Data'}/cache/pod/";
-	my $out = `$cmd`;
+	my @results;
 
+	# check if the text is only strings and/or white space so that we can use the fast grep version
+	my $F        = $args{'terms'} =~ /\A[\w\s]+\Z/xms ? '-F' : '';
+	my $location = -d "$conf->{'General'}{'Data'}/cache/text" ? 'text' : 'pod';
+	my $cmd      = "$conf->{'Search'}{'grep'} $F -cR '$args{'terms'}' $conf->{'General'}{'Data'}/cache/$location/";
+	my $out      = `$cmd`;
+
+	# now process all the returned results
 	for my $line ( split /\n/xms, $out ) {
 		my ( $area, $file, $count ) = $line =~ m{^ $conf->{'General'}{'Data'}/cache/pod/ (\w+) / ([^:]+) : (\d+) }xms;
 		if ( $count > 0 ) {
 			$file =~ s{/}{::}gxms;
 			$file =~ s{[.]\w+$}{}xms;
-			push @{ $rank{$count} }, $file
+			push @{ $rank{$count} }, [ $file => $area ];
 		}
 	}
 
-	my @results;
 
+	# limit the returned results to the amount desired
 RANK:
 	for my $rank ( reverse sort keys %rank ) {
 		push @results, @{ $rank{$rank} };
-		last RANK if @results > 10;
+		last RANK if @results > $conf->{Search}{result_size} || 10;
 	}
 
+	# return the modules found
 	return @results;
 }
 
