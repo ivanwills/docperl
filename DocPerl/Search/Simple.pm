@@ -1,5 +1,130 @@
 package DocPerl::Search::Simple;
 
+# Created on: 2006-07-02 06:11:02
+# Create by:  ivan
+# $Id$
+# # $Revision$, $HeadURL$, $Date$
+# # $Revision$, $Source$, $Date$
+
+use strict;
+use warnings;
+use version;
+use Carp;
+use Scalar::Util;
+use List::Util;
+use Data::Dumper qw/Dumper/;
+use English '-no_match_vars';
+use base qw/DocPerl::Search/;
+
+our $VERSION   = version->new('0.6.0');
+our @EXPORT_OK = qw//;
+
+sub new {
+	my $caller = shift;
+	my $class  = ( ref $caller ) ? ref $caller : $caller;
+	my %param  = @_;
+	my $self   = \%param;
+
+	if ( !$param{conf} ) {
+		croak 'No configuration object passed!';
+	}
+
+	bless $self, $class;
+	$self->init();
+
+	return $self;
+}
+
+sub init {
+	my $self = shift;
+	my $conf  = $self->{conf};
+	my $data  = $conf->{General}{Data};
+	my $cache = "$data/cache";
+	my $pod   = "$cache/pod";
+
+
+	my %files = ( $self->find("$pod/inc"), $self->find("$pod/perl"), $self->find("$pod/local") );
+	for my $file ( keys %files ) {
+		my ( $type, $module, $extension ) = $file =~ m{$pod/(\w+)/(.*)([.]\w+)$}xms;
+		$module =~ s{/}{::}gxms;
+		$self->{modules}{$module} += $files{$file};
+	}
+
+	return;
+}
+
+sub search {
+	my $self    = shift;
+	my %args    = @_;
+	my %files   = %{ $self->{files} };
+	my %modules = %{ $self->{modules} };
+
+	if ( $args{regex} ) {
+		$self->{regex} = $args{regex} !~ /\((?![?]:)/xms ? "($self->{regex})" : $self->{regex};
+	}
+	elsif ( $args{terms} ) {
+		my $re = join ')|(', split /\s+/xms, $args{terms};
+		$self->{regex} = qr/($re)/;
+	}
+	else {
+		croak 'No search term or search regular expression passed!';
+	}
+
+	return (
+		map {
+			{ $_ => $modules{$_} }
+			} reverse sort { $modules{$a} <=> $modules{$b} } keys %modules
+	)[ 0 .. 10 ];
+}
+
+sub find {
+	my $self = shift;
+	my ($dir) = @_;
+	my %files;
+
+	opendir DIR, $dir or carp "Unable to open the directory $dir: $OS_ERROR\n" and return;
+	my @files = readdir DIR;
+	close DIR;
+
+FILE:
+	for my $file (
+		sort { -d "$dir/$a" && -d "$dir/$b" || -f "$dir/$a" && -f "$dir/$b" ? $a cmp $b : -f "$dir/$a" ? 1 : -1 }
+		@files ) {
+		next FILE if $file eq '.' || $file eq '..';
+
+		if ( -d "$dir/$file" ) {
+			%files = ( %files, $self->find("$dir/$file") );
+		}
+		else {
+			my $count = $self->process_file("$dir/$file");
+			if ( $count ) {
+				$files{"$dir/$file"} = $count;
+			}
+		}
+	}
+	return %files;
+}
+
+sub process_file {
+	my $self   = shift;
+	my $re     = $self->{regex};
+	my ($file) = @_;
+	my $count  = 0;
+
+	open my $fh, '<', $file or carp "Could not open the file '$file' for reading: $!\n" and return;
+	{
+		undef $INPUT_RECORD_SEPARATOR;
+		my @count = <$fh> =~ /$re/gxms;
+		$count = @count;
+	}
+
+	return $count;
+}
+
+1;
+
+__END__
+
 =head1 NAME
 
 DocPerl::Search::Simple - Initial quick and dirty search engin till I find an
@@ -23,30 +148,11 @@ This documentation refers to DocPerl::Search::Simple version 0.6.0.
 
 Performs a simple text search for a list of words in the cached documentation
 files. (Hopefully this will be replaced by something like KinoSearch or
-VectorSearch) 
+VectorSearch)
 
-=head1 METHODS
+=head1 SUBROUTINES/METHODS
 
-=cut
-
-# Created on: 2006-07-02 06:11:02
-# Create by:  ivan
-
-use strict;
-use warnings;
-use version;
-use Carp;
-use Scalar::Util;
-use List::Util;
-use Data::Dumper qw/Dumper/;
-use base qw/Exporter/;
-
-our $VERSION   = version->new('0.6.0');
-our @EXPORT    = qw//;
-our @EXPORT_OK = qw//;
-
-
-=head3 C<sub ( %params )>
+=head3 C<new ( %params )>
 
 Param: C<conf> - hashref - Standard DocPerl Configuration hash
 
@@ -54,25 +160,9 @@ Param: C<terms> - string - space seperated string of search tearms
 
 Param: C<regex> - string (regex) - A regular expression for the terms to be searched
 
-Return: DocPerl::Search::Simple - 
+Return: DocPerl::Search::Simple -
 
-Description: 
-
-=cut
-
-sub new {
-	my $caller = shift;
-	my $class  = (ref $caller) ? ref $caller : $caller;
-	my %param  = @_;
-	my $self   = \%param;
-	
-	croak "No configuration object passed!" unless $param{conf};
-	
-	bless $self, $class;
-	$self->init();
-	
-	return $self;
-}
+Description:
 
 =head3 C<init ( $var1, $var2,  )>
 
@@ -80,122 +170,31 @@ Param: C<$var1> - type (detail) - description
 
 Param: C<$var2> - type (detail) - description
 
-Return:  - 
+Return:  -
 
-Description: 
-
-=cut
-
-sub init {
-	my $self = shift;
-	my $conf = $self->{conf};
-	
-	if ( $self->{regex} ) {
-		if ( $self->{regex} !~ /\((?![?]:)/ ) {
-			$self->{regex} = "($self->{regex})";
-		}
-	}
-	elsif ( $self->{terms} ) {
-		my $re = join ')|(', split /\s+/, $self->{terms};
-		$self->{regex} = qr/($re)/;
-	}
-	else {
-		croak "No search term or search regular expression passed!";
-	}
-	
-}
+Description:
 
 =head3 C<search ( )>
 
-Return:  - 
+Return:  -
 
-Description: 
-
-=cut
-
-sub search {
-	my $self  = shift;
-	my $conf  = $self->{conf};
-	my $data  = $conf->{General}{Data};
-	my $cache = "$data/cache";
-	my $pod   = "$cache/pod";
-	
-	my %files = ( $self->find( "$pod/inc" ), $self->find( "$pod/perl" ), $self->find( "$pod/local" ) );
-	my %modules;
-	
-	for my $file ( keys %files ) {
-		my ($type, $module, $extension) = $file =~ m{$pod/(\w+)/(.*)([.]\w+)$};
-		$module           =~ s{/}{::}g;
-		$modules{$module} += $files{$file};
-	}
-	
-	return ( map { { $_ => $modules{$_} } } sort { $modules{$b} <=> $modules{$a} } keys %modules )[0..10];
-}
+Description:
 
 =head3 C<find_files ( $dir )>
 
 Param: C<$dir> - type (detail) - description
 
-Return:  - 
+Return:  -
 
-Description: 
-
-=cut
-
-sub find {
-	my $self    = shift;
-	my ( $dir ) = @_;
-	my %files;
-	
-	opendir DIR, $dir or warn "Unable to open the directory $dir: $!\n" and return;
-	my @files = readdir DIR;
-	close DIR;
-	
-	foreach my $file ( sort { -d "$dir/$a" && -d "$dir/$b" || -f "$dir/$a" && -f "$dir/$b" ? $a cmp $b : -f "$dir/$a" ? 1 : -1 } @files ) {
-		next if $file eq '.' || $file eq '..';
-		
-		if ( -d "$dir/$file" ) {
-			%files = ( %files, $self->find( "$dir/$file" ) );
-		}
-		else {
-			my $count = $self->process_file( "$dir/$file" );
-			$files{"$dir/$file"} = $count if $count;
-		}
-	}
-	return %files;
-}
+Description:
 
 =head3 C<process_file ( $file )>
 
 Param: C<$file> - string (file name) - The file to check
 
-Return:  - 
+Return:  -
 
-Description: 
-
-=cut
-
-sub process_file {
-	my $self   = shift;
-	my $re     = $self->{regex};
-	my ($file) = @_;
-	my $count  = 0;
-	
-	open my $fh, '<', $file or warn "Could not open the file '$file' for reading: $!\n" and return;
-	{
-		undef $/;
-		my @count = <$fh> =~ /$re/g;
-		$count    = @count;
-	}
-	
-	return $count;
-}
-
-
-
-1;
-
-__END__
+Description:
 
 =head1 DIAGNOSTICS
 
