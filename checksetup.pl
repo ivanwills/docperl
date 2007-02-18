@@ -194,9 +194,79 @@ sub shrink_js {
 	$text =~ s/\s*{\n/{/gxms;
 	$text =~ s/\s* ( [^\w\s'] ) \s*/$1/gxms;
 	$text =~ s/\n}/}/gxms;
-	$text =~ s/}\n([^f])/$1/gxms;
+	$text =~ s/}\n([^f])/}$1/gxms;
 	# multiple white space
 	$text =~ s/\s\s+/ /gxms;
+	$text =~ s/;}/}/gxms;
+
+	my %replace = (
+		'document.getElementById' => '$',
+		'document.createTextNode' => '$ct',
+		'document.createElement'  => '$ce',
+	);
+	my $func = join '', map { "function $replace{$_}(a){return $_(a)}" } keys %replace;
+	my $list = join '|', keys %replace;
+
+	$text =~ s/($list)/$replace{$1}/gxms;
+	$text .= $func;
+
+	%replace = (
+		'add_count'         => 'ac',
+		'clear_cookie'      => 'cc',
+		'cookie_number'     => 'cn',
+		'create_module'     => 'Cm',
+		'create_plus'       => 'Cp',
+		'create_tree'       => 'Ct',
+		'container_id'      => 'ci',
+		'count'             => 'C',
+		'count_tree'        => 'ct',
+		'counter'           => 'c',
+		'counter_span'      => 'cs',
+		'counter_value'     => 'cv',
+		'display_recent'    => 'dr',
+		'end_of_cookie'     => 'eoc',
+		'exists_cookie'     => 'ec',
+		'expiry_date'       => 'ed',
+		'expiry_string'     => 'es',
+		'found'             => 'f',
+		'find_in'           => 'fi',
+		'files_sort'        => 'fs',
+		'debug_div'         => 'dd',
+		'debug_found'       => 'df',
+		'domain_string'     => 'ds',
+		'get_cookie'        => 'gc',
+		'get_cookie_count'  => 'gcc',
+		'get_cookie_number' => 'gcn',
+		'head'              => 'h',
+		'lable'             => 'L',
+		'link'              => 'l',
+		'list'              => 'l',
+		'list_toggle'       => 'lt',
+		'li_sub'            => 'ls',
+		'module'            => 'm',
+		'my_cookie'         => 'mc',
+		'name'              => 'c',
+		'name_length'       => 'nl',
+		'path_string'       => 'ps',
+		'path_to_module'    => 'ptm',
+		'plus'              => 'l',
+		'result'            => 'r',
+		'search_name'       => 'sn',
+		'sect'              => 'S',
+		'section'           => 's',
+		'set_cookie'        => 'sc',
+		'secure_string'     => 'ss',
+		'show_found'        => 'sf',
+		'start_of_cookie'   => 'soc',
+		'term'              => 't',
+		'terms'             => 'T',
+		'three_days'        => 't',
+		'tree_holder'       => 'th',
+		'ul_sub'            => 'us',
+	);
+	$list = join '|', keys %replace;
+
+	$text =~ s/(?<!\w)($list)(?!\w)/$replace{$1}/gxms;
 
 	return $text;
 }

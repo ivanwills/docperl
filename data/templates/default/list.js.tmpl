@@ -413,13 +413,13 @@ function list_toggle( id ) {
  *	Toggles a whole section open/closed.
  */
 function section_toggle( section ) {
-	var div  = document.getElementById( section );
+	var sect = document.getElementById( section );
 	var head = document.getElementById( section + '_head' );
 	var link = document.getElementById( 'plus__' + section );
 	// check the status of the list
-	if ( div.style && div.style.display ) {
+	if ( sect.style && sect.style.display ) {
 		// list is closed so open
-		div.style.display = '';
+		sect.style.display = '';
 		head.style.marginBottom = '';
 		link.removeChild( link.firstChild );
 		link.appendChild( document.createTextNode('-') );
@@ -428,7 +428,7 @@ function section_toggle( section ) {
 	}
 	else {
 		// list is open so close
-		div.style.display = 'none';
+		sect.style.display = 'none';
 		head.style.marginBottom = '1px';
 		link.removeChild( link.firstChild );
 		link.appendChild( document.createTextNode('+') );
@@ -509,57 +509,57 @@ function get_cookie(name) {
  *	Sets a cookie with the supplied parameters
  */
 function set_cookie(name, value, expires, path, domain, secure) {
-	var expString	 = expires	== null	? '' : ('; expires=' + expires.toGMTString());
-	var pathString	 = path		== null	? '' : ('; path=' + path);
-	var domainString = domain	== null	? '' : ('; domain=' + domain);
-	var secureString = secure	== true	? '; secure' : '';
-	var new_cookie	 = name + '=' + escape(value) + expString + pathString + domainString + secureString;
-	document.cookie	 = new_cookie;
+	var expiry_string = expires == null ? '' : ('; expires=' + expires.toGMTString());
+	var path_string   = path    == null ? '' : ('; path=' + path);
+	var domain_string = domain  == null ? '' : ('; domain=' + domain);
+	var secure_string = secure  == true ? '; secure' : '';
+	var new_cookie    = name + '=' + escape(value) + expiry_string + path_string + domain_string + secure_string;
+	document.cookie   = new_cookie;
 }
 
 /**
- *	@param	name:	The cookie to delete
- *	@param	path:	The path of the cookie
- *	@param	domain:	The domaing of the cookie
- *	@param	secure:	Flags if the cookie should be secure
- *	@todo
- *	@bug
+ *  @param name:   The cookie to delete
+ *  @param path:   The path of the cookie
+ *  @param domain: The domaing of the cookie
+ *  @param secure: Flags if the cookie should be secure
+ *  @todo
+ *  @bug
  *
- *	Clears/deletes a cookie from the system.
+ *  Clears/deletes a cookie from the system.
  */
 function clear_cookie(name, path, domain, secure) {
-	var ThreeDays	= 3 * 24 * 60 * 60 * 1000;
-	var expDate		= new Date();
-	expDate.setTime(expDate.getTime() - ThreeDays);
-	set_cookie(name, 'ImOutOfHere', expDate, path, domain, secure)
+	var three_days  = 3 * 24 * 60 * 60 * 1000;
+	var expiry_date = new Date();
+	expiry_date.setTime(expiry_date.getTime() - three_days);
+	set_cookie(name, 'ImOutOfHere', expiry_date, path, domain, secure);
 }
 
 /**
- *	@param	cookie:	The cookie to check for existance
- *	@return	bool:	True if the cookie exists false other wise
- *	@todo
- *	@bug
+ *  @param  cookie: The cookie to check for existance
+ *  @return bool:   True if the cookie exists false other wise
+ *  @todo
+ *  @bug
  *
- *	Determines the existance of a cookie
+ *  Determines the existance of a cookie
  */
 function exists_cookie(cookie) {
 	return (get_cookie(cookie) == null) ? false : true;
 }
 
 /**
- *	@param	name:	The cookie to count
- *	@return	int:	The number of cookies with the name name
- *	@todo
- *	@bug
+ *  @param	name: The cookie to count
+ *  @return	int:  The number of cookies with the name name
+ *  @todo
+ *  @bug
  *
- *	Counts the number of cookies with the name 'name' (ie path, domain, etc are different)
+ *  Counts the number of cookies with the name 'name' (ie path, domain, etc are different)
  */
 function get_cookie_count(name) {
-	var result			= 0;
-	var my_cookie		= ' ' + document.cookie + ';';
-	var search_name		= ' ' + name + '=';
-	var name_length		= search_name.length;
-	var start_of_cookie	= myCookie.indexOf(search_name);
+	var result          = 0;
+	var my_cookie       = ' ' + document.cookie + ';';
+	var search_name     = ' ' + name + '=';
+	var name_length     = search_name.length;
+	var start_of_cookie = my_cookie.indexOf(search_name);
 
 	while (start_of_cookie != -1) {
 		result += 1;
@@ -570,16 +570,16 @@ function get_cookie_count(name) {
 
 /**
  *	@param	name:	The name of the cookie
- *	@param	cookie_num:	The order of the cookie to get
+ *	@param	cookie_number:	The order of the cookie to get
  *	@return	string:	The value of the cookie
  *	@todo
  *	@bug
  *
- *	For cookies with many entries this gets the one numberd cookie_num.
+ *	For cookies with many entries this gets the one numberd cookie_number.
  */
-function get_cookie_number(name, cookie_num) {
+function get_cookie_number(name, cookie_number) {
 	var result = null;
-	if (cookie_num >= 1) {
+	if (cookie_number >= 1) {
 		var cntr			= 0;
 		var my_cookie		= ' ' + document.cookie + ';';
 		var search_name		= ' ' + name + '=';
@@ -612,7 +612,7 @@ function debug(msg) {
 		return debug(msg);
 	}
 
-	var div = document.createElement('div');
-	div.appendChild( document.createTextNode(msg) );
-	debug_div.appendChild(div);
+	var out = document.createElement('div');
+	out.appendChild( document.createTextNode(msg) );
+	debug_div.appendChild(out);
 }
