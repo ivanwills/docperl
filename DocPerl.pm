@@ -474,8 +474,8 @@ sub _organise_perl {
 			: $module =~ /faq/xms    ? 'FAQ'
 			: $module =~ /tut/xms    ? 'Tutorials'
 			: $module =~ /mod/xms    ? 'Modules'
-			: $found ? undef
-			:          'Unsorted';
+			: $found                 ? undef
+			:                          'Unsorted';
 
 		if ($area) {
 			$pod{$area}{$module} = $perl->{$module};

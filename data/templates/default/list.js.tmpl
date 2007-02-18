@@ -54,7 +54,7 @@ function count_tree( tree, counter ) {
 	for ( var module in tree ) {
 		if ( module != '*' ) {
 			data = tree[module];
-			var tt = new Array();
+			var tt = [];
 			for ( var t in data )
 				tt.push(t);
 			if ( data && tt.length )
@@ -78,7 +78,7 @@ function count_tree( tree, counter ) {
  *
  *	Creates a <ul> tree of modules
  */
-var tree_holder = new Array();
+var tree_holder = [];
 function create_tree ( files, container_id, path, counter ) {
 	// need to stick each module into a container
 	var container= document.getElementById(container_id);
@@ -94,7 +94,7 @@ function create_tree ( files, container_id, path, counter ) {
 	if (!files)
 		files = tree_holder[path];
 
-	var files_sort = new Array();
+	var files_sort = [];
 	for ( var module in files ) {
 		files_sort.push(module);
 	}
@@ -281,7 +281,7 @@ function search(force) {
 	for ( var i in terms ) {
 		var term = terms[i];
 
-		var list = show_found( new Array(perl.POD), term, 'perl', 'POD' );
+		var list = show_found( [perl.POD], term, 'perl', 'POD' );
 		if ( list )
 			ul.appendChild( list );
 		list = show_found( local, term, 'local', 'Local' );
@@ -354,7 +354,7 @@ function show_found( list, term, base, name ) {
  */
 function find_in( list, term, name ) {
 	var next	= name ? name + '::' : '';
-	var found	= new Array();
+	var found	= [];
 	var regex	= new RegExp( term, 'i' );
 
 	for ( var item in list ) {
