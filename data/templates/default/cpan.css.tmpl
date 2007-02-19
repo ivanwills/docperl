@@ -1,30 +1,42 @@
-/*
+/** 
+ *  Author: Ivan Wills
+ *  Copyright: Ivan Wills (c) 2007
  *
+ *  Emulates the CPAN style sheets
  */
 
 pre {
-	background-color:	#EEE;
-	border:				solid 1px grey;
-	padding:			12px;
+	background-color:   #EEE;
+	border:             solid 1px grey;
+	padding:            12px;
 	font-size:          9pt;
+}
+code {
+	font-weith:         lighter;
 }
 body {
 	font-family:        arial,sans-serif;
 	font-size:          11pt;
 }
 h1, h2, h3, h4, h5, h6 {
-	font-family:		sans-serif;
-	color:              #069;
+	font-family:        sans-serif;
 	-moz-border-radius: 5px;
 }
 h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
 	text-decoration:    none;
+	color:              #069;
 }
 h1:after, h2:after, h3:after, h4:after, h5:after, h6:after {
-	content:            ' |+|';
 }
 h1 {
 	font-size:          large;
+}
+h1 img {
+	border:             1px solid;
+	height:             16px;
+	width:              16px;
+	overflow:           none;
+	font-size:          smaller;
 }
 h2 {
 	font-size:          medium;
@@ -37,10 +49,37 @@ hr {
 }
 
 dl dl {
-	margin-left:		2em;
+	margin-left:        2em;
 }
-
+dt {
+	font-weight:        lighter;
+}
 td {
-	padding-left:		2px;
-	padding-right:		2px;
+	padding-left:       2px;
+	padding-right:      2px;
+}
+ul.menu, ul.menu ul {
+	list-style-type:    none;
+}
+ul.menu li, ul.menu ul li {
+	list-style-type:    none;
+}
+li.level1 a,
+li.level2 a,
+li.level3 a,
+li.level4 a {
+	text-decoration:    none;
+	color:              #069;
+}
+li.level1 {
+	padding-left:       0em;
+}
+li.level2 {
+	padding-left:       3em;
+}
+li.level3 {
+	padding-left:       6em;
+}
+li.level4 {
+	padding-left:       9em;
 }

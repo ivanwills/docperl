@@ -13,7 +13,7 @@
 		<meta name="keywords"	 content="" />
 		<style type="text/css">
 		<!--/* <![CDATA[ */
-			@import url("?page=css.css");
+			@import url("?page=cpan.css");
 			html {
 				padding:		0px;
 				margin:			0px;
@@ -22,20 +22,21 @@
 				padding:		0px;
 				margin:			0px;
 			}
-			h1 {
+			#headding h1 {
 				float:			left;
 				padding-top:	0px;
 				padding-bottom:	0px;
 				margin-top:		0px;
 				margin-bottom:	0px;
 			}
-			ul {
+			#headding ul {
 				display:		inline;
 			}
-			li {
+			#headding li {
 				display:		inline;
 			}
-			pre { display: none; }
+			#headding pre { display: none; }
+			#content      { padding: 9px;  }
 		/* ]]> */-->
 		</style>
 		<script type="text/javascript">
@@ -45,26 +46,32 @@
 		</script>
 	</head>
 	<body>
-		<table style="width:100%; vertical-align:middle; text-align: center; clear: both; ">
-[%- FOR source = sources -%]
-			<tr>
-				<th>[% IF !first %][% first = 1 %][% module %][% END %]</th>
-				<td><a target="contents" title="Documentation [% module %]"  href="?page=pod&amp;module=[% module %]&amp;file=[% file %]&amp;location=[% location %]&amp;source=[% source.file %]"> POD </a></td>
-				<td><a target="contents" title="Documentation [% module %]"  href="?page=text&amp;module=[% module %]&amp;file=[% file %]&amp;location=[% location %]&amp;source=[% source.file %]"> Text </a></td>
-				<td>
-	[%- UNLESS source.suffix == 'pod' -%]
-				<a target="contents" title="Functions defined, modules used, inheritance etc" href="?page=api&amp;module=[% module %]&amp;file=[% file %]&amp;location=[% location %]&amp;source=[% source.file %]"> API </a>
+		<div id="headding">
+			<table style="width:100%; vertical-align:middle; text-align: center; clear: both; ">
+	[%- FOR source = sources -%]
+				<tr>
+					<th>[% IF !first %][% first = 1 %][% module %][% END %]</th>
+					<td><a target="contents" title="Documentation [% module %]"  href="?page=pod&amp;module=[% module %]&amp;file=[% file %]&amp;location=[% location %]&amp;source=[% source.file %]"> POD </a></td>
+					<td><a target="contents" title="Documentation [% module %]"  href="?page=text&amp;module=[% module %]&amp;file=[% file %]&amp;location=[% location %]&amp;source=[% source.file %]"> Text </a></td>
+					<td>
+		[%- UNLESS source.suffix == 'pod' -%]
+					<a target="contents" title="Functions defined, modules used, inheritance etc" href="?page=api&amp;module=[% module %]&amp;file=[% file %]&amp;location=[% location %]&amp;source=[% source.file %]"> API </a>
+		[%- END -%]
+					</td>
+					<td><a target="contents" title="View source code" href="?page=code&amp;module=[% module %]&amp;file=[% file %]&amp;location=[% location %]&amp;source=[% source.file %]">CODE</a></td>
+		[%- IF location != 'local' %]
+					<td><a target="contents" title="See latest documentation on CPAN" href="http://search.cpan.org/search?query=[% module %]&amp;mode=module"> CPAN</a></td>
+		[%- END -%]
+				</tr>
 	[%- END -%]
-				</td>
-				<td><a target="contents" title="View source code" href="?page=code&amp;module=[% module %]&amp;file=[% file %]&amp;location=[% location %]&amp;source=[% source.file %]">CODE</a></td>
-	[%- IF location != 'local' %]
-				<td><a target="contents" title="See latest documentation on CPAN" href="http://search.cpan.org/search?query=[% module %]&amp;mode=module"> CPAN</a></td>
-	[%- END -%]
-			</tr>
-[%- END -%]
-		</table>
-		<pre>
-			[% DUMP %]
-		</pre>
+			</table>
+			<pre>
+				[%# DUMP %]
+			</pre>
+		</div>
+		<hr/>
+		<div id="content">
+		[% content %]
+		</div>
 	</body>
 </html>

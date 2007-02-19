@@ -16,7 +16,7 @@ use Carp;
 use Data::Dumper qw/Dumper/;
 use English qw/ -no_match_vars /;
 use Pod::POM;
-use Pod::POM::View::HTML;
+use DocPerl::Cached::POD::HTML;
 use base qw/DocPerl::Cached/;
 
 our $VERSION     = version->new('0.0.1');
@@ -46,9 +46,9 @@ sub process {
 
 	my $parser = Pod::POM->new({ warn => 0, });
 	my $pom    = $parser->parse($file);
-	my $out    = Pod::POM::View::HTML->print($pom);
+	my $out    = DocPerl::Cached::POD::HTML->print($pom);
 
-	$out =~ s{<html>}{<html><link rel="stylesheet" href="?page=css.css" type="text/css" />}xms;
+	$out =~ s{<html>}{<html><link rel="stylesheet" href="?page=cpan.css" type="text/css" />}xms;
 	$out =~ s{</pre>(\s+)<pre>}{$1}gxms;
 
 	return ( pod => $out );
