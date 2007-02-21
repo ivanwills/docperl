@@ -8,7 +8,7 @@
 
 =item *
 
-L<perlfunc>: Perl function documentation
+L<pod::perlfunc>: Perl function documentation
 
 =item *
 
