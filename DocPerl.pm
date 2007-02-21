@@ -98,6 +98,9 @@ sub init_module {
 		# store the module file name
 		$self->{module}      =~ s{__}{::}gxms;
 		$self->{module_file} =~ s{__}{/}gxms;
+		if ( $self->{current_location} eq 'perl' ) {
+			$self->{module_file} = "pod/$self->{module_file}";
+		}
 	}
 	elsif ( $q->{module} =~ m{^link/(.+)(?:[.]html)$}xms ) {
 		$self->{current_location} = $q->{location};
@@ -126,7 +129,17 @@ sub init_module {
 	croak 'Module file went!' if !$self->{module_file};
 	croak 'Location went!'    if !$self->{current_location};
 
-	#
+	# Find all files that match the module
+	$self->find_matches();
+
+	return;
+}
+
+sub find_matches {
+	my $self = shift;
+	my $q    = $self->{cgi};
+	my $conf = $self->{conf};
+
 	my $file = $self->{module_file};
 	my @files;
 	my @folders;
@@ -158,6 +171,14 @@ sub init_module {
 	$self->{suffixes} = \@suffixes;
 	$self->{sources}  = \@files;                           # all files that match the module name
 	$self->{source}   = $q->{source} || $files[0]{file};
+
+	#warn "$self->{current_location}: $self->{source}\nfolders = ".(join ', ', @folders);
+
+	if ( ( !$self->{source} || !-e $self->{source} )
+		&& $self->{current_location} eq 'local' ) {
+		$self->{current_location} = 'inc';
+		$self->find_matches();
+	}
 
 	return;
 }
@@ -203,6 +224,7 @@ sub process {
 
 			# try to see if the method is a cached module
 			my $module = 'DocPerl::Cached::' . uc $1;
+			warn $module;
 			eval("require $module");
 			if ($@) {
 				carp $@;
@@ -236,6 +258,9 @@ sub process {
 	$conf->{Template} ||= {};
 	$tmpl->process( $self->template(), { %{$q}, %{ $conf->{Template} }, %vars }, \$out )
 		or error( $tmpl->error );
+		warn $self->template();
+		warn length $out;
+		warn scalar keys %vars;
 
 	if ( $out =~ /\A\s+\Z/xms ) {
 		croak 'The processed template "' . $self->template() . '" contains not data!' . Dumper \%vars, $out;

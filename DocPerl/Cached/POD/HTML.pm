@@ -67,6 +67,7 @@ our $VERSION     = version->new('0.0.1');
 our @EXPORT_OK   = qw//;
 our %EXPORT_TAGS = ();
 #our @EXPORT      = qw//;
+our $LOCATION   = 'inc';
 
 sub menu {
 	my ($self, $pod) = @_;
@@ -233,6 +234,85 @@ sub view_item {
 		. $start_content
 		. $item->content->present($self)
 		. "$end_content\n";
+}
+
+sub view_seq_code {
+	my ($self, $text) = @_;
+
+	# check if the text loosk like a Module
+	if ( $text =~ /^[\w:]+$/xms ) {
+		$text = "<a href=\"?page=pod&module=$text&location=$LOCATION\">$text</a>";
+	}
+
+	return "<code>$text</code>";
+}
+
+sub view_seq_link {
+	my ($self, $link) = @_;
+
+	# view_seq_text has already taken care of L<http://example.com/>
+	if ($link =~ /^<a href=/ ) {
+		return $link;
+	}
+
+	# full-blown URL's are emitted as-is
+	if ($link =~ m{^\w+://}s ) {
+		return make_href($link);
+	}
+
+	$link =~ s/\n/ /g;   # undo line-wrapped tags
+
+	my $orig_link = $link;
+	my $linktext;
+	# strip the sub-title and the following '|' char
+	if ( $link =~ s/^ ([^|]+) \| //x ) {
+		$linktext = $1;
+	}
+
+	# make sure sections start with a /
+	$link =~ s|^"|/"|;
+
+	my $page;
+	my $section;
+	if ($link =~ m|^ (.*?) / "? (.*?) "? $|x) { # [name]/"section"
+		($page, $section) = ($1, $2);
+	}
+	elsif ($link =~ /\s/) {  # this must be a section with missing quotes
+		($page, $section) = ('', $link);
+	}
+	else {
+		($page, $section) = ($link, '');
+	}
+
+	# warning; show some text.
+	$linktext = $orig_link unless defined $linktext;
+
+	my $url = '';
+	if (defined $page && length $page) {
+		$url = $self->view_seq_link_transform_path($page);
+	}
+
+	# append the #section if exists
+	$url .= "#$section" if defined $url and
+		defined $section and length $section;
+
+	return make_href($url, $linktext);
+}
+
+sub make_href {
+	my($url, $title) = @_;
+
+	if (!defined $url) {
+		if ( $title =~ /^[\w:]+$/xms ) {
+			$url = "?page=pod&module=$title&location=$LOCATION";
+		}
+		else {
+			return defined $title ? "M<i>$title</i>"  : '';
+		}
+	}
+
+	$title = $url unless defined $title;
+	return qq{<a href="$url">$title</a>};
 }
 
 1;

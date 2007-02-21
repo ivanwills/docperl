@@ -174,7 +174,7 @@ sub _save_cache {
 
 	# check that the arguments are supplied
 	croak 'Missing required argument - source, file'    if !$source;
-	croak "Source file does exist '$source'"            if $source ne '1' && !-f $source;
+	croak "Source file does not exist '$source'"        if $source ne '1' && !-f $source;
 	croak 'Missing required argument - cache, location' if !$cache;
 	carp 'No cache content to save!' && return if !$arg{content};
 

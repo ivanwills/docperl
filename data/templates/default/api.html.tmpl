@@ -1,93 +1,7 @@
 [% UNLESS ApiColumns %][% ApiColumns = 3 %][% END -%]
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html
-	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-	 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en-AU" xml:lang="en-AU">
-	<head>
-		<title>API for [% module %]</title>
-		<meta http-equiv="Content-Type"		content="text/html; charset=utf-8" />
-		<meta http-equiv="Content-Language"	content="en-au" />
-		<meta name="author"		 content="Ivan Wills" />
-		<meta name="copyright"	 content="Copyright (c) 2006 Ivan Wills, All Rights Reserved" />
-		<meta name="description" content="" />
-		<meta name="keywords"	 content="" />
-		<style type="text/css">
-			@import url(?page=css.css);
-			pre {
-				padding:			3px;
-				border-radius:		5px;
-				font-family:		sans-serif;
-				font-size:			8pt;
-				-moz-border-radius:	5px;
-			}
-			table {
-				border:				1px outset;
-				width:				500px;
-				overflow:			visible;
-				border-collapse:	collapse;
-			}
-			th, td {
-				border:				1px inset;
-				font-size:			10pt;
-				padding:			2px;
-			}
-			td {
-				width:				[% 1 / (1 + ApiColumns) * 100  %]%;
-			}
-			th {
-				text-align:			right;
-				width:				160px;
-			}
-			td.double_list {
-				padding:			0px;
-			}
-			td.double_list > table {
-				border-width:		0px;
-				margin:				0px;
-				width:				100%;
-			}
-			td.double_list > table td {
-				border-width:		0px 1px 0px 0px;
-				padding:			2px;
-				margin:				0px;
-				width:				50%;
-			}
-			ul {
-				margin:				0px;
-				padding:			5px;
-				list-style-type:	none;
-			}
-			div ul ul {
-				margin-left:		10px;
-			}
-			.hirachy {
-				float:				right;
-				border:				1px solid black;
-				border-radius:		3px;
-				-moz-border-radius:	3px;
-			}
-			.hirachy > div {
-				border:				1px solid black;
-				border-left:		0px;
-				border-right:		0px;
-				border-top:			0px;
-				font-weight:		bold;
-				font-size:			1.2em;
-				font-family:		sans-serif;
-				padding:			1px 5px 1px 5px;
-				text-align:			center;
-				border-radius:		3px;
-				-moz-border-radius:	3px 3px 0px 0px;
-			}
-		</style>
-		<script type="text/javascript">
-		<!--
-			
-		//-->
-		</script>
-	</head>
-	<body>
+[% WRAPPER module_head.html.tmpl
+	view = 'API' %]
+	<div id="api">
 		<h1>[% module %]</h1>
 		<div class="hirachy">
 			<div>Class Inheritance</div>
@@ -306,5 +220,5 @@ sub object_method {
 }</pre>
 			</div>
 		</div>
-	</body>
-</html>
+	</div>
+[% END -%]

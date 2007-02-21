@@ -42,13 +42,16 @@ sub process {
 	($file)   = $file   =~ m{\A ( [\w\-./]+ ) \Z}xms;
 	($module) = $module =~ m{\A ( [\w\:]+ ) \Z}xms;
 
-	return ( pod => "File contains dodgy craricters ($file)" ) if !$file;
+	return ( pod => "File contains dodgy characters ($file)" ) if !$file;
 
 	my $parser = Pod::POM->new({ warn => 0, });
 	my $pom    = $parser->parse($file);
-	my $out    = DocPerl::Cached::POD::HTML->print($pom);
+	my $out;
+	{
+		local $DocPerl::Cached::POD::HTML::LOCATION = $self->{current_location};
+		$out = DocPerl::Cached::POD::HTML->print($pom);
+	}
 
-	$out =~ s{<html>}{<html><link rel="stylesheet" href="?page=cpan.css" type="text/css" />}xms;
 	$out =~ s{</pre>(\s+)<pre>}{$1}gxms;
 
 	return ( pod => $out );
