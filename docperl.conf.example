@@ -74,6 +74,15 @@ PerlLabel:      Perl
 #   if random people clear the cache for no good reason
 #ClearCache:    on
 
+# Show plain text version of the POD documentation
+#ShowText:      on
+
+# Sets the default style sheet
+# The cpan style emulates CPAN's look
+#StyleSheet:     cpan
+# The css style is the original DocPerl style
+#StyleSheet:     css
+StyleSheet:     cpan
 
 ## General
 # General configuration

@@ -52,7 +52,7 @@ sub init {
 		}
 		else {
 			$self->{template} = "$template.html";
-			$self->{mime}     = 'text/html';
+			$self->{mime}     = $page eq 'text' ? 'text/plain' : 'text/html';
 		}
 	}
 	else {

@@ -150,7 +150,7 @@ function create_tree ( files, container_id, path, counter ) {
 function create_module(path, module) {
 	var display = path_to_module(path);
 	var label   = document.createElement('a');
-	label.href  = '?page=text&module=' + path;
+	label.href  = '?page=pod&module=' + path;
 	label.title = display;
 	label.setAttribute( 'onclick', 'javascript: click_module("' + path + '");' );
 	label.setAttribute( 'target', '[% IF !sidebar %]main[% ELSE %]_content[% END %]' );

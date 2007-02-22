@@ -1,35 +1,12 @@
 package DocPerl::Cached::POD;
 
-=head1 NAME
+# Created on: 2007-02-13 19:14:27
+# Create by:  ivan
+# $Id$
+# $Revision$, $HeadURL$, $Date$
+# $Revision$, $Source$, $Date$
 
-DocPerl::Cached::POD - Generates the HTML Documentation from a files POD
-
-=head1 VERSION
-
-This documentation refers to DocPerl::Cached::POD version 0.6.0.
-
-
-=head1 SYNOPSIS
-
-   use DocPerl::Cached::POD;
-
-   # Brief but working code example(s) here showing the most common usage(s)
-   # This section will be as far as many users bother reading, so make it as
-   # educational and exemplary as possible.
-
-
-=head1 DESCRIPTION
-
-A full description of the module and its features.
-
-May include numerous subsections (i.e., =head2, =head3, etc.).
-
-
-=head1 METHODS
-
-=cut
-
-# Created on: 2006-03-19 20:31:36
+# Created on: 2007-02-13 19:14:27
 # Create by:  ivan
 
 use strict;
@@ -37,23 +14,15 @@ use warnings;
 use version;
 use Carp;
 use Data::Dumper qw/Dumper/;
-use Scalar::Util qw/tainted/;
+use English qw/ -no_match_vars /;
+use Pod::POM;
+use DocPerl::Cached::POD::HTML;
 use base qw/DocPerl::Cached/;
-#use Pod::Html 1.0505;
-use Pod::Html;
 
-our $VERSION   = version->new('0.6.0');
-our @EXPORT_OK = qw//;
-
-=head3 C<process ( )>
-
-Return: string - The POD documentation of the module passed in during
-creation.
-
-Description: Creates the html POD documentation of the file/module passed in
-when this object was created.
-
-=cut
+our $VERSION     = version->new('0.0.1');
+our @EXPORT_OK   = qw//;
+our %EXPORT_TAGS = ();
+#our @EXPORT      = qw//;
 
 sub process {
 	my $self    = shift;
@@ -73,80 +42,72 @@ sub process {
 	($file)   = $file   =~ m{\A ( [\w\-./]+ ) \Z}xms;
 	($module) = $module =~ m{\A ( [\w\:]+ ) \Z}xms;
 
-	return ( pod => "File contains dodgy craricters ($file)" ) if !$file;
+	return ( pod => "File contains dodgy characters ($file)" ) if !$file;
 
-	# construct the list of parameters
-	my @params = (
-		"--infile=$file",
-		"--podroot=.",
-		"--title=$module",
-		"--index",
-		"--cachedir=$conf->{General}{Data}/cache",
-		'--css=?page=css.css',
-	);
-
-	# check if any values are tainted
-	for (@params) {
-		carp "Tainted $_" if tainted $_;
+	my $parser = Pod::POM->new({ warn => 0, });
+	my $pom    = $parser->parse($file);
+	my $out;
+	{
+		local $DocPerl::Cached::POD::HTML::LOCATION = $self->{current_location};
+		$out = DocPerl::Cached::POD::HTML->print($pom);
 	}
 
-	my $perl = $conf->{General}{Perl} || '/usr/bin/perl';
-	my $cmd = "$perl -MPod::Html -e \"pod2html('" . join( "', '", @params ) . "\')\"";
+	$out =~ s{</pre>(\s+)<pre>}{$1}gxms;
 
-	# Pod::Html only appears to be able to print to STDOUT so have to call it
-	# as an external program and capture STDOUT
-	tie *STDOUT, 'POD::STDOUT';
-
-	# Create the HTML POD
-	eval { pod2html(@params); };
-	my $pod = $POD::STDOUT::string;
-	untie *STDOUT;
-
-	# check for errors
-	if ($@) {
-		carp "Error in creating POD: $@";
-		return ( pod =>
-				"<html><head><title>Error</title></head><body><h1>Error</h1><p>Error in creating POD from $file</p></html>"
-		);
-	}
-
-	# check that the html was created success fully
-	if ( length $pod < 100 ) {
-		return ( pod =>
-				  "Could not create the POD for $module $!<br/><br/>\nGENERATED POD\n$pod\n<br/><br/>\n$cmd\n<br/><pre>"
-				. Dumper($conf)
-				. '</pre><br/>' );
-	}
-
-	# remove final number if one exists (bug with Pod::Html?)
-	if ( $pod =~ /\d$/xms ) {
-		$pod =~ s/\d$//xms;
-	}
-
-	# try to get rid of gaps between pre tags
-	$pod =~ s{</pre>(\s*)<pre>}{$1}ixmsg;
-
-	# convert relative links to work with DocPerl structure
-	my $location = $self->{current_location} || 'inc';
-	$pod =~ s{href="/}{target="main" href="?page=module&location=$location&module=link/}gxms;
-
-	# return the processed documentation
-	return ( pod => $pod );
+	return ( pod => $out );
 }
-
-package POD::STDOUT;
-
-use base qw/Tie::Handle/;
-our $string = '';
-
-sub TIEHANDLE { $string = ''; my $s; return bless \$s, shift      }
-sub PRINT     { shift; no warnings; $string .= join $,, @_; return }
-sub PRINTF    { shift; no warnings; $string .= sprintf @_; return  }
-sub CLOSE     { return }
 
 1;
 
 __END__
+
+=head1 NAME
+
+DocPerl::Cached::POD - <One-line description of module's purpose>
+
+=head1 VERSION
+
+This documentation refers to DocPerl::Cached::POD version 0.1.
+
+
+=head1 SYNOPSIS
+
+   use DocPerl::Cached::POD;
+
+   # Brief but working code example(s) here showing the most common usage(s)
+   # This section will be as far as many users bother reading, so make it as
+   # educational and exemplary as possible.
+
+
+=head1 DESCRIPTION
+
+A full description of the module and its features.
+
+May include numerous subsections (i.e., =head2, =head3, etc.).
+
+
+=head1 SUBROUTINES/METHODS
+
+A separate section listing the public components of the module's interface.
+
+These normally consist of either subroutines that may be exported, or methods
+that may be called on objects belonging to the classes that the module
+provides.
+
+Name the section accordingly.
+
+In an object-oriented module, this section should begin with a sentence (of the
+form "An object of this class represents ...") to give the reader a high-level
+context to help them understand the methods that are subsequently described.
+
+
+=head3 C<sub ( $search, )>
+
+Param: C<$search> - type (detail) - description
+
+Return: DocPerl::Cached::POD -
+
+Description:
 
 =head1 DIAGNOSTICS
 
@@ -177,6 +138,16 @@ modules that use source code filters are mutually incompatible).
 
 =head1 BUGS AND LIMITATIONS
 
+A list of known problems with the module, together with some indication of
+whether they are likely to be fixed in an upcoming release.
+
+Also, a list of restrictions on the features the module does provide: data types
+that cannot be handled, performance issues and the circumstances in which they
+may arise, practical limitations on the size of data sets, special cases that
+are not (yet) handled, etc.
+
+The initial template usually just has:
+
 There are no known bugs in this module.
 
 Please report problems to Ivan Wills (ivan.wills@gmail.com).
@@ -186,11 +157,13 @@ Patches are welcome.
 =head1 AUTHOR
 
 Ivan Wills - (ivan.wills@gmail.com)
+<Author name(s)>  (<contact address>)
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright (c) 2006 Ivan Wills (101 Miles St Bald Hills QLD Australia 4036).
+Copyright (c) 2007 Ivan Wills (101 Miles St Bald Hills QLD Australia 4036).
 All rights reserved.
+
 
 This module is free software; you can redistribute it and/or modify it under
 the same terms as Perl itself. See L<perlartistic>.  This program is
