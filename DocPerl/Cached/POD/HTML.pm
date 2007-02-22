@@ -72,7 +72,7 @@ our $LOCATION   = 'inc';
 sub menu {
 	my ($self, $pod) = @_;
 
-	my $menu  = '<ul class="menu">';
+	my $menu  = '<ul class="menu">'."\n";
 	my @items = $self->menu_items($pod);
 
 	for my $item ( @items ) {
@@ -80,7 +80,7 @@ sub menu {
 		my $type  = $item->type();
 		my ($level) = $type =~ /^head(\d)$/xms;
 
-		$menu .= '<li class="level'.$level.'"><a href="#'.$self->make_anchor($title).'">'.$title.'</a></li>';
+		$menu .= "\t".'<li class="level'.$level.'"><a href="#'.$self->make_anchor($title).'">'.$title."</a></li>\n";
 	}
 	$menu .= "</ul>\n";
 
