@@ -124,7 +124,7 @@ sub view_head1 {
 	 . $self->make_anchor($title)
 	 .'" href="#__top" title="to top of page">'
 	 . $title
-	 . ' <img src="" height="16" width="16" alt="+" border="0"/></a></h1>'
+	 . ' <div style="border:1px solid;height:16px;width:16px;display:inline;font-size:smaller">&#8593;</div>'
 	 . "\n\n"
 	 . $head1->content->present($self);
 }

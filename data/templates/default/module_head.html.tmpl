@@ -24,7 +24,7 @@
 		</script>
 	</head>
 	<body>
-		<div id="headding">
+		<div id="headding" style="position: fixed; background-color: white">
 			<table style="width:100%; vertical-align:middle; text-align: center; clear: both; ">
 	[%- FOR source = sources -%]
 				<tr>
@@ -48,8 +48,11 @@
 			<pre>
 				[%# DUMP %]
 			</pre>
+			<hr style="margin-bottom: 0px" />
 		</div>
-		<hr/>
+	[% FOR source = sources -%]
+		<br/>
+	[%- END -%]
 		<div id="content">
 		[% content %]
 		</div>
