@@ -24,31 +24,36 @@
 		</script>
 	</head>
 	<body>
-		<div id="headding" style="position: fixed; background-color: white">
-			<table style="width:100%; vertical-align:middle; text-align: center; clear: both; ">
+		<div id="headding">
+			<table>
 	[%- FOR source = sources -%]
 				<tr>
-					<th>[% IF !first %][% first = 1 %][% module %][% END %]</th>
-					<td><a title="Documentation [% module %]"  href="?page=pod&amp;module=[% module %]&amp;file=[% file %]&amp;location=[% location %]&amp;source=[% source.file %]"> POD </a></td>
-		[%- IF show_text -%]
-					<td><a title="Documentation [% module %]"  href="?page=text&amp;module=[% module %]&amp;file=[% file %]&amp;location=[% location %]&amp;source=[% source.file %]"> Text </a></td>
-		[%- END -%]
+		[%- IF !first %][% first = 1 %]
+					<th rowspan="[% sources.size %]">[% module %]</th>
+		[% END %]
 					<td>
-		[%- UNLESS source.suffix == 'pod' -%]
-					<a title="Functions defined, modules used, inheritance etc" href="?page=api&amp;module=[% module %]&amp;file=[% file %]&amp;location=[% location %]&amp;source=[% source.file %]"> API </a>
+		[%- IF sources.size > 1 %]
+						[% source.file %]:
 		[%- END -%]
-					</td>
-					<td><a title="View source code" href="?page=code&amp;module=[% module %]&amp;file=[% file %]&amp;location=[% location %]&amp;source=[% source.file %]">CODE</a></td>
+						<a title="Documentation [% module %]"  href="?page=pod&amp;module=[% module %]&amp;file=[% file %]&amp;location=[% location %]&amp;source=[% source.file %]"> POD </a>
+		[%- IF show_text %]
+						| <a title="Documentation [% module %]"  href="?page=text&amp;module=[% module %]&amp;file=[% file %]&amp;location=[% location %]&amp;source=[% source.file %]"> Text </a>
+		[%- END -%]
+		[%- UNLESS source.suffix == 'pod' %]
+						| <a title="Functions defined, modules used, inheritance etc" href="?page=api&amp;module=[% module %]&amp;file=[% file %]&amp;location=[% location %]&amp;source=[% source.file %]"> API </a>
+		[%- END %]
+						| <a title="View source code" href="?page=code&amp;module=[% module %]&amp;file=[% file %]&amp;location=[% location %]&amp;source=[% source.file %]">CODE</a>
 		[%- IF location != 'local' %]
-					<td><a title="See latest documentation on CPAN" href="http://search.cpan.org/search?query=[% IF location == 'pod' %]pod::[% END %][% module %]&amp;mode=module"> CPAN</a></td>
-		[%- END -%]
+						| <a title="See latest documentation on CPAN" href="http://search.cpan.org/search?query=[% IF location == 'pod' %]pod::[% END %][% module %]&amp;mode=module"> CPAN</a>
+		[%- END %]
+					</td>
 				</tr>
 	[%- END -%]
 			</table>
 			<pre>
 				[%# DUMP %]
 			</pre>
-			<hr style="margin-bottom: 0px" />
+			<hr/>
 		</div>
 	[% FOR source = sources -%]
 		<br/>
