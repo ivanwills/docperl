@@ -40,7 +40,7 @@
 					</td>
 					<td><a title="View source code" href="?page=code&amp;module=[% module %]&amp;file=[% file %]&amp;location=[% location %]&amp;source=[% source.file %]">CODE</a></td>
 		[%- IF location != 'local' %]
-					<td><a title="See latest documentation on CPAN" href="http://search.cpan.org/search?query=[% module %]&amp;mode=module"> CPAN</a></td>
+					<td><a title="See latest documentation on CPAN" href="http://search.cpan.org/search?query=[% IF location == 'pod' %]pod::[% END %][% module %]&amp;mode=module"> CPAN</a></td>
 		[%- END -%]
 				</tr>
 	[%- END -%]
