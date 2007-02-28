@@ -258,9 +258,6 @@ sub process {
 	$conf->{Template} ||= {};
 	$tmpl->process( $self->template(), { %{$q}, %{ $conf->{Template} }, %vars }, \$out )
 		or error( $tmpl->error );
-		warn $self->template();
-		warn length $out;
-		warn scalar keys %vars;
 
 	if ( $out =~ /\A\s+\Z/xms ) {
 		croak 'The processed template "' . $self->template() . '" contains not data!' . Dumper \%vars, $out;
