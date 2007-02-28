@@ -10,6 +10,8 @@ use strict;
 use warnings;
 use version;
 use Carp;
+use Readonly;
+use Symbol qw/delete_package/;
 use Data::Dumper qw/Dumper/;
 use Scalar::Util;
 use English '-no_match_vars';
@@ -18,11 +20,15 @@ use base qw/DocPerl::Cached/;
 our $VERSION   = version->new('0.6.0');
 our @EXPORT_OK = qw//;
 
+Readonly my $QW       => qr/qw[^\w\s;] ( [\w:\s]+ ) [^\w\s;]/xms;
+Readonly my $LIST     => qr/[(] ( [\w:\s'"]+ ) [)]/xms;
+Readonly my $LIST_ALL => qr/(?: $QW | $LIST )/xms;
+
 sub process {
 	my $self     = shift;
 	my $conf     = $self->{conf};
 	my $location = $self->{current_location};
-	my $source   = $self->{source} || '';
+	my $source   = $self->{source};
 	my $file     = $source;
 
 	return if !-f $file;
@@ -57,70 +63,15 @@ LINE:
 		# lines after the end/data can only add to POD stat
 		next LINE if $end;
 
-		# if the line starts with the package directive
-		if ( $line =~ /^\s*package ([\w:]+);/xms ) {
-			if ( $api{package} ) {
-				push @{ $api{packages} }, $1;
-			}
-			else {
-				$api{package} = $1;
-			}
-		}
+		if (   $self->check_package( $line, \%api )
+			|| $self->check_base_parents( $line, \%api )
+			|| $self->check_isa_parents( $line, \%api )
+			|| $self->check_use( $line, \%api )
+			|| $self->check_require( $line, \%api )
+			|| $self->check_package_vars( $line, \%api )
 
-		# check if the line starts with 'use base' to indicate inhereted packages
-		elsif (
-			$line =~ m#\A
-					\s* use \s+ base \s+ qw
-					( [\|/({\[] )
-					\s*([\w:]+)\s*
-					( [\|/)}\]] )
-					#xms
+			#|| $self->check_( $line, \%api )
 			) {
-			my $parents = $2;
-			my @parents = split /\s+/xms, $parents;
-			push @{ $api{parents} }, @parents;
-		}
-
-		# check if the line starts with '@ISA' to indicate inhereted packages
-		elsif ( $line =~ / \@ISA \s* = \s* \( ([^)]+) \)  /xms ) {
-			my $parents = $1;
-			my @parents = split /,\s*/xms, $parents;
-			for my $parent (@parents) {
-				$parent =~ s/'|\s//gxms;    #'
-			}
-			push @{ $api{parents} }, @parents;
-		}
-		elsif (
-			$line =~ m#^
-					\s* \@ISA \s* = \s* qw
-					(?: [|] | [/] | [(] | [{] | \[ )
-					\s*(.*)\s*
-					(?: [|] | [/] | [)] | [}] | \] )
-					#xms
-			) {
-			my $parents = $1;
-			my @parents = split /\s+/xms, $parents;
-			push @{ $api{parents} }, @parents;
-		}
-		elsif ( $line =~ / push \s* [(]? \s* \@ISA \s* , \s* (?:['"])? ([\w:]+) (?:['"])? /xms ) {
-			my $parents = $1;
-			my @parents = split /,\s*/xms, $parents;
-			push @{ $api{parents} }, @parents;
-		}
-
-		# check for generic module 'use'
-		elsif ( my ($module) = $line =~ /^\s*use\s+([\w:]*)/xms ) {
-			$api{modules}{$module}++;
-		}
-
-		# check for generic module 'require'
-		elsif ( my ($require) = $line =~ /^\s*require\s+([\w:]*)/xms ) {
-			$api{required}{$require}++;
-		}
-
-		# check for package variables
-		elsif ( my ($var) = $line =~ /^\s*our\s+([\$\%\@]\w+)/xms ) {
-			$api{vars}{$var} = $INPUT_LINE_NUMBER;
 		}
 
 		# check for sub directives
@@ -177,7 +128,7 @@ LINE:
 	push @INC, @paths;
 
 	if ( $api{package} ) {
-		$api{version} = eval "require $api{package};\$$api{package}\:\:VERSION";
+		$api{version} = load_package( $api{package}, $file );
 		carp $EVAL_ERROR if $EVAL_ERROR;
 		eval { $api{hirachy} = [ get_hirachy( $api{package} ) ]; };
 		if ($EVAL_ERROR) {
@@ -188,7 +139,11 @@ LINE:
 			carp 'Found parents but not hirachy!';
 			$api{hirachy}[0]{hirachy} = [ map { { class => $_ } } @{ $api{parents} } ];
 		}
+
+		# clean up if we did not already have the symbol table
+		unload_package( $api{package} );
 	}
+
 	if ( ref $api{modules} ) {
 		$api{modules} = [ sort keys %{ $api{modules} } ];
 	}
@@ -205,14 +160,110 @@ LINE:
 	return ( api => \%api );
 }
 
+sub check_package {
+	my ( $self, $line, $api ) = @_;
+
+	# if the line starts with the package directive
+	my ($package) = $line =~ /^ \s* package \s+ ( [\w:]+ );/xms;
+
+	if ($package) {
+		if ( $api->{package} ) {
+			push @{ $api->{packages} }, $package;
+		}
+		else {
+			$api->{package} = $package;
+		}
+		return 1;
+	}
+
+	return 0;
+}
+
+sub check_base_parents {
+	my ( $self, $line, $api ) = @_;
+
+	# check if the line starts with 'use base' to indicate inhereted packages
+	my ($parents) = $line =~ m{\A \s* use \s+ base \s+ $LIST_ALL }xms;
+	if ($parents) {
+		my @parents = split /\s+/xms, $parents;
+		push @{ $api->{parents} }, @parents;
+		return 1;
+	}
+
+	return 0;
+}
+
+sub check_isa_parents {
+	my ( $self, $line, $api ) = @_;
+
+	# check if the line starts with '@ISA' to indicate inhereted packages
+	my ($parents) = $line =~ / \@ISA \s* = \s* $LIST_ALL  /xms;
+	if ($parents) {
+		my @parents = split /,\s*/xms, $parents;
+		for my $parent (@parents) {
+			$parent =~ s/'|\s//gxms;    #'
+		}
+		push @{ $api->{parents} }, @parents;
+		return 1;
+	}
+	$parents = $line =~ / push \s* [(]? \s* \@ISA \s* , \s* (?:['"])? ([\w:]+) (?:['"])? /xms;
+	if ($parents) {
+		my $parents = $1;
+		my @parents = split /,\s*/xms, $parents;
+		push @{ $api->{parents} }, @parents;
+		return 1;
+	}
+	return 0;
+}
+
+sub check_use {
+	my ( $self, $line, $api ) = @_;
+
+	# check for generic module 'use'
+	if ( my ($module) = $line =~ /^ \s* use \s+ ( [\w:]* ) /xms ) {
+		$api->{modules}{$module}++;
+		return 1;
+	}
+
+	return 0;
+}
+
+sub check_require {
+	my ( $self, $line, $api ) = @_;
+
+	# check for generic module 'require'
+	if ( my ($require) = $line =~ /^ \s* require \s+ ( [\w:]* ) /xms ) {
+		$api->{required}{$require}++;
+		return 1;
+	}
+
+	return 0;
+}
+
+sub check_package_vars {
+	my ( $self, $line, $api ) = @_;
+
+	# check for package variables
+	if ( my ($var) = $line =~ /^ \s* our \s+ ( [\$\%\@] \w+ ) /xms ) {
+		$api->{vars}{$var} = $INPUT_LINE_NUMBER;
+		return 1;
+	}
+
+	return 0;
+}
+
 sub get_hirachy {
 	my ($object) = @_;
 	my @hirachy;
-	my @parents = eval "\@$object\:\:ISA";
+	my @parents;
+	{
+		no strict qw/refs/;
+		@parents = @{"$object\:\:ISA"};
+	}
 	carp $EVAL_ERROR if $EVAL_ERROR;
 
 	foreach my $parent (@parents) {
-		eval "require $parent";
+		load_package($parent);
 		if ( !$EVAL_ERROR ) {
 			push @hirachy, get_hirachy($parent);
 		}
@@ -222,6 +273,54 @@ sub get_hirachy {
 	}
 
 	return { class => $object, hirachy => \@hirachy };
+}
+
+{
+	my %loaded;
+
+	sub load_package {
+		my ( $package, $file ) = @_;
+		my $sym = $package;
+		my ($sub_sym) = $sym =~ /::(\w+)$/xms;
+		my $version  = $package . '::VERSION';
+		my $have_sym = 0;
+		$sym =~ s/::(\w+)$/::/xms;
+		if ($sub_sym) {
+			$sub_sym .= '::';
+		}
+		else {
+			$sym .= '::';
+		}
+
+		if ( !$file ) {
+			$file = $package;
+			$file =~ s{/}{::}gxms;
+			$file .= '.pm';
+		}
+
+		{
+			no strict qw/refs/;
+			if ( ( $sub_sym && !exists ${ $sym{$sub_sym} } ) || ( !$sub_sym && !%{$sym} ) ) {
+				eval { require $file };
+			}
+			else {
+				$loaded{$package} = 1;
+			}
+			return ${$version};
+		}
+
+		return;
+	}
+
+	sub unload_package {
+		my ($package) = @_;
+		if ( $loaded{$package} ) {
+			delete_package($package);
+			$loaded{$package} = 0;
+		}
+
+		return;
+	}
 }
 
 1;
