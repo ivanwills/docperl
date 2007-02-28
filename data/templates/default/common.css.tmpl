@@ -54,39 +54,39 @@ body {
 	-moz-border-radius: 5px;
 }
 #api table {
-	border:	            1px outset;
-	width:	            500px;
+	border:             1px outset;
+	width:              500px;
 	overflow:           visible;
-	border-collapse:	collapse;
+	border-collapse:    collapse;
 }
 #api th, #api td {
-	border:	            1px inset;
+	border:             1px inset;
 	font-size:          10pt;
 	padding:            2px;
 }
 #api td {
-	width:	            [% UNLESS ApiColumns %][% ApiColumns = 2 %][% END %][% 1 / (1 + ApiColumns) * 100  %]%;
+	width:              [% UNLESS ApiColumns %][% ApiColumns = 2 %][% END %][% 1 / (1 + ApiColumns) * 100  %]%;
 }
 #api th {
-	text-align:	        right;
-	width:	            160px;
+	text-align:         right;
+	width:              160px;
 }
 #api td.double_list {
 	padding:            0px;
 }
 #api td.double_list > table {
 	border-width:       0px;
-	margin:	            0px;
-	width:	            100%;
+	margin:             0px;
+	width:              100%;
 }
 #api td.double_list > table td {
 	border-width:       0px 1px 0px 0px;
 	padding:            2px;
-	margin:	            0px;
-	width:	            50%;
+	margin:             0px;
+	width:              50%;
 }
 #api ul {
-	margin:	            0px;
+	margin:             0px;
 	padding:            5px;
 	list-style-type:    none;
 }
@@ -94,55 +94,67 @@ body {
 	margin-left:        10px;
 }
 .hirachy {
-	float:	            right;
-	border:	            1px solid black;
-	border-radius:		3px;
-	-moz-border-radius:	3px;
+	float:              right;
+	border:             1px solid black;
+	border-radius:      3px;
+	-moz-border-radius: 3px;
 }
 #api .hirachy > div {
-	border:		        1px solid black;
+	border:             1px solid black;
 	border-left:        0px;
 	border-right:       0px;
-	border-top:	        0px;
+	border-top:         0px;
 	font-weight:        bold;
-	font-size:	        1.2em;
+	font-size:          1.2em;
 	font-family:        sans-serif;
-	padding:	        1px 5px 1px 5px;
-	text-align:	        center;
+	padding:            1px 5px 1px 5px;
+	text-align:         center;
 	border-radius:      3px;
-	-moz-border-radius:	3px 3px 0px 0px;
+	-moz-border-radius: 3px 3px 0px 0px;
 }
-#code a.line_no {
-	background-color:	blue;
-	color:	            black;
-	width:	            4em;
-	text-align:	        right;
+#api #note {
+	clear:              both;
+	font-size:          0.8em;
+}
+#api #note #details {
+	clear:              both;
+	display:            none;
+}
+#api #note:hover #details {
 	display:            block;
-	float:	            left;
+}
+
+#code a.line_no {
+	background-color:   blue;
+	color:              black;
+	width:              4em;
+	text-align:         right;
+	display:            block;
+	float:              left;
 }
 #code .reserved {
-	color:	            red;
+	color:              red;
 }
 #code .pod {
-	color:	            #A23;
+	color:              #A23;
 }
 #code .comment {
-	color:	            #A41;
+	color:              #A41;
 }
 #code .builtin {
-	color:	            #36E;
+	color:              #36E;
 }
 #code .other {
-	color:	            #E33;
+	color:              #E33;
 }
 #code .operator {
-	color:	            #4A4;
+	color:              #4A4;
 }
 #code .logic {
-	color:	            #92D;
+	color:              #92D;
 }
 #code .declatory {
-	color:	            #F66;
+	color:              #F66;
 }
 #code pre {
 	padding:            0px;
