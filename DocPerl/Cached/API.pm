@@ -199,6 +199,9 @@ LINE:
 	}
 	@INC = @INC[ 0 .. $inc_path_size ];
 
+	$api{lines} = $i;
+	$api{size}  = int -s $file;
+
 	return ( api => \%api );
 }
 

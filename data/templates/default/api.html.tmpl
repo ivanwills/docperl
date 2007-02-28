@@ -62,6 +62,10 @@
 			</tr>
 			[% END -%]
 			<tr>
+				<th>File</th>
+				<td colspan="[% ApiColumns %]">[% api.size %] bytes, [% api.lines %] lines</td>
+			</tr>
+			<tr>
 				<th>Contains POD</th>
 				<td colspan="[% ApiColumns %]">[% IF api.pod %][% api.pod %] Lines[% ELSE %]No POD[% END %]</td>
 			</tr>
