@@ -48,7 +48,7 @@ LINE:
 		if ( $line =~ /\A=(\w*)/xms || $pod ) {
 			$api{pod}++;
 			my $pod_cmd = $1;
-			$pod = $pod && $pod_cmd eq 'cut' ? 0 : 1;
+			$pod = $pod && $pod_cmd && $pod_cmd eq 'cut' ? 0 : 1;
 			next LINE;
 		}
 
@@ -257,7 +257,7 @@ sub get_hirachy {
 	my @hirachy;
 	my @parents;
 	{
-		no strict qw/refs/;
+		no strict qw/refs/;    ## no critic
 		@parents = @{"$object\:\:ISA"};
 	}
 	carp $EVAL_ERROR if $EVAL_ERROR;
@@ -299,8 +299,8 @@ sub get_hirachy {
 		}
 
 		{
-			no strict qw/refs/;
-			if ( ( $sub_sym && !exists ${ $sym{$sub_sym} } ) || ( !$sub_sym && !%{$sym} ) ) {
+			no strict qw/refs/;    ## no critic
+			if ( ( $sub_sym && !exists ${$sym}{$sub_sym} ) || ( !$sub_sym && !%{$sym} ) ) {
 				eval { require $file };
 			}
 			else {
