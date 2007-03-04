@@ -6,6 +6,282 @@ package DocPerl::Cached::POD::HTML;
 # $Revision$, $HeadURL$, $Date$
 # $Revision$, $Source$, $Date$
 
+use strict;
+use warnings;
+use version;
+use Carp;
+use Scalar::Util;
+use List::Util;
+use CGI;
+use Data::Dumper qw/Dumper/;
+use English qw/ -no_match_vars /;
+use base qw/Pod::POM::View::HTML/;
+
+our $VERSION     = version->new('0.0.1');
+our @EXPORT_OK   = qw//;
+our %EXPORT_TAGS = ();
+our $LOCATION    = 'inc';
+
+sub menu {
+	my ( $self, $pod ) = @_;
+
+	my $menu  = '<ul class="menu">' . "\n";
+	my @items = $self->menu_items($pod);
+
+	for my $item (@items) {
+		my $title = $item->title->present($self);
+		my $type  = $item->type();
+		my ($level) = $type =~ /^head(\d)$/xms;
+
+		$menu .= "\t"
+			. '<li class="level'
+			. $level
+			. '"><a href="#'
+			. $self->make_anchor($title) . '">'
+			. $title
+			. "</a></li>\n";
+	}
+	$menu .= "</ul>\n";
+
+	return $menu;
+}
+
+sub menu_items {
+	my ( $self, $pom ) = @_;
+	my @items;
+
+	for my $item ( $pom->content() ) {
+		my $type = $item->type();
+		if ( $type eq 'head1' || $type eq 'head2' || $type eq 'head3' || $type eq 'head4' ) {
+			push @items, $item;
+		}
+		push @items, $self->menu_items($item);
+	}
+
+	return @items;
+}
+
+sub make_anchor {
+	my ( $self, $title ) = @_;
+	my $anchor = lc $title;
+	$anchor =~ s/::/__/gxms;
+	$anchor =~ s/\s/_/gxms;
+	return $anchor;
+}
+
+sub view_pod {
+	my ( $self, $pod ) = @_;
+	return '<a name="__top"></a>' . $self->menu($pod) . $pod->content->present($self);
+}
+
+sub view_head1 {
+	my ( $self, $head1 ) = @_;
+	my $title = $head1->title->present($self);
+	return '<h1><a name="'
+		. $self->make_anchor($title)
+		. '" href="#__top" title="to top of page">'
+		. $title
+		. ' <div class="up">&#8593;</div>'
+		. "</a></h1>\n\n"
+		. $head1->content->present($self);
+}
+
+sub view_head2 {
+	my ( $self, $head2 ) = @_;
+	my $title = $head2->title->present($self);
+	return '<h2><a name="'
+		. $self->make_anchor($title)
+		. '" href="#__top" title="to top of page">'
+		. $title
+		. "</a></h2>\n\n"
+		. $head2->content->present($self);
+}
+
+sub view_head3 {
+	my ( $self, $head3 ) = @_;
+	my $title = $head3->title->present($self);
+	return '<h3><a name="'
+		. $self->make_anchor($title)
+		. '" href="#__top" title="to top of page">'
+		. $title
+		. "</a></h3>\n\n"
+		. $head3->content->present($self);
+}
+
+sub view_head4 {
+	my ( $self, $head4 ) = @_;
+	my $title = $head4->title->present($self);
+	return '<h4><a name="'
+		. $self->make_anchor($title)
+		. '" href="#__top" title="to top of page">'
+		. $title
+		. "</a></h4>\n\n"
+		. $head4->content->present($self);
+}
+
+sub view_over {
+	my ( $self, $over ) = @_;
+	my ( $start, $end, $strip );
+
+	my $items = $over->item();
+	return '' if !@{$items};
+
+	my $first_title = $items->[0]->title();
+
+	if ( $first_title =~ /\A\s*\*\s*/xms ) {
+
+		# '=item *' => <ul>
+		$start = "<ul>\n";
+		$end   = "</ul>\n";
+		$strip = qr/^\s*\*\s*/;
+	}
+	elsif ( $first_title =~ /\A\s*\d+\.?\s*/xms ) {
+
+		# '=item 1.' or '=item 1 ' => <ol>
+		$start = "<ol>\n";
+		$end   = "</ol>\n";
+		$strip = qr/^\s*\d+\.?\s*/;
+	}
+	else {
+		$start = "<dl>\n";
+		$end   = "</dl>\n";
+		$strip = '';
+	}
+
+	my $overstack = ref $self ? $self->{OVER} : \@SUPER::OVER;
+	push @{$overstack}, $strip;
+	my $content = $over->content->present($self);
+	pop @{$overstack};
+
+	return $start . $content . $end;
+}
+
+sub view_item {
+	my ( $self, $item ) = @_;
+
+	my $over  = ref $self ? $self->{OVER} : \@SUPER::OVER;
+	my $title = $item->title();
+	my $strip = $over->[-1];
+
+	my $start_title   = '<li>';
+	my $end_title     = '';
+	my $start_content = '';
+	my $end_content   = '</li>';
+
+	if ( defined $title ) {
+		if ( ref $title ) {
+			$title = $title->present($self);
+		}
+		if ($strip) {
+			$title =~ s/$strip//xms;
+		}
+		if ( length $title ) {
+			my $anchor = $title;
+			$anchor =~ s/^\s*|\s*$//gxms;    # strip leading and closing spaces
+			$anchor =~ s/\W/_/gxms;
+			$title = qq{<a name="item_$anchor"></a><b>$title</b>};
+		}
+	}
+
+	if ( !$strip ) {
+		$start_title   = '<dt>';
+		$end_title     = '</dt>';
+		$start_content = '<dd';
+		$end_content   = '</dd>';
+	}
+
+	return "$start_title$title$end_title\n" . $start_content . $item->content->present($self) . "$end_content\n";
+}
+
+sub view_seq_code {
+	my ( $self, $text ) = @_;
+
+	# check if the text loosk like a Module
+	if ( $text =~ /^[\w:]+$/xms ) {
+		$text = "<a href=\"?page=pod&module=$text&location=$LOCATION\">$text</a>";
+	}
+
+	return "<code>$text</code>";
+}
+
+sub view_seq_link {
+	my ( $self, $link ) = @_;
+
+	# view_seq_text has already taken care of L<http://example.com/>
+	if ( $link =~ /^<a href=/xms ) {
+		return $link;
+	}
+
+	# full-blown URL's are emitted as-is
+	if ( $link =~ m{^\w+://}xms ) {
+		return make_href($link);
+	}
+
+	$link =~ s/\n/ /gxms;    # undo line-wrapped tags
+
+	my $orig_link = $link;
+	my $linktext;
+
+	# strip the sub-title and the following '|' char
+	if ( $link =~ s/^ ([^|]+) \| //xms ) {
+		$linktext = $1;
+	}
+
+	# make sure sections start with a /
+	$link =~ s{^"}{/"}xms;
+
+	my $page;
+	my $section;
+	if ( $link =~ m{^ (.*?) / "? (.*?) "? $}xms ) {    # [name]/"section"
+		( $page, $section ) = ( $1, $2 );
+	}
+	elsif ( $link =~ /\s/xms ) {                       # this must be a section with missing quotes
+		( $page, $section ) = ( '', $link );
+	}
+	else {
+		( $page, $section ) = ( $link, '' );
+	}
+
+	# warning; show some text.
+	if ( !defined $linktext ) {
+		$linktext = $orig_link;
+	}
+
+	my $url = '';
+	if ( defined $page && length $page ) {
+		$url = $self->view_seq_link_transform_path($page);
+	}
+
+	# append the #section if exists
+	if ( defined $url && defined $section && length $section ) {
+		$url .= "#$section";
+	}
+
+	return make_href( $url, $linktext );
+}
+
+sub make_href {
+	my ( $url, $title ) = @_;
+
+	if ( !defined $url ) {
+		if ( $title =~ /^[\w:]+$/xms ) {
+			$url = "?page=pod&module=$title&location=$LOCATION";
+		}
+		else {
+			return defined $title ? "M<i>$title</i>" : '';
+		}
+	}
+
+	if ( !defined $title ) {
+		$title = $url;
+	}
+	return qq{<a href="$url">$title</a>};
+}
+
+1;
+
+__END__
+
 =head1 NAME
 
 DocPerl::Cached::POD::HTML - <One-line description of module's purpose>
@@ -47,277 +323,6 @@ context to help them understand the methods that are subsequently described.
 
 
 =cut
-
-# Created on: 2007-02-19 20:38:23
-# Create by:  ivan
-
-use strict;
-use warnings;
-use version;
-use Carp;
-use Scalar::Util;
-use List::Util;
-#use List::MoreUtils;
-use CGI;
-use Data::Dumper qw/Dumper/;
-use English qw/ -no_match_vars /;
-use base qw/Pod::POM::View::HTML/;
-
-our $VERSION     = version->new('0.0.1');
-our @EXPORT_OK   = qw//;
-our %EXPORT_TAGS = ();
-#our @EXPORT      = qw//;
-our $LOCATION   = 'inc';
-
-sub menu {
-	my ($self, $pod) = @_;
-
-	my $menu  = '<ul class="menu">'."\n";
-	my @items = $self->menu_items($pod);
-
-	for my $item ( @items ) {
-		my $title = $item->title->present($self);
-		my $type  = $item->type();
-		my ($level) = $type =~ /^head(\d)$/xms;
-
-		$menu .= "\t".'<li class="level'.$level.'"><a href="#'.$self->make_anchor($title).'">'.$title."</a></li>\n";
-	}
-	$menu .= "</ul>\n";
-
-	return $menu;
-}
-sub menu_items {
-	my ($self, $pom) = @_;
-	my @items;
-
-	for my $item ( $pom->content() ) {
-		my $type = $item->type();
-		if ( $type eq 'head1' || $type eq 'head2' || $type eq 'head3' || $type eq 'head4' ) {
-			push @items, $item;
-		}
-		push @items, $self->menu_items($item);
-	}
-
-	return @items;
-}
-
-
-sub make_anchor {
-	my ($self, $title) = @_;
-	my $anchor = lc $title;
-	$anchor =~ s/::/__/gxms;
-	$anchor =~ s/\s/_/gxms;
-	return $anchor;
-}
-
-sub view_pod {
-	my ($self, $pod) = @_;
-	return '<a name="__top"></a>'
-		. $self->menu($pod)
-		. $pod->content->present($self);
-}
-
-sub view_head1 {
-	my ($self, $head1) = @_;
-	my $title = $head1->title->present($self);
-	return '<h1><a name="'
-	 . $self->make_anchor($title)
-	 .'" href="#__top" title="to top of page">'
-	 . $title
-	 . ' <div class="up">&#8593;</div>'
-	 . "</a></h1>\n\n"
-	 . $head1->content->present($self);
-}
-
-sub view_head2 {
-	my ($self, $head2) = @_;
-	my $title = $head2->title->present($self);
-	return '<h2><a name="'
-	 . $self->make_anchor($title)
-	 .'" href="#__top" title="to top of page">'
-	 . $title
-	 . "</a></h2>\n\n"
-	 . $head2->content->present($self);
-}
-
-sub view_head3 {
-	my ($self, $head3) = @_;
-	my $title = $head3->title->present($self);
-	return '<h3><a name="'
-	 . $self->make_anchor($title)
-	 .'" href="#__top" title="to top of page">'
-	 . $title
-	 . "</a></h3>\n\n"
-	 . $head3->content->present($self);
-}
-
-sub view_head4 {
-	my ($self, $head4) = @_;
-	my $title = $head4->title->present($self);
-	return '<h4><a name="'
-	 . $self->make_anchor($title)
-	 .'" href="#__top" title="to top of page">'
-	 . $title
-	 . "</a></h4>\n\n"
-	 . $head4->content->present($self);
-}
-
-sub view_over {
-	my ($self, $over) = @_;
-	my ($start, $end, $strip);
-
-	my $items = $over->item();
-	return "" unless @$items;
-
-	my $first_title = $items->[0]->title();
-
-	if ($first_title =~ /^\s*\*\s*/) {
-		# '=item *' => <ul>
-		$start = "<ul>\n";
-		$end   = "</ul>\n";
-		$strip = qr/^\s*\*\s*/;
-	}
-	elsif ($first_title =~ /^\s*\d+\.?\s*/) {
-		# '=item 1.' or '=item 1 ' => <ol>
-		$start = "<ol>\n";
-		$end   = "</ol>\n";
-		$strip = qr/^\s*\d+\.?\s*/;
-	}
-	else {
-		$start = "<dl>\n";
-		$end   = "</dl>\n";
-		$strip = '';
-	}
-
-	my $overstack = ref $self ? $self->{ OVER } : \@SUPER::OVER;
-	push(@$overstack, $strip);
-	my $content = $over->content->present($self);
-	pop(@$overstack);
-
-	return $start
-	 . $content
-		 . $end;
-}
-
-
-sub view_item {
-	my ($self, $item) = @_;
-
-	my $over  = ref $self ? $self->{ OVER } : \@SUPER::OVER;
-	my $title = $item->title();
-	my $strip = $over->[-1];
-
-	my $start_title   = '<li>';
-	my $end_title     = '';
-	my $start_content = '';
-	my $end_content   = '</li>';
-
-	if (defined $title) {
-		$title = $title->present($self) if ref $title;
-		$title =~ s/$strip// if $strip;
-		if (length $title) {
-			my $anchor = $title;
-			$anchor =~ s/^\s*|\s*$//g; # strip leading and closing spaces
-			$anchor =~ s/\W/_/g;
-			$title = qq{<a name="item_$anchor"></a><b>$title</b>};
-		}
-	}
-
-	if ( !$strip ) {
-		$start_title   = '<dt>';
-		$end_title     = '</dt>';
-		$start_content = '<dd';
-		$end_content   = '</dd>';
-	}
-
-	return "$start_title$title$end_title\n"
-		. $start_content
-		. $item->content->present($self)
-		. "$end_content\n";
-}
-
-sub view_seq_code {
-	my ($self, $text) = @_;
-
-	# check if the text loosk like a Module
-	if ( $text =~ /^[\w:]+$/xms ) {
-		$text = "<a href=\"?page=pod&module=$text&location=$LOCATION\">$text</a>";
-	}
-
-	return "<code>$text</code>";
-}
-
-sub view_seq_link {
-	my ($self, $link) = @_;
-
-	# view_seq_text has already taken care of L<http://example.com/>
-	if ($link =~ /^<a href=/ ) {
-		return $link;
-	}
-
-	# full-blown URL's are emitted as-is
-	if ($link =~ m{^\w+://}s ) {
-		return make_href($link);
-	}
-
-	$link =~ s/\n/ /g;   # undo line-wrapped tags
-
-	my $orig_link = $link;
-	my $linktext;
-	# strip the sub-title and the following '|' char
-	if ( $link =~ s/^ ([^|]+) \| //x ) {
-		$linktext = $1;
-	}
-
-	# make sure sections start with a /
-	$link =~ s|^"|/"|;
-
-	my $page;
-	my $section;
-	if ($link =~ m|^ (.*?) / "? (.*?) "? $|x) { # [name]/"section"
-		($page, $section) = ($1, $2);
-	}
-	elsif ($link =~ /\s/) {  # this must be a section with missing quotes
-		($page, $section) = ('', $link);
-	}
-	else {
-		($page, $section) = ($link, '');
-	}
-
-	# warning; show some text.
-	$linktext = $orig_link unless defined $linktext;
-
-	my $url = '';
-	if (defined $page && length $page) {
-		$url = $self->view_seq_link_transform_path($page);
-	}
-
-	# append the #section if exists
-	$url .= "#$section" if defined $url and
-		defined $section and length $section;
-
-	return make_href($url, $linktext);
-}
-
-sub make_href {
-	my($url, $title) = @_;
-
-	if (!defined $url) {
-		if ( $title =~ /^[\w:]+$/xms ) {
-			$url = "?page=pod&module=$title&location=$LOCATION";
-		}
-		else {
-			return defined $title ? "M<i>$title</i>"  : '';
-		}
-	}
-
-	$title = $url unless defined $title;
-	return qq{<a href="$url">$title</a>};
-}
-
-1;
-
-__END__
 
 =head1 DIAGNOSTICS
 

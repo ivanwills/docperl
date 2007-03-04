@@ -31,7 +31,7 @@ sub process {
 	my $source   = $self->{source};
 	my $file     = $source;
 
-	return if !-f $file;
+	return if !$file || !-f $file;
 
 	# open the file
 	open my $fh, '<', $file or carp "Cannot open $file: $!\n" and return;

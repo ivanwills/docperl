@@ -22,7 +22,6 @@ use base qw/DocPerl::Cached/;
 our $VERSION     = version->new('0.0.1');
 our @EXPORT_OK   = qw//;
 our %EXPORT_TAGS = ();
-#our @EXPORT      = qw//;
 
 sub process {
 	my $self    = shift;
@@ -44,8 +43,8 @@ sub process {
 
 	return ( pod => "File contains dodgy characters ($file)" ) if !$file;
 
-	my $parser = Pod::POM->new({ warn => 0, });
-	my $pom    = $parser->parse($file);
+	my $parser = Pod::POM->new( { warn => 0, } );
+	my $pom = $parser->parse($file);
 	my $out;
 	{
 		local $DocPerl::Cached::POD::HTML::LOCATION = $self->{current_location};
