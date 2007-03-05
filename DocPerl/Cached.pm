@@ -1,35 +1,10 @@
 package DocPerl::Cached;
 
-=head1 NAME
-
-DocPerl::Cached - Parent object for pages that cache their results.
-
-=head1 VERSION
-
-This documentation refers to DocPerl::Cached version 0.6.0.
-
-
-=head1 SYNOPSIS
-
-   use DocPerl::Cached;
-
-   # create a new object
-   my $cached = DocPerl::Cached->new( conf => { General => { Data => '/path/to/data' }, );
-
-   # clear the cached files
-   $cached->clear( '' );
-
-=head1 DESCRIPTION
-
-DocPerl::Cached provides a base for DocPerl classses that produce complex html
-pages that need to be cached for performance.
-
-=head1 METHODS
-
-=cut
-
 # Created on: 2006-03-19 20:28:44
 # Create by:  ivan
+# $Id$
+# $Revision$, $HeadURL$, $Date$
+# $Revision$, $Source$, $Date$
 
 use strict;
 use warnings;
@@ -39,20 +14,11 @@ use Data::Dumper qw/Dumper/;
 use Scalar::Util qw/tainted/;
 use File::stat;
 use File::Path;
+use English qw/ -no_match_vars /;
 use base qw/Exporter/;
 
 our $VERSION   = version->new('0.6.0');
 our @EXPORT_OK = qw//;
-
-=head3 C<new ( %args )>
-
-Arg: C<$search> - type (detail) - description
-
-Return: DocPerl::Cached - A new DocPerl::Cached object
-
-Description: Creates and initialises a new DocPerl::Cached or inherited object
-
-=cut
 
 sub new {
 	my $caller = shift;
@@ -70,13 +36,6 @@ sub new {
 	return $self;
 }
 
-=head3 C<init (  )>
-
-Description: Does nothing in its self but shold be overridden by inheriting
-packages for any initialisation that they need.
-
-=cut
-
 sub init {
 	my $self = shift;
 
@@ -86,21 +45,6 @@ sub init {
 sub process {
 	return carp 'process should not be called directly from DocPerl::Cached is should be called from a drived object';
 }
-
-=head3 C<_check_cache ( %args )>
-
-Arg: C<source> - string - The file name that a cached file is baised on
-
-Arg: C<cache> - string - The relative file name for a cached version of a file
-
-Return: string - The cached file's contents if the source and cache file's
-modiffied times match or an empty string if there is no cache file or the files
-modification time is different to that of the source file.
-
-Description: Checks a source file against the cached version to see if their
-modified times are different. Returning the cache contents if they match.
-
-=cut
 
 sub _check_cache {
 	my $self   = shift;
@@ -135,7 +79,7 @@ sub _check_cache {
 
 	# get the file stats for the source and cached files
 	my $source_stat = $source ne '1' ? stat $source : undef;
-	my $cache_stat  = stat $file;
+	my $cache_stat = stat $file;
 
 	# check that the last modified times of both files are the same
 	return '' if $source ne '1' && $source_stat->mtime != $cache_stat->mtime;
@@ -144,24 +88,16 @@ sub _check_cache {
 	open my $cache_fh, '<', $file or carp "Could not read the cache file $file: $!" and return '';
 	my $data;
 	{
-		local $/ = undef;
+		local $INPUT_RECORD_SEPARATOR = undef;
 		$data = <$cache_fh>;
 	}
-	close $cache_fh;
+	if ( !close $cache_fh ) {
+		warn "Error in closing file handel for $file: $OS_ERROR\n";    ## no critic
+	}
 
 	# return the cached contents
 	return $data;
 }
-
-=head3 C<_save_cache ( %arg )>
-
-Arg: C<source> - string - The file name that a cached file is baised on
-
-Arg: C<cache> - string - The relative file name for a cached version of a file
-
-Description: Saves some calculated data to a cache file
-
-=cut
 
 sub _save_cache {
 	my $self   = shift;
@@ -193,51 +129,39 @@ sub _save_cache {
 
 	carp "The cache file '$dir/$file' does not have a suffix" if $file !~ /\./xms;
 
-	#carp "dir = $dir, ".join ' ', @parts;
 	# make sure that we have all the directories up to the cached file
 	$dir .= '/' . join '/', @parts;
-	return if $dir !~ m{^ ( [\w\-\./]+ ) $}xms;
-	eval { mkpath $1 };
-	if ($@) {
-		carp "Could not create the path $dir: $@";
+	my ($path) = $dir =~ m{^ ( [\w\-\./]+ ) $}xms;
+	return if !$path;
+
+	eval { mkpath $path };
+	if ($EVAL_ERROR) {
+		carp "Could not create the path $dir: $EVAL_ERROR";
 		return;
 	}
 
-	# check that the file is OK
-	return if $file !~ /\A([\w\-\.]+)\Z/xms;
-	$file = $1;
-
 	# open the cache file and write the contents
-	#carp "Saving cache file '$dir/$file'\n";
-	my %full = ( "$dir/$file" => 1 );
-	my ($full) = %full;
+	my ($full) = "$dir/$file" =~ m{\A ([\w\-\./]+) \Z}xms;
 	open my $cache_fh, '>', $full or carp "Unable to create the cache file '$full': $!" and return;
 	print {$cache_fh} $arg{content} or carp "No content was able to be added to '$full': $!" and return;
-	close $cache_fh;
+	if ( !close $cache_fh ) {
+		warn "Error in closing file handel for $full: $OS_ERROR\n";    ## no critic
+	}
 
 	# touch the file using the source file's time stamps
 	if ( $source ne '1' && $source =~ m{\A ( [\w\-\./]+ ) \Z}xms ) {
 		my $stat = stat $1;
 		my ($atime) = $stat->atime =~ m{\A (\d+) \Z}xms;
 		my ($mtime) = $stat->mtime =~ m{\A (\d+) \Z}xms;
-		my ($full)  = "$dir/$file" =~ m{\A ([\w\-\./]+) \Z}xms;
 		utime $atime, $mtime, $full;
 	}
 
 	return;
 }
 
-=head3 C<clear_cache ( [$dir] )>
-
-Param: C<$dir> - string (detail) - The cache directory to clear
-
-Description: Clears all the cache files.
-
-=cut
-
 sub clear_cache {
 	my $self = shift;
-	my $dir  = shift || $self->{cache_dir};
+	my $dir = shift || $self->{cache_dir};
 
 	system "rm -rf $dir/*";
 
@@ -252,6 +176,72 @@ sub DESTROY {
 1;
 
 __END__
+
+=head1 NAME
+
+DocPerl::Cached - Parent object for pages that cache their results.
+
+=head1 VERSION
+
+This documentation refers to DocPerl::Cached version 0.6.0.
+
+
+=head1 SYNOPSIS
+
+   use DocPerl::Cached;
+
+   # create a new object
+   my $cached = DocPerl::Cached->new( conf => { General => { Data => '/path/to/data' }, );
+
+   # clear the cached files
+   $cached->clear( '' );
+
+=head1 DESCRIPTION
+
+DocPerl::Cached provides a base for DocPerl classses that produce complex html
+pages that need to be cached for performance.
+
+=head1 SUBROUTINES/METHODS
+
+=head3 C<new ( %args )>
+
+Arg: C<$search> - type (detail) - description
+
+Return: DocPerl::Cached - A new DocPerl::Cached object
+
+Description: Creates and initialises a new DocPerl::Cached or inherited object
+
+=head3 C<init (  )>
+
+Description: Does nothing in its self but shold be overridden by inheriting
+packages for any initialisation that they need.
+
+=head3 C<_check_cache ( %args )>
+
+Arg: C<source> - string - The file name that a cached file is baised on
+
+Arg: C<cache> - string - The relative file name for a cached version of a file
+
+Return: string - The cached file's contents if the source and cache file's
+modiffied times match or an empty string if there is no cache file or the files
+modification time is different to that of the source file.
+
+Description: Checks a source file against the cached version to see if their
+modified times are different. Returning the cache contents if they match.
+
+=head3 C<_save_cache ( %arg )>
+
+Arg: C<source> - string - The file name that a cached file is baised on
+
+Arg: C<cache> - string - The relative file name for a cached version of a file
+
+Description: Saves some calculated data to a cache file
+
+=head3 C<clear_cache ( [$dir] )>
+
+Param: C<$dir> - string (detail) - The cache directory to clear
+
+Description: Clears all the cache files.
 
 =head1 DIAGNOSTICS
 
