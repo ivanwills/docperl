@@ -44,7 +44,7 @@
 		[%- END %]
 						| <a title="View source code" href="?page=code&amp;module=[% module %]&amp;file=[% file %]&amp;location=[% location %]&amp;source=[% source.file %]">CODE</a>
 		[%- IF location != 'local' %]
-						| <a title="See latest documentation on CPAN" href="http://search.cpan.org/search?query=[% IF location == 'pod' %]pod::[% END %][% module %]&amp;mode=module"> CPAN</a>
+						| <a title="See latest documentation on CPAN" href="http://search.cpan.org/search?query=[% IF location == 'perl' %]pod::[% END %][% module %]&amp;mode=module"> CPAN</a>
 		[%- END %]
 					</td>
 				</tr>
