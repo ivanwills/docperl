@@ -2,6 +2,9 @@ package DocPerl;
 
 # Created on: 2006-01-31 19:59:04
 # Create by:  Ivan Wills
+# $Id$
+# $Revision$, $HeadURL$, $Date$
+# $Revision$, $Source$, $Date$
 
 use strict;
 use warnings;
@@ -11,6 +14,7 @@ use Data::Dumper qw/Dumper/;
 use Scalar::Util;
 use Template;
 use DocPerl::Cached;
+use English qw/ -no_match_vars /;
 use base qw/Exporter/;
 
 our $VERSION   = version->new('0.6.0');
@@ -52,7 +56,7 @@ sub init {
 		}
 		else {
 			$self->{template} = "$template.html";
-			$self->{mime}     = $page eq 'text' ? 'text/plain' : 'text/html';
+			$self->{mime} = $page eq 'text' ? 'text/plain' : 'text/html';
 		}
 	}
 	else {
@@ -70,7 +74,6 @@ sub init {
 	return;
 }
 
-
 sub init_module {
 	my $self = shift;
 	my $q    = $self->{cgi};
@@ -86,10 +89,8 @@ sub init_module {
 		my $module = $self->{tag} = $q->{module};
 
 		# remove the location start parts
+		( $self->{current_location} ) = $module =~ m{^([^_]+)__[^_]+__}xms;
 		$module =~ s{^([^_]+)__[^_]+__}{}xms;
-
-		# store the location
-		$self->{current_location} = $1;
 
 		# store the perl module name
 		$self->{module}      = $module;
@@ -148,7 +149,7 @@ sub find_matches {
 	# Get the folder locations and file name suffixes for the current
 	# location.
 	if ( $self->{current_location} eq 'local' ) {
-		@folders  = split /:/xms, $conf->{LocalFolders}{Path};
+		@folders = split /:/xms, $conf->{LocalFolders}{Path};
 		@suffixes = @{ $conf->{LocalFolders}{suffixes} };
 	}
 	else {
@@ -224,14 +225,15 @@ sub process {
 
 			# try to see if the method is a cached module
 			my $module = 'DocPerl::Cached::' . uc $1;
-			warn $module;
-			eval("require $module");
-			if ($@) {
-				carp $@;
+			my $file = 'DocPerl/Cached/' . ( uc $1 ) . '.pm';
+			eval { require $file };
+			if ($EVAL_ERROR) {
+				carp $EVAL_ERROR;
 			}
 			else {
 
 				# use the cached object to get the data
+				#warn Dumper $self;
 				my $cache = $module->new( %{$self} );
 				%vars = $cache->process();
 			}
@@ -291,7 +293,7 @@ sub get_templ_object {
 	my $data = $conf->{General}{Data};
 	my $path = "$conf->{Templates}{Path}:$data/templates/local:$data/templates/default";
 	$self->{templ} = Template->new( INCLUDE_PATH => $path, EVAL_PERL => 1 );
-	croak "Could not create the template object!" if !$self->{templ};
+	croak 'Could not create the template object!' if !$self->{templ};
 
 	return $self->{templ};
 }
@@ -316,12 +318,12 @@ sub list {
 		# Move any module found in the pod name space to the PERL
 		# location and create the javascript for the list page
 		$vars{PERL} = $vars{INC}{P}{pod};
-		my $perl    = _organise_perl( $vars{INC}{P}{pod} );
+		my $perl = _organise_perl( $vars{INC}{P}{pod} );
 		$vars{perl} = $self->_create_js( 'perl', $perl );
 
 		# delete the pod documentation and reate the INC javascript
 		delete $vars{INC}{P}{pod};
-		$vars{inc}      = $self->_create_js( 'inc', $vars{INC} );
+		$vars{inc} = $self->_create_js( 'inc', $vars{INC} );
 		$vars{inc_path} = join '<br/>', ( @INC, split /:/xms, $conf->{IncFolders}{Path}, );
 	}
 
@@ -407,7 +409,7 @@ sub find {
 
 	opendir DIR, $path or return;
 	my @files = readdir DIR;
-	close DIR;
+	close DIR || print {*STDERR} "Error in closing the dir handel for $path: $OS_ERROR\n";
 
 	for my $file (@files) {
 		next if $file eq '.' || $file eq '..' || $file =~ /^\d+$/xms;
@@ -416,7 +418,7 @@ sub find {
 			find( $full, $match, $action );
 		}
 		elsif ( $full =~ /$match/xms ) {
-			&$action($full);
+			$action->($full);
 		}
 	}
 
@@ -453,7 +455,7 @@ sub _create_js_object {
 	my $js = "'$name':{'*':new Array(";
 
 	if ( $vars->{'*'} and ref $vars->{'*'} eq 'ARRAY' ) {
-		$js .= "'" . join( "','", @{ $vars->{'*'} } ) . "'";
+		$js .= q{'} . join( q{','}, @{ $vars->{'*'} } ) . q{'};
 	}
 	$js .= '),';
 
@@ -540,7 +542,7 @@ This documentation refers to DocPerl version 0.6.0.
 
 This module provides the basic controll of DocPerl.
 
-=head1 METHODS
+=head1 SUBROUTINES/METHODS
 
 =head3 C<new ( %param )>
 
