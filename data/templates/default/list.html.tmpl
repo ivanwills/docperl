@@ -34,11 +34,11 @@
 			h2 {
 				font-size:			1.2em;
 				-moz-border-radius:	0px;
-				
+
 			}
 			table {
 				font-size:			0.9em;
-				
+
 			}
 			ul {
 				font-size:			1em;
@@ -120,7 +120,7 @@
 			var level;
 			var group = 0;
 			var counter = { perl:0, local:0, inc:0 };
-			
+
 			function setup_modules() {
 				// set up each of perl, inc and local
 				if ( group == 0 ) {
@@ -160,7 +160,7 @@
 					if ( exists_cookie( name ) ) {
 						var list	= get_cookie( name );
 						var modules	= list.split(':');
-						
+
 						for ( var module in modules ) {
 							display_recent( modules[module] );
 						}
@@ -199,16 +199,72 @@
 			}
 		//-->
 		</script>
+		<style type="text/css">
+		<!--/* <![CDATA[ */
+			#adv_open,
+			#adv_close {
+				border:      solid black 1px;
+				padding:     2px;
+				font-weight: bold;
+				font-size:   1.4em;
+				cursor:      pointer;
+			}
+			#adv_open {
+			}
+			#adv_close {
+				display: none;
+			}
+			#advanced {
+				display: none;
+			}
+			#advanced label {
+				font-size: 1.2em;
+			}
+		/* ]]> */-->
+		</style>
+		<script type="text/javascript">
+		<!--
+			function adv_open() {
+				var adv   = document.getElementById('advanced');
+				var open  = document.getElementById('adv_open');
+				var close = document.getElementById('adv_close');
+				adv.style.display = 'block';
+				open.style.display = 'none';
+				close.style.display = 'block';
+			}
+			function adv_close() {
+				var adv   = document.getElementById('advanced');
+				var open  = document.getElementById('adv_open');
+				var close = document.getElementById('adv_close');
+				adv.style.display = 'none';
+				open.style.display = 'block';
+				close.style.display = 'none';
+			}
+		//-->
+		</script>
 	</head>
 	<body onload="setup_modules();">
-	
+
 		<h1 id="headding" style="overflow: hidden">Perl&nbsp;Documentation</h1>
 		<!--h2>Search</h2-->
 		<center style="padding-bottom: 1em">
 			<table>
 				<tr>
+					<td class="advanced">
+						<div id="adv_open"  onclick="adv_open(); " title="Open Advanced Search Options ">&#8595;</div>
+						<div id="adv_close" onclick="adv_close();" title="Close Advanced Search Options">&#8593;</div>
+					</td>
 					<td><input type="text" name="search" id="search" size="15" onkeyup="search(false);" title="Find modules by name"/></td>
 					<td><input type="button" value="Search" onclick="search(true);"/></td>
+				</tr>
+				<tr>
+					<td colspan="3" style="vertical-align: middle; text-align: center;">
+						<div id="advanced">
+							<input type="checkbox" id="type" name="type" value="modules"  /><label>Modules</label>&nbsp;&nbsp;
+							<input type="checkbox" id="type" name="type" value="pod"      /><label>POD</label>&nbsp;&nbsp;
+							<input type="checkbox" id="type" name="type" value="functions"/><label>Functions</label>&nbsp;&nbsp;
+						</div>
+					</td>
 				</tr>
 			</table>
 		</center>
