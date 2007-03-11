@@ -262,7 +262,7 @@ sub process {
 		or error( $tmpl->error );
 
 	if ( $out =~ /\A\s+\Z/xms ) {
-		croak 'The processed template "' . $self->template() . '" contains not data!' . Dumper \%vars, $out;
+		croak 'The processed template "' . $self->template() . '" (for ' . "$self->{module}: $self->{file}) contains not data!\n" . Dumper \%vars, $out;
 	}
 
 	if ( $page && ( !$self->{source} || -f $self->{source} ) ) {
@@ -409,7 +409,7 @@ sub find {
 
 	opendir DIR, $path or return;
 	my @files = readdir DIR;
-	close DIR || print {*STDERR} "Error in closing the dir handel for $path: $OS_ERROR\n";
+	closedir DIR || print {*STDERR} "Error in closing the dir handel for $path: $OS_ERROR\n";
 
 	for my $file (@files) {
 		next if $file eq '.' || $file eq '..' || $file =~ /^\d+$/xms;

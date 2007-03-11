@@ -299,12 +299,10 @@ sub shrink_css {
 sub compile {
 	my ( $data, $dp, $compile ) = @_;
 
-		#for my $location ( qw/LOCAL / ) {
-		for my $location ( qw/PERL LOCAL INC/ ) {
-			print "Create $location Cache\n";
-			cache( $data->{$location}, $dp, location => lc $location, top => 1, map {$_=>1} @$compile );
-			#die Dumper $data->{$location};
-		}
+	for my $location ( qw/PERL LOCAL INC/ ) {
+		print "Create $location Cache\n";
+		cache( $data->{$location}, $dp, location => lc $location, top => 1, map {$_=>1} @$compile );
+	}
 }
 
 sub cache {
@@ -327,11 +325,16 @@ sub cache {
 			if ( $arg{pod} ) {
 				$dp->process();
 			}
+			if ( $arg{text} ) {
+				$dp->{cgi}{page} = 'text';
+				$dp->{template}  = 'text.html';
+				$dp->process();
+			}
 			if ( $arg{api} ) {
 				$dp->{cgi}{page} = 'api';
 				$dp->{template}  = 'api.html';
 				# Unfortunatly repeated processing of api's can be dangerous to this is now disabled
-				#$dp->process();
+				$dp->process();
 			}
 			if ( $arg{code} ) {
 				$dp->{cgi}{page} = 'code';

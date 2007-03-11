@@ -46,7 +46,8 @@ sub process {
 	my $parser = Pod::POM->new( { warn => 0, } );
 	my $pom = $parser->parse($file);
 	my $out;
-	$out = Pod::POM::View::Text->print($pom);
+	$out = eval{ Pod::POM::View::Text->print($pom) };
+	$out ||= 'No POD ' . $@;
 
 	return ( pod => $out );
 }

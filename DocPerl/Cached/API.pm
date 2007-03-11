@@ -136,7 +136,7 @@ LINE:
 			$api{hirachy} = $api{parents};
 		}
 		elsif ( !@{ $api{hirachy}[0]{hirachy} } && $api{parents} ) {
-			carp 'Found parents but not hirachy!';
+			carp "Found parents of $api{package} (" . ( join ',', @{ $api{parents} } ) . ') but not hirachy!';
 			$api{hirachy}[0]{hirachy} = [ map { { class => $_ } } @{ $api{parents} } ];
 		}
 
@@ -276,7 +276,10 @@ sub get_hirachy {
 }
 
 {
-	my %loaded;
+	my %loaded = (
+		'DocPerl'        => 1,
+		'UNIVERSAL::can' => 1,
+	);
 
 	sub load_package {
 		my ( $package, $file ) = @_;
@@ -301,7 +304,10 @@ sub get_hirachy {
 		{
 			no strict qw/refs/;    ## no critic
 			if ( ( $sub_sym && !exists ${$sym}{$sub_sym} ) || ( !$sub_sym && !%{$sym} ) ) {
+				my $warn = $SIG{__WARN__};
+				$SIG{__WARN__} = sub {};
 				eval { require $file };
+				$SIG{__WARN__} = $warn;
 			}
 			else {
 				$loaded{$package} = 1;
@@ -314,9 +320,8 @@ sub get_hirachy {
 
 	sub unload_package {
 		my ($package) = @_;
-		if ( $loaded{$package} ) {
+		if ( !$loaded{$package} ) {
 			delete_package($package);
-			$loaded{$package} = 0;
 		}
 
 		return;

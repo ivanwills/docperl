@@ -51,7 +51,9 @@ sub process {
 		$out = DocPerl::Cached::POD::HTML->print($pom);
 	}
 
-	$out =~ s{</pre>(\s+)<pre>}{$1}gxms;
+	if ( defined $out ) {
+		$out =~ s{</pre>(\s+)<pre>}{$1}gxms;
+	}
 
 	return ( pod => $out );
 }
