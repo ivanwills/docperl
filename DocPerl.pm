@@ -146,6 +146,9 @@ sub find_matches {
 	my @folders;
 	my @suffixes;
 
+	$conf->{IncFolders}{suffixes}   ||= [qw/pm pod/];
+	$conf->{LocalFolders}{suffixes} ||= [qw/pm pod/];
+
 	# Get the folder locations and file name suffixes for the current
 	# location.
 	if ( $self->{current_location} eq 'local' ) {
@@ -155,7 +158,7 @@ sub find_matches {
 	else {
 		@folders = @INC;
 		push @folders, split /:/xms, $conf->{IncFolders}{Path};
-		@suffixes = @{ $conf->{LocalFolders}{suffixes} };
+		@suffixes = @{ $conf->{IncFolders}{suffixes} };
 	}
 
 	# Get the location of the file
