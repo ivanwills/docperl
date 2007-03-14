@@ -255,6 +255,7 @@ sub process {
 	$vars{location} = $self->{current_location};
 	$vars{sources}  = $self->{sources};
 	$vars{source}   = $self->{source};
+	$vars{page}     = $page;
 
 	# get the template object
 	my $tmpl = $self->get_templ_object();
