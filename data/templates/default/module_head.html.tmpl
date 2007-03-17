@@ -15,16 +15,16 @@
 		<!--/* <![CDATA[ */
 			@import url("?page=common.css");
 			@import url("?page=[% StyleSheet || 'cpan' %].css");
-	[% current_file = 0 %]
-	[%- IF sources.size > 1 %]
-		[%- file_count = 0 %]
+	[%- current_file = 0 -%]
+	[%- IF sources.size > 1 -%]
+		[%- file_count = 0 -%]
 		[%- FOR src = sources -%]
 			[%- file_count = file_count + 1 %]
 			[%- IF src.file != source %]
 			#file_[% file_count %],
 			[%- ELSE -%]
 				[%- current_file = file_count -%]
-			[%- END %]
+			[%- END -%]
 		[%- END %]
 			#file_[% file_count + 1 %] {
 				display: none;
@@ -41,12 +41,8 @@
 				var current = document.getElementById('file_' + current_file);
 				var next    = document.getElementById('file_' + select.options[index].value);
 
-				//alert(current_file + ': ' + current.style.display);
 				current.style.display = 'none';
-				//alert(current_file + ': ' + current.style.display);
-				//alert(select.options[index].value + ': ' + next.style.display);
 				next.style.display    = 'block';
-				//alert(select.options[index].value + ': ' + next.style.display);
 				current_file = select.options[index].value;
 			}
 		//-->

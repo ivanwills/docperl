@@ -1,23 +1,23 @@
 [% UNLESS history_size %][% history_size = 10 %][% END -%]
-/**	@file	list.js
- *	@brief	Javascript for displaying/creating the module lists
- *	@author 	Ivan Wills
- *	@version	0.4
- *	@created	2006-06-01
- *	@todo	Add AJAX stuff for file content searching
- *	@bug
+/** @file    list.js
+ *  @brief   Javascript for displaying/creating the module lists
+ *  @author  Ivan Wills
+ *  @version 0.4
+ *  @created 2006-06-01
+ *  @todo    Add AJAX stuff for file content searching
+ *  @bug
  *
- *	This file contains the javascript for controlling the module list in DocPerl.
+ *  This file contains the javascript for controlling the module list in DocPerl.
  *
  */
 
 /**
- *	@param	counter:	The counter to increment
- *	@param	amount: 	The amount to increment the counter by
- *	@todo
- *	@bug
+ *  @param counter: The counter to increment
+ *  @param amount:  The amount to increment the counter by
+ *  @todo
+ *  @bug
  *
- *	Increments the counter by amount (which could be negative)
+ *  Increments the counter by amount (which could be negative)
  */
 function add_count( counter, amount ) {
 	var counter_span = document.getElementById( counter + '_count' );
@@ -28,11 +28,11 @@ function add_count( counter, amount ) {
 }
 
 /**
- *	@param	counter:	the counter to reset
- *	@todo
- *	@bug
+ *  @param counter: The counter to reset
+ *  @todo
+ *  @bug
  *
- *	Resets a counter to zero
+ *  Resets a counter to zero
  */
 function reset_count( counter ) {
 	var counter_span = document.getElementById( counter + '_count' );
@@ -42,12 +42,12 @@ function reset_count( counter ) {
 }
 
 /**
- *	@param	tree:	the module tree to count
- *	@param	counter:	The counter associated with the tree
- *	@todo
- *	@bug
+ *  @param tree:    The module tree to count
+ *  @param counter: The counter associated with the tree
+ *  @todo
+ *  @bug
  *
- *	Counts the modules in a tree
+ *  Counts the modules in a tree
  */
 function count_tree( tree, counter ) {
 	var count = 0;
@@ -68,15 +68,15 @@ function count_tree( tree, counter ) {
 }
 
 /**
- *	@param	files:
- *	@param	container_id:
- *	@param	path:	The path of the tree
- *	@param	counter:	The counter associated with this tree.
- *	@return	:
- *	@todo
- *	@bug
+ *  @param  files:
+ *  @param  container_id:
+ *  @param  path:         The path of the tree
+ *  @param  counter:      The counter associated with this tree.
+ *  @return :
+ *  @todo
+ *  @bug
  *
- *	Creates a <ul> tree of modules
+ *  Creates a <ul> tree of modules
  */
 var tree_holder = [];
 function create_tree ( files, container_id, path, counter ) {
@@ -139,13 +139,13 @@ function create_tree ( files, container_id, path, counter ) {
 }
 
 /**
- *	@param	path:	The full module path
- *	@param	module:	The module name.
- *	@return	<a>:	The anchor tag linking to the module information
- *	@todo
- *	@bug
+ *  @param  path:   The full module path
+ *  @param  module: The module name.
+ *  @return <a>:    The anchor tag linking to the module information
+ *  @todo
+ *  @bug
  *
- *	Creates the module link
+ *  Creates the module link
  */
 function create_module(path, module) {
 	var display = path_to_module(path);
@@ -160,32 +160,32 @@ function create_module(path, module) {
 }
 
 /**
- *	@param	path:	The path to expand to (if no path supplied then a place
- *					holder element is created).
- *	@return	<a>|<div>:	Javascript linking anchor tag if there is a path or a
- *						place holder division other wise.
- *	@todo
- *	@bug
+ *  @param  path:      The path to expand to (if no path supplied then a place
+ *                     holder element is created).
+ *  @return <a>|<div>: Javascript linking anchor tag if there is a path or a
+ *                     place holder division other wise.
+ *  @todo
+ *  @bug
  *
- *	Creates the expansion/collapse element for the lists if there are sub
- *	modules and a place holder element if there are no sub modules.
+ *  Creates the expansion/collapse element for the lists if there are sub
+ *  modules and a place holder element if there are no sub modules.
  */
 function create_plus(path) {
 	var plus;
 	// the javascript contains only one element if there are no sub directories
 	if ( path ) {
-		plus				= document.createElement('a');
-		plus.id				= 'plus__' + path;
-		plus.href			= 'javascript: list_toggle("' + path + '")';
-		plus.title			= 'Show';
-		plus.className		= 'mod_expand';
-		plus.style.cssText	= 'text-decoration: none';
+		plus               = document.createElement('a');
+		plus.id            = 'plus__' + path;
+		plus.href          = 'javascript: list_toggle("' + path + '")';
+		plus.title         = 'Show';
+		plus.className     = 'mod_expand';
+		plus.style.cssText = 'text-decoration: none';
 		plus.appendChild( document.createTextNode( '+' ) );
 	}
 	else {
-		plus				= document.createElement('div');
-		plus.className		= 'mod_expand';
-		plus.style.cssText	= 'border-width: 0px;';
+		plus               = document.createElement('div');
+		plus.className     = 'mod_expand';
+		plus.style.cssText = 'border-width: 0px;';
 		plus.appendChild( document.createTextNode( '.' ) );
 	}
 
@@ -193,18 +193,18 @@ function create_plus(path) {
 }
 
 /**
- *	@param	path:	The path that the user clicked on.
- *	@todo
- *	@bug
+ *  @param path: The path that the user clicked on.
+ *  @todo
+ *  @bug
  *
- *	Event called when the user clicks on a module name. Adds the path to the
- *	recent modules list.
+ *  Event called when the user clicks on a module name. Adds the path to the
+ *  recent modules list.
  */
 function click_module( path ) {
 	var name = 'DocPerl_recent';
 	if ( exists_cookie( name ) ) {
-		var list	= get_cookie( name );
-		var modules	= list.split(':');
+		var list    = get_cookie( name );
+		var modules = list.split(':');
 		for ( var module in modules ) {
 			if ( modules[module] == path )
 				return;
@@ -226,21 +226,21 @@ function click_module( path ) {
 }
 
 /**
- *	@param	path:	The path to add to the recent list
- *	@todo
- *	@bug
+ *  @param path: The path to add to the recent list
+ *  @todo
+ *  @bug
  *
- *	Adds a path to the recent module list.
+ *  Adds a path to the recent module list.
  */
 function display_recent(path) {
-	var path_parts	= path.split('__');
-	var recent_doc	= document.getElementById('recent_doc');
-	var recent_ul	= document.getElementById('ul_recent');
-	var name		= path_to_module(path);
+	var path_parts = path.split('__');
+	var recent_doc = document.getElementById('recent_doc');
+	var recent_ul  = document.getElementById('ul_recent');
+	var name       = path_to_module(path);
 	recent_doc.style.cssText = '';
 	recent_doc.style.display = 'block';
 
-	var li	= document.createElement('li');
+	var li = document.createElement('li');
 	li.appendChild( create_plus() );
 	li.appendChild( create_module( path, name ) );
 
@@ -249,11 +249,11 @@ function display_recent(path) {
 }
 
 /**
- *	@param	force:	A forces the search for module names less than 4 characters long
- *	@todo
- *	@bug
+ *  @param force: A forces the search for module names less than 4 characters long
+ *  @todo
+ *  @bug
  *
- *	Searches the all modules names to find those that match the search term
+ *  Searches the all modules names to find those that match the search term
  */
 function search(force) {
 	var term        = document.getElementById('search').value;
@@ -294,36 +294,36 @@ function search(force) {
 }
 
 /**
- *	@param	list:	This is the list to search
- *	@param	term:	The search tearm
- *	@param	base:	The display list id base
- *	@param	name:	The display name for the list of found modules
- *	@return	<li>:	A list item containg a list of all found items
- *	@todo
- *	@bug
+ *  @param  list: This is the list to search
+ *  @param  term: The search tearm
+ *  @param  base: The display list id base
+ *  @param  name: The display name for the list of found modules
+ *  @return <li>: A list item containg a list of all found items
+ *  @todo
+ *  @bug
  *
- *	Creates list items for found modules
+ *  Creates list items for found modules
  */
 function show_found( list, term, base, name ) {
-	var count	= 0;
-	var li		= document.createElement('li');
-	var ul_sub	= document.createElement('ul');
-	var path	= 'results__' + base;
-	li.id		= 'li__' + path;
-	ul_sub.id	= 'ul__' + path;
+	var count  = 0;
+	var li     = document.createElement('li');
+	var ul_sub = document.createElement('ul');
+	var path   = 'results__' + base;
+	li.id      = 'li__' + path;
+	ul_sub.id  = 'ul__' + path;
 	li.appendChild( create_plus(path) );
 	li.appendChild( document.createTextNode(name) );
 
 	for ( var i in list ) {
-		var item	= list[i];
-		var found	= find_in( item, term );
+		var item  = list[i];
+		var found = find_in( item, term );
 
 		if ( found.length ) {
 			count += found.length;
 
 			for ( var item in found ) {
-				var li_sub	= document.createElement('li');
-				var name	= found[item];
+				var li_sub = document.createElement('li');
+				var name   = found[item];
 				name = name.replace( /::/g, '__' );
 
 				li_sub.appendChild( create_plus() );
@@ -343,19 +343,19 @@ function show_found( list, term, base, name ) {
 }
 
 /**
- *	@param	list:	The list to search through
- *	@param	term:	The search term to compare with
- *	@param	name:	The name of the module that represents list
- *	@return	Array:	Array of found modules
- *	@todo
- *	@bug
+ *  @param  list:  The list to search through
+ *  @param  term:  The search term to compare with
+ *  @param  name:  The name of the module that represents list
+ *  @return Array: Array of found modules
+ *  @todo
+ *  @bug
  *
- *	Recurses through the list trying to find modules that match term
+ *  Recurses through the list trying to find modules that match term
  */
 function find_in( list, term, name ) {
-	var next	= name ? name + '::' : '';
-	var found	= [];
-	var regex	= new RegExp( term, 'i' );
+	var next  = name ? name + '::' : '';
+	var found = [];
+	var regex = new RegExp( term, 'i' );
 
 	for ( var item in list ) {
 		var module = next + item;
@@ -376,18 +376,18 @@ function find_in( list, term, name ) {
 }
 
 /**
- *	@param	id:	The id of the list to toggle
- *	@todo
- *	@bug
+ *  @param id: The id of the list to toggle
+ *  @todo
+ *  @bug
  *
- *	Toggles open/close the list identified by id
+ *  Toggles open/close the list identified by id
  */
 function list_toggle( id ) {
-	var ul		= document.getElementById( 'ul__' + id );
+	var ul = document.getElementById( 'ul__' + id );
 	if (!ul) {
-		ul		= create_tree( null, 'li__'+id, id, 'inc');
+		ul = create_tree( null, 'li__'+id, id, 'inc');
 	}
-	var link	= document.getElementById( 'plus__' + id );
+	var link = document.getElementById( 'plus__' + id );
 	// check the status of the list
 	if ( ul.style && ul.style.display == 'block' ) {
 		// list is open so close
@@ -406,11 +406,11 @@ function list_toggle( id ) {
 }
 
 /**
- *	@param	section:	The section to toggle open/closed
- *	@todo
- *	@bug
+ *  @param section: The section to toggle open/closed
+ *  @todo
+ *  @bug
  *
- *	Toggles a whole section open/closed.
+ *  Toggles a whole section open/closed.
  */
 function section_toggle( section ) {
 	var sect = document.getElementById( section );
@@ -438,13 +438,13 @@ function section_toggle( section ) {
 }
 
 /**
- *	@param	path:	The path to convert to a module name
- *	@return	string:	The propper module name
- *	@todo
- *	@bug
+ *  @param  path:   The path to convert to a module name
+ *  @return string: The propper module name
+ *  @todo
+ *  @bug
  *
- *	Converts a path (which is in the form of {section}__{group}__module) into
- *	a standard module name.
+ *  Converts a path (which is in the form of {section}__{group}__module) into
+ *  a standard module name.
  */
 function path_to_module(path) {
 	var module = path.replace(/__/g, '::');
@@ -454,11 +454,11 @@ function path_to_module(path) {
 /***** CURRENT LINK *****/
 
 /**
- *	@todo	implementation
- *	@bug
+ *  @todo implementation
+ *  @bug
  *
- *	Sets the current link to a link that the user can click on to see the
- *	page in its current state.
+ *  Sets the current link to a link that the user can click on to see the
+ *  page in its current state.
  */
 
 function update_current_link() {
@@ -469,21 +469,27 @@ function update_current_link() {
 	link.href = url;
 }
 
+/*************************\
+ *                       *
+ *  UTILITIE  FUNCTIONS  *
+ *                       *
+\*************************/
+
 /***** COOKIES *****/
 
 /**
- *	@param	name:	The name of the cookie wanted
- *	@return	string:	The value of the cokkie
- *	@todo
- *	@bug
+ *  @param  name:   The name of the cookie wanted
+ *  @return string: The value of the cokkie
+ *  @todo
+ *  @bug
  *
- *	Gets the value of a cookie called name
+ *  Gets the value of a cookie called name
  */
 function get_cookie(name) {
-	var result			= null;
-	var my_cookie		= ' ' + document.cookie + '; ';
-	var search_name		= ' ' + name + '=';
-	var start_of_cookie	= my_cookie.indexOf(search_name);
+	var result          = null;
+	var my_cookie       = ' ' + document.cookie + '; ';
+	var search_name     = ' ' + name + '=';
+	var start_of_cookie = my_cookie.indexOf(search_name);
 	var end_of_cookie;
 
 	if (start_of_cookie != -1) {
@@ -497,16 +503,16 @@ function get_cookie(name) {
 }
 
 /**
- *	@param	name:	The name of the cookie to set
- *	@param	value:	The value the should have
- *	@param	expires:	The time that the cookie expires (Date object)
- *	@param	path:	The path of the cookie
- *	@param	domain:	The domain of the cookie
- *	@param	secure:	Flags that the cookie should be secure
- *	@todo
- *	@bug
+ *  @param name:    The name of the cookie to set
+ *  @param value:   The value the should have
+ *  @param expires: The time that the cookie expires (Date object)
+ *  @param path:    The path of the cookie
+ *  @param domain:  The domain of the cookie
+ *  @param secure:  Flags that the cookie should be secure
+ *  @todo
+ *  @bug
  *
- *	Sets a cookie with the supplied parameters
+ *  Sets a cookie with the supplied parameters
  */
 function set_cookie(name, value, expires, path, domain, secure) {
 	var expiry_string = expires == null ? '' : ('; expires=' + expires.toGMTString());
@@ -547,8 +553,8 @@ function exists_cookie(cookie) {
 }
 
 /**
- *  @param	name: The cookie to count
- *  @return	int:  The number of cookies with the name name
+ *  @param  name: The cookie to count
+ *  @return int:  The number of cookies with the name name
  *  @todo
  *  @bug
  *
@@ -569,35 +575,66 @@ function get_cookie_count(name) {
 }
 
 /**
- *	@param	name:	The name of the cookie
- *	@param	cookie_number:	The order of the cookie to get
- *	@return	string:	The value of the cookie
- *	@todo
- *	@bug
+ *  @param  name:          The name of the cookie
+ *  @param  cookie_number: The order of the cookie to get
+ *  @return string:        The value of the cookie
+ *  @todo
+ *  @bug
  *
- *	For cookies with many entries this gets the one numberd cookie_number.
+ *  For cookies with many entries this gets the one numberd cookie_number.
  */
 function get_cookie_number(name, cookie_number) {
 	var result = null;
 	if (cookie_number >= 1) {
-		var cntr			= 0;
-		var my_cookie		= ' ' + document.cookie + ';';
-		var search_name		= ' ' + name + '=';
-		var name_length		= search_name.length;
-		var start_of_cookie	= my_cookie.indexOf(search_name);
+		var cntr            = 0;
+		var my_cookie       = ' ' + document.cookie + ';';
+		var search_name     = ' ' + name + '=';
+		var name_length     = search_name.length;
+		var start_of_cookie = my_cookie.indexOf(search_name);
 
 		for (cntr = 1; cntr < cookie_number; cntr++) {
 			start_of_cookie = my_cookie.indexOf(search_name, start_of_cookie + name_length);
 		}
 
 		if (start_of_cookie != 1) {
-			start_of_cookie	 += name_length; // skip past cookie name
+			start_of_cookie  += name_length; // skip past cookie name
 			var end_of_cookie = my_cookie.indexOf(';', start_of_cookie);
 			result = unescape(my_cookie.substring(start_of_cookie, end_of_cookie));
 		}
 	}
 	return result;
 }
+
+
+// AJAX stuff
+// Code from Javascript the definitave guide
+var HTTP = {};
+HTTP._factories = [
+	function() { return new XMLHttoRequest(); },
+	function() { return new ActiveXObject("Msxml2.XMLHTTP"); },
+	function() { return new ActiveXObject("Microsoft.XMLHTTP"); }
+];
+
+HTTP.newRequest = function() {
+	if ( HTTP._factory != null ) return HTTP._factory();
+
+	for ( var i = 0; i < HTTP._factories.length; i++ ) {
+		try {
+			var factory = HTTP._factories[i];
+			var request = factory();
+			if ( request != null ) {
+				HTTP._factory = factory;
+				return request;
+			}
+		}
+		catch (e) {
+			continue;
+		}
+	}
+
+	HTTP._factory = function() { throw new Error("XMLHttpRequest not supported" };
+	HTTP._factory();
+};
 
 /***** DEBUG ******/
 
