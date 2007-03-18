@@ -48,10 +48,16 @@ sub main {
 
 sub jason {
 	my ( $cgi, $terms, @files ) = @_;
+	my $count = @files || 0;
+	my %results;
+	for my $result ( @files ) {
+		push @{ $results{$result->[1]} }, $result->[0];
+	}
 	print $cgi->header('text/jason');
-	print "{terms:'$terms',results:[";
-	print join ",", map { "{$_->[1]:'$_->[0]'}" } @files;
-	print "]}\n";
+	print "{'terms':'$terms','count':$count,'results':{";
+	print join ',', map { "'$_':['".(join "','", @{$results{$_}})."']" } keys %results;
+	#print join ",", map { "{'$_->[1]':'$_->[0]'}" } @files;
+	print "}}\n";
 }
 
 sub xml {

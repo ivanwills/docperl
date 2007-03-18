@@ -135,7 +135,7 @@
 			[% perl %]
 			[% inc %]
 			[% local %]
-			var links = new Array();
+			var links = [];
 			var level;
 			var group = 0;
 			var counter = { perl:0, local:0, inc:0 };
@@ -252,9 +252,9 @@
 				<tr>
 					<td colspan="3" style="vertical-align: middle; text-align: center;">
 						<div id="advanced">
-							<input type="checkbox" id="type" name="type" value="modules" checked="checked" /><label>Modules</label>&nbsp;&nbsp;
-							<input type="checkbox" id="type" name="type" value="pod"      /><label>POD</label>&nbsp;&nbsp;
-							<input type="checkbox" id="type" name="type" value="functions"/><label>Functions</label>&nbsp;&nbsp;
+							<input type="checkbox" id="type_names"     name="type" value="modules" checked="checked" /><label>Modules</label>&nbsp;&nbsp;
+							<input type="checkbox" id="type_pod"       name="type" value="pod"      /><label>POD</label>&nbsp;&nbsp;
+							<input type="checkbox" id="type_functions" name="type" value="functions"/><label>Functions</label>&nbsp;&nbsp;
 						</div>
 					</td>
 				</tr>
@@ -263,21 +263,21 @@
 		<div id="functions_doc" style="display:none">
 			<h2 id="functions_head">
 			<a id="plus__functions" href="javascript: section_toggle('functions');" class="mod_expand" title="Hide">-</a>
-			Search Functions (<span id="functions_count">0</span>)</h2>
+			Search - Functions (<span id="functions_count">0</span>)</h2>
 			<div id="functions">
 			</div>
 		</div>
 		<div id="pod_doc" style="display:none">
 			<h2 id="pod_head">
 			<a id="plus__pod" href="javascript: section_toggle('pod');" class="mod_expand" title="Hide">-</a>
-			Search POD (<span id="pod_count">0</span>)</h2>
+			Search - POD (<span id="pod_count">0</span>)</h2>
 			<div id="pod">
 			</div>
 		</div>
 		<div id="names_doc" style="display:none">
 			<h2 id="names_head">
 			<a id="plus__names" href="javascript: section_toggle('names');" class="mod_expand" title="Hide">-</a>
-			Search Names (<span id="names_count">0</span>)</h2>
+			Search - Names (<span id="names_count">0</span>)</h2>
 			<div id="names">
 			</div>
 		</div>

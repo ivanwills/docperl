@@ -53,8 +53,8 @@ function count_tree( tree, counter ) {
 	var count = 0;
 	for ( var module in tree ) {
 		if ( module != '*' ) {
-			data = tree[module];
-			var tt = [];
+			var data = tree[module];
+			var tt   = [];
 			for ( var t in data )
 				tt.push(t);
 			if ( data && tt.length )
@@ -257,31 +257,76 @@ function display_recent(path) {
  */
 function search(force) {
 	var term = document.getElementById('search').value;
-	var type = document.getElementById('type');
 
 	if ( !force && term.length < 4 )
 		return;
 
-	if (type[0].checked)
-		search_names();
+	if (document.getElementById('type_names').checked)
+		search_names(term);
 
-	if (type[1].checked)
-		search_pod();
+	if (document.getElementById('type_pod').checked)
+		search_ajax({ section: 'pod', area: 'text', terms: term});
 
-	if (type[2].checked)
-		search_functions();
+	if (document.getElementById('type_functions').checked)
+		search_ajax({ section: 'functions', area: 'function', terms: term });
 }
 
-function search_names() {
+function search_ajax(args) {
+	var area_doc = document.getElementById(args.section + '_doc');
+	var section  = document.getElementById(args.section);
+	var url      = 'search.cgi?type=jason&terms=' + args.terms + '&area=' + args.area;
+	var ul       = document.createElement('ul');
+
+	while (section.firstChild)
+		section.removeChild(section.firstChild);
+
+	ul.id = 'ul__names';
+	section.appendChild(ul);
+	reset_count(args.section);
+
+	HTTP.get_jason(
+		url,
+		function(result) {
+			//alert(result + '\n' + args.section);
+			area_doc.style.display = 'block';
+			add_count( args.section, result.count );
+
+			for ( var name in result.results ) {
+				var li     = document.createElement('li');
+				var ul_sub = document.createElement('ul');
+				var path   = args.section + '__' + name;
+				li.id      = 'li__' + path;
+				ul_sub.id  = 'ul__' + path;
+				li.appendChild( create_plus(path) );
+				li.appendChild( document.createTextNode(name) );
+
+				for ( var item in result.results[name] ) {
+					var li_sub = document.createElement('li');
+					var found_item = result.results[name][item];
+					found_item = found_item.replace( /::/g, '__' );
+
+					li_sub.appendChild( create_plus() );
+					li_sub.appendChild( create_module( path + '__' + found_item, result.results[name][item] ) );
+					ul_sub.appendChild(li_sub);
+				}
+
+				li.appendChild(ul_sub);
+				ul.appendChild(li);
+			}
+		}
+	);
+}
+
+function search_names(term) {
 	var names_doc = document.getElementById('names_doc');
 	if ( !term ) {
 		names_doc.style.cssText = 'display:none';
 		return;
 	}
 
-	var terms   = term.split(/\s+/);
+	var terms = term.split(/\s+/);
 	var names = document.getElementById('names');
-	var ul      = document.createElement('ul');
+	var ul    = document.createElement('ul');
 	names_doc.style.cssText = '';
 
 	while (names.firstChild)
@@ -292,15 +337,15 @@ function search_names() {
 	reset_count('names');
 
 	for ( var i in terms ) {
-		var term = terms[i];
+		var cur_term = terms[i];
 
-		var list = show_found( [perl.POD], term, 'perl', 'POD' );
+		var list = show_found( [perl.POD], cur_term, 'perl', 'POD' );
 		if ( list )
 			ul.appendChild( list );
-		list = show_found( local, term, 'local', 'Local' );
+		list = show_found( local, cur_term, 'local', 'Local' );
 		if ( list )
 			ul.appendChild( list );
-		list = show_found( inc, term, 'inc', 'Installed' );
+		list = show_found( inc, cur_term, 'inc', 'Installed' );
 		if ( list )
 			ul.appendChild( list );
 	}
@@ -336,11 +381,11 @@ function show_found( list, term, base, name ) {
 
 			for ( var item in found ) {
 				var li_sub = document.createElement('li');
-				var name   = found[item];
-				name = name.replace( /::/g, '__' );
+				var found_item = found[item];
+				found_item = found_item.replace( /::/g, '__' );
 
 				li_sub.appendChild( create_plus() );
-				li_sub.appendChild( create_module( path + '__' + name, found[item] ) );
+				li_sub.appendChild( create_module( path + '__' + found_item, found[item] ) );
 				ul_sub.appendChild(li_sub);
 			}
 		}
@@ -623,7 +668,7 @@ function get_cookie_number(name, cookie_number) {
 // Code from Javascript the definitave guide
 var HTTP = {};
 HTTP._factories = [
-	function() { return new XMLHttoRequest(); },
+	function() { return new XMLHttpRequest(); },
 	function() { return new ActiveXObject("Msxml2.XMLHTTP"); },
 	function() { return new ActiveXObject("Microsoft.XMLHTTP"); }
 ];
@@ -645,8 +690,27 @@ HTTP.newRequest = function() {
 		}
 	}
 
-	HTTP._factory = function() { throw new Error("XMLHttpRequest not supported" };
+	HTTP._factory = function() { throw new Error("XMLHttpRequest not supported") };
 	HTTP._factory();
+	return false;
+};
+
+HTTP.get_jason = function(url, callback) {
+	var request = HTTP.newRequest();
+	request.onreadystatechange = function() {
+		if (request.readyState == 4 && request.status == 200) {
+			try {
+				eval('var response = ' + request.responseText + ';');
+				callback(response);
+			}
+			catch (e) {
+				throw new Error('Could not eval jason response: ' + e);
+				callback(null);
+			}
+		}
+	};
+	request.open('GET', url);
+	request.send(null);
 };
 
 /***** DEBUG ******/
@@ -659,10 +723,13 @@ function debug(msg) {
 	if ( !debug_div && !debug_found ) {
 		debug_div = document.getElementById('debug');
 		debug_found = true;
-		return debug(msg);
+		debug(msg);
+		return;
 	}
 
 	var out = document.createElement('div');
 	out.appendChild( document.createTextNode(msg) );
 	debug_div.appendChild(out);
+
+	return;
 }

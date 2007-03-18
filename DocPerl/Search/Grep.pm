@@ -41,20 +41,21 @@ sub search {
 
 	# now process all the returned results
 	for my $line ( split /\n/xms, $out ) {
-		my ( $area, $file, $count ) = $line =~ m{^ $conf->{'General'}{'Data'}/cache/pod/ (\w+) / ([^:]+) : (\d+) }xms;
-		if ( $count > 0 ) {
+		my ( $area, $file, $count ) = $line =~ m{^ $conf->{'General'}{'Data'}/cache/$location/ (\w+) / ([^:]+) : (\d+) }xms;
+		if ( defined $count && $count > 0 ) {
 			$file =~ s{/}{::}gxms;
 			$file =~ s{[.]\w+$}{}xms;
 			push @{ $rank{$count} }, [ $file => $area ];
 		}
 	}
 
+	$conf->{Search}{result_size} ||= 10;
 
 	# limit the returned results to the amount desired
 RANK:
 	for my $rank ( reverse sort keys %rank ) {
 		push @results, @{ $rank{$rank} };
-		last RANK if @results > $conf->{Search}{result_size} || 10;
+		last RANK if @results > $conf->{Search}{result_size};
 	}
 
 	# return the modules found

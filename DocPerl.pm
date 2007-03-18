@@ -89,7 +89,7 @@ sub init_module {
 		my $module = $self->{tag} = $q->{module};
 
 		# remove the location start parts
-		( $self->{current_location} ) = $module =~ m{^([^_]+)__[^_]+__}xms;
+		( $self->{current_location}, $self->{alt_location} ) = $module =~ m{^([^_]+)__([^_]+)__}xms;
 		$module =~ s{^([^_]+)__[^_]+__}{}xms;
 
 		# store the perl module name
@@ -99,6 +99,9 @@ sub init_module {
 		# store the module file name
 		$self->{module}      =~ s{__}{::}gxms;
 		$self->{module_file} =~ s{__}{/}gxms;
+		if ( $self->{alt_location} eq 'perl' || $self->{alt_location} eq 'local' || $self->{alt_location} eq 'inc' ) {
+			$self->{current_location} = $self->{alt_location};
+		}
 		if ( $self->{current_location} eq 'perl' ) {
 			$self->{module_file} = "pod/$self->{module_file}";
 		}
@@ -456,12 +459,12 @@ sub _create_js_object {
 
 	return '' if !ref $vars;
 
-	my $js = "'$name':{'*':new Array(";
+	my $js = "'$name':{'*':[";
 
 	if ( $vars->{'*'} and ref $vars->{'*'} eq 'ARRAY' ) {
 		$js .= q{'} . join( q{','}, @{ $vars->{'*'} } ) . q{'};
 	}
-	$js .= '),';
+	$js .= '],';
 
 	for my $module ( sort keys %{$vars} ) {
 		next if $module eq '*' or not ref $vars->{$module};
