@@ -138,6 +138,7 @@ sub main {
 	if ( ref $option{compile} && @{ $option{compile} } ) {
 		$config{Templates}{ClearCache} = 'on';
 		eval('use DocPerl');
+		delete $config{General}{Cache};
 		my $dp = DocPerl->new( cgi => { page => 'list', }, conf => \%config, save_data => 1, );
 		my %data = $dp->list();
 
