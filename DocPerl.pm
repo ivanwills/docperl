@@ -269,7 +269,6 @@ sub process {
 		or error( $tmpl->error );
 
 	if ( $out =~ /\A\s+\Z/xms ) {
-		carp 'The processed template "' . ($self->template() || 'unknown') . '" (for ' . "$self->{module}: $self->{file}) contains not data!\n" . Dumper \%vars, $out;
 		croak 'The processed template "' . ($self->template() || 'unknown') . '" (for ' . "$self->{module}: $self->{file}) contains not data!\n" . Dumper \%vars, $out;
 	}
 

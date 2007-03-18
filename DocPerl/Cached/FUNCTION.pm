@@ -29,7 +29,6 @@ sub process {
 	my $module  = $self->{module};
 	my $file    = $self->{source} || '';
 	my @folders = $self->{folders};
-	my @suffixes;
 
 	croak 'No location supplied' if !$self->{current_location};
 
@@ -49,9 +48,7 @@ sub process {
 		local $/;
 		$text = <$fh>;
 	}
-
-	my @functions = $text =~ /(?:^|\W)sub \s+ (\w+)/xms;
-	warn Dumper \$module, \@functions;
+	my @functions = $text =~ /(?:^|\W)sub \s+ (\w+)/gxms;
 
 	return ( functions => \@functions );
 }

@@ -38,7 +38,6 @@ sub search {
 	my $F        = $args{'terms'} =~ /\A[\w\s]+\Z/xms ? '-F' : '';
 	my $cmd      = "$conf->{'Search'}{'grep'} $F -cR '$args{'terms'}' $conf->{'General'}{'Data'}/cache/$location/";
 	my $out      = `$cmd`;
-warn $location;
 
 	# now process all the returned results
 	for my $line ( split /\n/xms, $out ) {
@@ -47,9 +46,6 @@ warn $location;
 			$file =~ s{/}{::}gxms;
 			$file =~ s{[.]\w+$}{}xms;
 			push @{ $rank{$count} }, [ $file => $area ];
-		}
-		elsif ( !defined $count ) {
-			warn $line;
 		}
 	}
 

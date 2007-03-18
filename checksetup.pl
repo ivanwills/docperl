@@ -300,6 +300,10 @@ sub shrink_css {
 sub compile {
 	my ( $data, $dp, $compile ) = @_;
 
+	$dp->{cgi}{page} = 'index';
+	$dp->{template}  = 'index.html';
+	$dp->process();
+
 	for my $location ( qw/PERL LOCAL INC/ ) {
 		print "Create $location Cache\n";
 		cache( $data->{$location}, $dp, location => lc $location, top => 1, map {$_=>1} @$compile );
@@ -335,12 +339,16 @@ sub cache {
 				$dp->{cgi}{page} = 'api';
 				$dp->{template}  = 'api.html';
 				# Unfortunatly repeated processing of api's can be dangerous to this is now disabled
-				$dp->process();
+				#$dp->process();
 			}
 			if ( $arg{function} ) {
 				$dp->{cgi}{page} = 'function';
 				$dp->{template}  = 'function.html';
+				# catch errors (which occur due to no output) because some files will declare no functions
+				my $sig = $SIG{__WARN__};
+				$SIG{__WARN__} = sub {};
 				eval{ $dp->process() };
+				$SIG{__WARN__} = $sig;
 			}
 			if ( $arg{code} ) {
 				$dp->{cgi}{page} = 'code';
