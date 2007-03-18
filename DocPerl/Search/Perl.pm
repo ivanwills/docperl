@@ -6,9 +6,6 @@ package DocPerl::Search::Perl;
 # $Revision$, $HeadURL$, $Date$
 # $Revision$, $Source$, $Date$
 
-# Created on: 2007-02-16 20:28:48
-# Create by:  ivan
-
 use strict;
 use warnings;
 use version;

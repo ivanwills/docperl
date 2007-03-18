@@ -337,6 +337,11 @@ sub cache {
 				# Unfortunatly repeated processing of api's can be dangerous to this is now disabled
 				$dp->process();
 			}
+			if ( $arg{function} ) {
+				$dp->{cgi}{page} = 'function';
+				$dp->{template}  = 'function.html';
+				eval{ $dp->process() };
+			}
 			if ( $arg{code} ) {
 				$dp->{cgi}{page} = 'code';
 				$dp->{template}  = 'code.html';

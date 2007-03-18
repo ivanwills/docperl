@@ -6,9 +6,6 @@ package DocPerl::Search::Grep;
 # $Revision$, $HeadURL$, $Date$
 # $Revision$, $Source$, $Date$
 
-# Created on: 2007-02-11 08:17:49
-# Create by:  ivan
-
 use strict;
 use warnings;
 use version;
@@ -34,10 +31,14 @@ sub search {
 	my @results;
 
 	# check if the text is only strings and/or white space so that we can use the fast grep version
+	my $location = $args{'area'} eq 'function'                ? 'function'
+	             : $args{'area'} eq 'code'                    ? 'code'
+                 : -d "$conf->{'General'}{'Data'}/cache/text" ? 'text'
+                 :                                              'pod';
 	my $F        = $args{'terms'} =~ /\A[\w\s]+\Z/xms ? '-F' : '';
-	my $location = -d "$conf->{'General'}{'Data'}/cache/text" ? 'text' : 'pod';
 	my $cmd      = "$conf->{'Search'}{'grep'} $F -cR '$args{'terms'}' $conf->{'General'}{'Data'}/cache/$location/";
 	my $out      = `$cmd`;
+warn $location;
 
 	# now process all the returned results
 	for my $line ( split /\n/xms, $out ) {
@@ -46,6 +47,9 @@ sub search {
 			$file =~ s{/}{::}gxms;
 			$file =~ s{[.]\w+$}{}xms;
 			push @{ $rank{$count} }, [ $file => $area ];
+		}
+		elsif ( !defined $count ) {
+			warn $line;
 		}
 	}
 

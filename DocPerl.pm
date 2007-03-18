@@ -227,7 +227,7 @@ sub process {
 		if ( $page !~ /^_/xms && $self->can($page) ) {
 			%vars = $self->$page();
 		}
-		elsif ( $page =~ /^(pod|text|api|code)$/xmsi ) {
+		elsif ( $page =~ /^(pod|text|api|function|code)$/xmsi ) {
 
 			# try to see if the method is a cached module
 			my $module = 'DocPerl::Cached::' . uc $1;
@@ -269,7 +269,8 @@ sub process {
 		or error( $tmpl->error );
 
 	if ( $out =~ /\A\s+\Z/xms ) {
-		croak 'The processed template "' . $self->template() . '" (for ' . "$self->{module}: $self->{file}) contains not data!\n" . Dumper \%vars, $out;
+		carp 'The processed template "' . ($self->template() || 'unknown') . '" (for ' . "$self->{module}: $self->{file}) contains not data!\n" . Dumper \%vars, $out;
+		croak 'The processed template "' . ($self->template() || 'unknown') . '" (for ' . "$self->{module}: $self->{file}) contains not data!\n" . Dumper \%vars, $out;
 	}
 
 	if ( $page && ( !$self->{source} || -f $self->{source} ) ) {
