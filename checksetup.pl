@@ -11,7 +11,7 @@ use Getopt::Long;
 use Pod::Usage;
 use Data::Dumper qw/Dumper/;
 
-our $VERSION = 0.6;
+our $VERSION = 0.9;
 
 use lib ($FindBin::Bin);
 my $CONFIG = "$FindBin::Bin/docperl.conf";
@@ -370,7 +370,7 @@ checksetup.pl - Program to check the setup of a DocPerl installation
 
 =head1 VERSION
 
-This documentation refers to checksetup.pl version 0.6.0.
+This documentation refers to checksetup.pl version 0.9.0.
 
 =head1 SYNOPSIS
 

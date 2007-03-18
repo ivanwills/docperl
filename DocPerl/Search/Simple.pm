@@ -16,7 +16,7 @@ use Data::Dumper qw/Dumper/;
 use English '-no_match_vars';
 use base qw/DocPerl::Search/;
 
-our $VERSION   = version->new('0.6.0');
+our $VERSION   = version->new('0.9.0');
 our @EXPORT_OK = qw//;
 
 sub new {
@@ -132,7 +132,7 @@ easily installable and working better solution.
 
 =head1 VERSION
 
-This documentation refers to DocPerl::Search::Simple version 0.6.0.
+This documentation refers to DocPerl::Search::Simple version 0.9.0.
 
 
 =head1 SYNOPSIS

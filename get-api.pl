@@ -19,7 +19,7 @@ use DocPerl::Cached::API;
 use DocPerl qw/find/;
 
 sub say;
-our $VERSION = version->new('0.1');
+our $VERSION = version->new('0.9.0');
 
 my %option = (
 	columns			=> 2,
@@ -52,10 +52,10 @@ sub main {
 		'help',
 		'version'
 	) or pod2usage( 2 );
-	
+
 	my $file = pop @ARGV;
 	my $module;
-	
+
 	print "get-api Version = $VERSION\n" and exit(1) if $option{version};
 	pod2usage( -verbose => 2 ) if $option{man};
 	pod2usage( -verbose => 1 ) if $option{help};
@@ -66,7 +66,7 @@ sub main {
 		$module = $file;
 		$module =~ s{::}{/}gxs;
 		undef $file;
-		
+
 		for my $path ( @INC ) {
 			find(
 				$path,
@@ -82,7 +82,7 @@ sub main {
 			last if $file;
 		}
 	}
-	
+
 	# Get the API for the file
 	my $api = DocPerl::Cached::API->new(
 		conf			=> {
@@ -98,7 +98,7 @@ sub main {
 	);
 	my %data = $api->process();
 	$api = $data{api};
-	
+
 	# print out the API
 	if ( $module ) {
 		say 'module', $module;
@@ -130,9 +130,9 @@ sub main {
 
 Param: C<$list> - type (detail) - description
 
-Return:  - 
+Return:  -
 
-Description: 
+Description:
 
 =cut
 
@@ -171,7 +171,7 @@ Param: C<$type> - string (detail) - The type of line to print
 
 Param: C<@line> - strings (detail) - the data to print
 
-Return: none - 
+Return: none -
 
 Description: Prints colourised lines
 
@@ -181,7 +181,7 @@ sub say {
 	my ( $type, @line ) = @_;
 	my $line = join '', @line;
 	$line .= "\n" unless $line =~ /\n$/;
-	
+
 	if ( $option{colour} ) {
 		print Term::ANSIColor::colored( $line, $colours{$type} );
 	}
@@ -199,13 +199,13 @@ get-api - Displays a summary of the API used by the file or module passed
 
 =head1 VERSION
 
-This documentation refers to get-api version 0.1.
+This documentation refers to get-api version 0.9.0.
 
 =head1 SYNOPSIS
 
    get-api [options] file | module
    get-api [ --version | --help | --man ]
-   
+
  OPTIONS:
   -c --columns  The number of columns to format the out put into (Default 2)
      --nocolor  Turns off the colouring of the output
@@ -286,7 +286,6 @@ Patches are welcome.
 =head1 AUTHOR
 
 Ivan Wills - (ivan.wills@gmail.com)
-<Author name(s)> - (<contact address>)
 
 =head1 LICENSE AND COPYRIGHT
 

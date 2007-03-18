@@ -15,7 +15,7 @@ use Scalar::Util;
 use English '-no_match_vars';
 use base qw/DocPerl::Cached/;
 
-our $VERSION   = version->new('0.6.0');
+our $VERSION   = version->new('0.9.0');
 our @EXPORT    = qw//;
 our @EXPORT_OK = qw//;
 
@@ -190,7 +190,7 @@ DocPerl::Cached::CODE - Displays the code of a specified file in syntax highlite
 
 =head1 VERSION
 
-This documentation refers to DocPerl::Cached::CODE version 0.6.0.
+This documentation refers to DocPerl::Cached::CODE version 0.9.0.
 
 =head1 SYNOPSIS
 

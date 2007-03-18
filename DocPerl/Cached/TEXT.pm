@@ -19,7 +19,7 @@ use Pod::POM;
 use Pod::POM::View::Text;
 use base qw/DocPerl::Cached/;
 
-our $VERSION     = version->new('0.0.1');
+our $VERSION     = version->new('0.9.0');
 our @EXPORT_OK   = qw//;
 our %EXPORT_TAGS = ();
 
@@ -62,8 +62,7 @@ DocPerl::Cached::TEXT - <One-line description of module's purpose>
 
 =head1 VERSION
 
-This documentation refers to DocPerl::Cached::TEXT version 0.1.
-
+This documentation refers to DocPerl::Cached::TEXT version 0.9.0.
 
 =head1 SYNOPSIS
 
@@ -133,16 +132,6 @@ modules that use source code filters are mutually incompatible).
 
 =head1 BUGS AND LIMITATIONS
 
-A list of known problems with the module, together with some indication of
-whether they are likely to be fixed in an upcoming release.
-
-Also, a list of restrictions on the features the module does provide: data types
-that cannot be handled, performance issues and the circumstances in which they
-may arise, practical limitations on the size of data sets, special cases that
-are not (yet) handled, etc.
-
-The initial template usually just has:
-
 There are no known bugs in this module.
 
 Please report problems to Ivan Wills (ivan.wills@gmail.com).
@@ -152,13 +141,11 @@ Patches are welcome.
 =head1 AUTHOR
 
 Ivan Wills - (ivan.wills@gmail.com)
-<Author name(s)>  (<contact address>)
 
 =head1 LICENSE AND COPYRIGHT
 
 Copyright (c) 2007 Ivan Wills (101 Miles St Bald Hills QLD Australia 4036).
 All rights reserved.
-
 
 This module is free software; you can redistribute it and/or modify it under
 the same terms as Perl itself. See L<perlartistic>.  This program is

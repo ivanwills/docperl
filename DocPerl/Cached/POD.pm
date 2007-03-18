@@ -19,7 +19,7 @@ use Pod::POM;
 use DocPerl::Cached::POD::HTML;
 use base qw/DocPerl::Cached/;
 
-our $VERSION     = version->new('0.0.1');
+our $VERSION     = version->new('0.9.0');
 our @EXPORT_OK   = qw//;
 our %EXPORT_TAGS = ();
 
@@ -68,8 +68,7 @@ DocPerl::Cached::POD - <One-line description of module's purpose>
 
 =head1 VERSION
 
-This documentation refers to DocPerl::Cached::POD version 0.1.
-
+This documentation refers to DocPerl::Cached::POD version 0.9.0.
 
 =head1 SYNOPSIS
 
@@ -158,7 +157,6 @@ Patches are welcome.
 =head1 AUTHOR
 
 Ivan Wills - (ivan.wills@gmail.com)
-<Author name(s)>  (<contact address>)
 
 =head1 LICENSE AND COPYRIGHT
 

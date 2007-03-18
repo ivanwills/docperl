@@ -17,7 +17,7 @@ use Data::Dumper qw/Dumper/;
 use English qw/ -no_match_vars /;
 use base qw/Pod::POM::View::HTML/;
 
-our $VERSION     = version->new('0.0.1');
+our $VERSION     = version->new('0.9.0');
 our @EXPORT_OK   = qw//;
 our %EXPORT_TAGS = ();
 our $LOCATION    = 'inc';
@@ -288,7 +288,7 @@ DocPerl::Cached::POD::HTML - <One-line description of module's purpose>
 
 =head1 VERSION
 
-This documentation refers to DocPerl::Cached::POD::HTML version 0.1.
+This documentation refers to DocPerl::Cached::POD::HTML version 0.9.0.
 
 
 =head1 SYNOPSIS
@@ -321,9 +321,6 @@ In an object-oriented module, this section should begin with a sentence (of the
 form "An object of this class represents ...") to give the reader a high-level
 context to help them understand the methods that are subsequently described.
 
-
-=cut
-
 =head1 DIAGNOSTICS
 
 A list of every error and warning message that the module can generate (even
@@ -353,16 +350,6 @@ modules that use source code filters are mutually incompatible).
 
 =head1 BUGS AND LIMITATIONS
 
-A list of known problems with the module, together with some indication of
-whether they are likely to be fixed in an upcoming release.
-
-Also, a list of restrictions on the features the module does provide: data types
-that cannot be handled, performance issues and the circumstances in which they
-may arise, practical limitations on the size of data sets, special cases that
-are not (yet) handled, etc.
-
-The initial template usually just has:
-
 There are no known bugs in this module.
 
 Please report problems to Ivan Wills (ivan.wills@gmail.com).
@@ -372,13 +359,11 @@ Patches are welcome.
 =head1 AUTHOR
 
 Ivan Wills - (ivan.wills@gmail.com)
-<Author name(s)>  (<contact address>)
 
 =head1 LICENSE AND COPYRIGHT
 
 Copyright (c) 2007 Ivan Wills (101 Miles St Bald Hills QLD Australia 4036).
 All rights reserved.
-
 
 This module is free software; you can redistribute it and/or modify it under
 the same terms as Perl itself. See L<perlartistic>.  This program is

@@ -1,4 +1,4 @@
-#!/usr/bin/perl 
+#!/usr/bin/perl
 
 # Created on: 2006-01-20 07:10:57
 # Create by:  ivanw
@@ -13,7 +13,7 @@ use Readonly;
 use lib qw/./;
 use DocPerl;
 
-our $VERSION = version->new('0.6.0');
+our $VERSION = version->new('0.9.0');
 
 Readonly my $BASE   => $Bin;
 Readonly my $CONFIG => "$BASE/docperl.conf";
@@ -33,14 +33,14 @@ sub main {
 	my $cgi = CGI->new();
 	my %cgi = $cgi->Vars();
 	my $out;
-	
+
 	# get the configuration info
 	read_config $CONFIG, my %config;
 	$config{template} ||= {};
-	
+
 	# create a new doc perl object
 	my $docperl = DocPerl->new( cgi => \%cgi, conf => \%config, );
-	
+
 	print $cgi->header( $docperl->mime() );
 	print $docperl->process();
 }
@@ -66,7 +66,7 @@ docperl.cgi - Displays the documentation/api/code of perl modules and other file
 
 =head1 VERSION
 
-This documentation refers to docperl.cgi version 0.6.0.
+This documentation refers to docperl.cgi version 0.9.0.
 
 =head1 SYNOPSIS
 
