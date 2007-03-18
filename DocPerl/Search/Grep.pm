@@ -53,7 +53,7 @@ warn $location;
 		}
 	}
 
-	$conf->{Search}{result_size} ||= 10;
+	$conf->{Search}{result_size} ||= 100;
 
 	# limit the returned results to the amount desired
 RANK:

@@ -263,12 +263,18 @@ function search(force) {
 
 	if (document.getElementById('type_names').checked)
 		search_names(term);
+	else
+		document.getElementById('names_doc').style.display = 'none';
 
 	if (document.getElementById('type_pod').checked)
 		search_ajax({ section: 'pod', area: 'text', terms: term});
+	else
+		document.getElementById('pod_doc').style.display = 'none';
 
 	if (document.getElementById('type_functions').checked)
 		search_ajax({ section: 'functions', area: 'function', terms: term });
+	else
+		document.getElementById('functions_doc').style.display = 'none';
 }
 
 function search_ajax(args) {
