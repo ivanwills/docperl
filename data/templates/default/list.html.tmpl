@@ -105,6 +105,25 @@
 			.info:hover span {
 				display:			block;
 			}
+			#adv_open,
+			#adv_close {
+				border:      solid black 1px;
+				padding:     2px;
+				font-weight: bold;
+				font-size:   1.4em;
+				cursor:      pointer;
+			}
+			#adv_open {
+			}
+			#adv_close {
+				display: none;
+			}
+			#advanced {
+				display: none;
+			}
+			#advanced label {
+				font-size: 1.2em;
+			}
 		/* ]]> */-->
 		</style>
 		<script type="text/javascript" src="?page=list.js&amp;sidebar=[% IF sidebar %]1[% ELSE %]0[% END %]"></script>
@@ -197,33 +216,6 @@
 				head.textContent = '\240' + head.textContent;
 				setTimeout( FADE_MAX == ++fade_count ? animate_headding : fade_headding, 100 );
 			}
-		//-->
-		</script>
-		<style type="text/css">
-		<!--/* <![CDATA[ */
-			#adv_open,
-			#adv_close {
-				border:      solid black 1px;
-				padding:     2px;
-				font-weight: bold;
-				font-size:   1.4em;
-				cursor:      pointer;
-			}
-			#adv_open {
-			}
-			#adv_close {
-				display: none;
-			}
-			#advanced {
-				display: none;
-			}
-			#advanced label {
-				font-size: 1.2em;
-			}
-		/* ]]> */-->
-		</style>
-		<script type="text/javascript">
-		<!--
 			function adv_open() {
 				var adv   = document.getElementById('advanced');
 				var open  = document.getElementById('adv_open');
@@ -260,7 +252,7 @@
 				<tr>
 					<td colspan="3" style="vertical-align: middle; text-align: center;">
 						<div id="advanced">
-							<input type="checkbox" id="type" name="type" value="modules"  /><label>Modules</label>&nbsp;&nbsp;
+							<input type="checkbox" id="type" name="type" value="modules" checked="checked" /><label>Modules</label>&nbsp;&nbsp;
 							<input type="checkbox" id="type" name="type" value="pod"      /><label>POD</label>&nbsp;&nbsp;
 							<input type="checkbox" id="type" name="type" value="functions"/><label>Functions</label>&nbsp;&nbsp;
 						</div>
@@ -268,11 +260,25 @@
 				</tr>
 			</table>
 		</center>
-		<div id="results_doc" style="display:none">
-			<h2 id="results_head">
-			<a id="plus__results" href="javascript: section_toggle('results');" class="mod_expand" title="Hide">-</a>
-			Search Results (<span id="results_count">0</span>)</h2>
-			<div id="results">
+		<div id="functions_doc" style="display:none">
+			<h2 id="functions_head">
+			<a id="plus__functions" href="javascript: section_toggle('functions');" class="mod_expand" title="Hide">-</a>
+			Search Functions (<span id="functions_count">0</span>)</h2>
+			<div id="functions">
+			</div>
+		</div>
+		<div id="pod_doc" style="display:none">
+			<h2 id="pod_head">
+			<a id="plus__pod" href="javascript: section_toggle('pod');" class="mod_expand" title="Hide">-</a>
+			Search POD (<span id="pod_count">0</span>)</h2>
+			<div id="pod">
+			</div>
+		</div>
+		<div id="names_doc" style="display:none">
+			<h2 id="names_head">
+			<a id="plus__names" href="javascript: section_toggle('names');" class="mod_expand" title="Hide">-</a>
+			Search Names (<span id="names_count">0</span>)</h2>
+			<div id="names">
 			</div>
 		</div>
 		<div id="recent_doc" style="display:none">

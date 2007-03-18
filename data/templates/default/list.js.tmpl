@@ -256,27 +256,40 @@ function display_recent(path) {
  *  Searches the all modules names to find those that match the search term
  */
 function search(force) {
-	var term        = document.getElementById('search').value;
-	var results_doc = document.getElementById('results_doc');
+	var term = document.getElementById('search').value;
+	var type = document.getElementById('type');
 
 	if ( !force && term.length < 4 )
 		return;
+
+	if (type[0].checked)
+		search_names();
+
+	if (type[1].checked)
+		search_pod();
+
+	if (type[2].checked)
+		search_functions();
+}
+
+function search_names() {
+	var names_doc = document.getElementById('names_doc');
 	if ( !term ) {
-		results_doc.style.cssText = 'display:none';
+		names_doc.style.cssText = 'display:none';
 		return;
 	}
 
 	var terms   = term.split(/\s+/);
-	var results = document.getElementById('results');
+	var names = document.getElementById('names');
 	var ul      = document.createElement('ul');
-	results_doc.style.cssText = '';
+	names_doc.style.cssText = '';
 
-	while (results.firstChild)
-		results.removeChild(results.firstChild);
+	while (names.firstChild)
+		names.removeChild(names.firstChild);
 
-	ul.id = 'ul__results';
-	results.appendChild(ul);
-	reset_count('results');
+	ul.id = 'ul__names';
+	names.appendChild(ul);
+	reset_count('names');
 
 	for ( var i in terms ) {
 		var term = terms[i];
@@ -308,7 +321,7 @@ function show_found( list, term, base, name ) {
 	var count  = 0;
 	var li     = document.createElement('li');
 	var ul_sub = document.createElement('ul');
-	var path   = 'results__' + base;
+	var path   = 'names__' + base;
 	li.id      = 'li__' + path;
 	ul_sub.id  = 'ul__' + path;
 	li.appendChild( create_plus(path) );
@@ -336,7 +349,7 @@ function show_found( list, term, base, name ) {
 	if ( !count )
 		return null;
 
-	add_count( 'results', count );
+	add_count( 'names', count );
 	li.appendChild(ul_sub);
 
 	return li;
