@@ -38,7 +38,7 @@ Path:           ./data/templates/local:./data/templates/default
 
 # Set to a true value to allow web users to clear the cached documents
 # this could be a performance hist as it would enable a malicious to force the
-# recreation of all documents. Should be ok to enable for lightly used systems
+# recreation of all documents. Should be OK to enable for lightly used systems
 # which modules change regularly.
 ClearCache:     0
 
@@ -69,7 +69,7 @@ IncLabel:       Installed Modules
 PerlLabel:      Perl
 
 # Uncomment to allow web users to clear the current cache
-# Note: Turining this on is only recomended for non public DocPerl
+# Note: Turning this on is only recommended for non public DocPerl
 #   installations as this could cause a large amount of load to the server
 #   if random people clear the cache for no good reason
 #ClearCache:    on
@@ -91,15 +91,15 @@ StyleSheet:     cpan
 # the location of the data directory
 Data:           ./data
 
-# Enable/Disable cacheing
+# Enable/Disable caching
 #Cache:         off
 
 # DefaultModule
-# Sets the module that will be displaied when DocPerl is run with no parameters
+# Sets the module that will be displayed when DocPerl is run with no parameters
 #
-# Note: This module must be prefixed with the location (perl/local/inc) and a
+# Note: This module must be prefixed with the location (perl/local/inc) and
 # a place holder (usually the first letter of the module name or the section
-# that the a POD file comes from for the standard perl documentation files.
+# that a POD file comes from for the standard perl documentation files.
 # some examples:
 #DefaultModule: perl__Tutorials__perlcheat
 #DefaultModule: local__D__DocPerl
@@ -114,7 +114,7 @@ DefaultModule:  perl__Programming__perlfunc
 # The options are:
 #   Grep - Fast for simple text and when the POD cache size is large
 #   Perl - Slower but allows more complicated search terms (and works when
-#          the grep command is not available eg in Windows)
+#          the grep command is not available e.g. in Windows)
 Engine:         Perl
 
 # the location of the grep command (needed when using the Grep Engine)
