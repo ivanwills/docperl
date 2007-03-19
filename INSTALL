@@ -21,20 +21,21 @@ or see
 
   $ ./checksetup.pl -h
 
-for more detais on ./checksetup.pl usage
+for more details on ./checksetup.pl usage
 
-DocPerl needs some perl modules that may not be already installed these
+DocPerl needs some Perl modules that may not be already installed these
 include:
 Template Toolkit
 Readonly
 Config::Std
 version
+Pod::POM
 
 to install one of the following commands should work
   $ cpan Template Readonly
 or
   $ perl -MCPAN -e 'install Template; install Readonly'
-or for active perl users
+or for active Perl users
   $ ppm install Template
   $ ppm install Readonly
 
@@ -45,9 +46,9 @@ https://sourceforge.net/forum/forum.php?forum_id=553595
 
 Installation on windows has now improved a lot, the dependencies on command
 line programs have been removed. The major problems you may now encounter are
-setting setting the perl scripts bang line to you perl location (if you do not
-download the windows zip file or your perl is not installed into C:/Perl).
-Workarrounds are to change the bang line from:
+setting setting the Perl scripts bang line to you Perl location (if you do not
+download the windows zip file or your Perl is not installed into C:/Perl).
+Work-arounds are to change the bang line from:
 
 #!/usr/bin/perl
 
@@ -55,12 +56,12 @@ to
 
 #!"C:/perl/bin/perl.exe"
 
-or where ever your perl is installed. You can set apache to use file
-extenstions instead (see your Apache documentation for details)
+or where ever your perl is installed. You can set Apache to use file
+extensions instead (see your Apache documentation for details)
 
 
-* If you are using active perl's ppm to get the Template Toolkit modules
-you may encounter some difficulity as ppm install Template does not appear to
+* If you are using active Perl's ppm to get the Template Toolkit modules
+you may encounter some difficulty as ppm install Template does not appear to
 install the Template Toolkit, you will probably need to use CPAN.
 
 *Upgrading*

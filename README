@@ -2,12 +2,12 @@ DocPerl
 
 For installations and upgrading instructions please see the INSTALL file.
 
-DocPerl provides access to the POD documentation provided by perl files as
+DocPerl provides access to the POD documentation provided by Perl files as
 well as showing the code of the files and a summary of the API that a file
 defines.
 
 DocPerl allows easy browsing of the modules installed on the server that is is
-run from. It can be setup to display your own project's perl files by adding
+run from. It can be setup to display your own project's Perl files by adding
 the directories that those files are stored in, into the Path parameter of the
 Local section of your docperl.conf file (located in the data directory).
 
@@ -21,7 +21,7 @@ command:
 $ ./checksetup.pl -c pod
 
 Note: this will generate a lot of error which can generally be ignored (they
-are caused by bad or missing POD in the standard perl module files)
+are caused by bad or missing POD in the standard Perl module files)
 
 If you have any problems try the forums at:
 http://sourceforge.net/forum/?group_id=163244
@@ -29,4 +29,4 @@ http://sourceforge.net/forum/?group_id=163244
 Please report bugs to:
 http://sourceforge.net/tracker/?func=add&group_id=163244&atid=826975
 
-DocPerl is licenced under the same licence as perl.
+DocPerl is licensed under the same licence as Perl.
