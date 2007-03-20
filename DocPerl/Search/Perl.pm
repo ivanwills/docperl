@@ -19,8 +19,6 @@ use base qw/DocPerl::Search/;
 our $VERSION     = version->new('0.9.0');
 our @EXPORT_OK   = qw//;
 our %EXPORT_TAGS = ();
-#our @EXPORT      = qw//;
-
 
 1;
 

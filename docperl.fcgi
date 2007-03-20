@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 # Created on: 2006-01-20 07:10:57
-# Create by:  ivanw
+# Create by:  Ivan Wills
 
 use strict;
 use warnings;
@@ -20,11 +20,11 @@ Readonly my $CONFIG => "$BASE/docperl.conf";
 
 #$SIG{__DIE__} = sub { error( "Internal error", $@ ) };
 
-# for taint saifty remove the environment's PATH;
+# for taint safety remove the environment's PATH;
 delete $ENV{PATH};
 my $count = 0;
 
-while (my $cgi = CGI::Fast->new() ) {
+while ( my $cgi = CGI::Fast->new() ) {
 	main($cgi);
 }
 exit(0);
@@ -45,13 +45,13 @@ sub main {
 	print $docperl->process();
 }
 
-# catastrofic error page
+# catastrophic error page
 sub error {
 	my ( $message, @hidden ) = @_;
 	print "Content-Type: text/html; charset=ISO-8859-1\n\n";
 	print "<html><head><title>Error</title></head><body>\n";
 	print "<h1>Error</h1><p>$message</p>\n";
-	for my $hidden ( @hidden ) {
+	for my $hidden (@hidden) {
 		print "<div>\n$hidden\n</div>\n";
 	}
 	print "</body></html>";

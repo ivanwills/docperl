@@ -30,7 +30,8 @@ sub main {
 	my $cgi = CGI->new();
 	read_config $CONFIG, my %config;
 
-	my $engine = $config{'Search'}{'Engine'} eq 'Grep' && -x $config{'Search'}{'grep'} ? 'DocPerl::Search::Grep' : 'DocPerl::Search::Perl';
+	my $engine = $config{'Search'}{'Engine'} eq 'Grep'
+		&& -x $config{'Search'}{'grep'} ? 'DocPerl::Search::Grep' : 'DocPerl::Search::Perl';
 	my $terms  = $cgi->param('terms') || $ARGV[0] || 'test';
 	my $type   = $cgi->param('type')  || $ARGV[1] || 'xml';
 	my $area   = $cgi->param('area')  || $ARGV[2] || 'text';
@@ -38,10 +39,10 @@ sub main {
 	my @files  = $search->search( terms => $terms, area => $area );
 
 	if ( $type eq 'jason' ) {
-		jason($cgi, $terms, @files);
+		jason( $cgi, $terms, @files );
 	}
 	else {
-		xml($cgi, $terms, @files);
+		xml( $cgi, $terms, @files );
 	}
 
 	return;
@@ -51,13 +52,12 @@ sub jason {
 	my ( $cgi, $terms, @files ) = @_;
 	my $count = @files || 0;
 	my %results;
-	for my $result ( @files ) {
-		push @{ $results{$result->[1]} }, $result->[0];
+	for my $result (@files) {
+		push @{ $results{ $result->[1] } }, $result->[0];
 	}
 	print $cgi->header('text/jason');
 	print "{'terms':'$terms','count':$count,'results':{";
-	print join ',', map { "'$_':['".(join "','", @{$results{$_}})."']" } keys %results;
-	#print join ",", map { "{'$_->[1]':'$_->[0]'}" } @files;
+	print join ',', map { "'$_':['" . ( join "','", @{ $results{$_} } ) . "']" } keys %results;
 	print "}}\n";
 }
 

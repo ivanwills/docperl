@@ -36,12 +36,11 @@ sub new {
 }
 
 sub init {
-	my $self = shift;
+	my $self  = shift;
 	my $conf  = $self->{conf};
 	my $data  = $conf->{General}{Data};
 	my $cache = "$data/cache";
 	my $pod   = "$cache/pod";
-
 
 	my %files = ( $self->find("$pod/inc"), $self->find("$pod/perl"), $self->find("$pod/local") );
 	for my $file ( keys %files ) {
@@ -97,7 +96,7 @@ FILE:
 		}
 		else {
 			my $count = $self->process_file("$dir/$file");
-			if ( $count ) {
+			if ($count) {
 				$files{"$dir/$file"} = $count;
 			}
 		}

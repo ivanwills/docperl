@@ -77,25 +77,25 @@ sub process {
 			# tag the various parts of perl code
 			if ($code) {
 
-				# tag opperators
+				# tag operators
 				$code =~ s/(=~?|\.=|\|\|=|\*=|\\=|\+=|-=|\|\|?|&amp;(?:&amp;)?|<=>)/<span class="operator">$1<\/span>/gxms;
 
-				# tag string opperators
+				# tag string operators
 				$code =~ s/([^\w&])(eq|ne|le|ge|lt|gt|cmp)(\W)/$1<span class="operator">$2<\/span>$3/gxms;
 
-				# tag opperators missed by other re's
+				# tag operators missed by other re's
 				$code =~ s/([^-])(&lt;|&gt;)/$1<span class="operator">$2<\/span>/gxms;
 
 				# tag reserved words
 				$code =~ s/(\W|^)(if|else|elsif|unless|while|do|for|foreach|sub|return|my|our|local|use|require|no)(\W|$)/$1<span class="reserved">$2<\/span>$3/gxms;
 
-				# tag builtin functions
+				# tag built-in functions
 				$code =~ s/(\W|^)(shift|warn|die|exit|print|open|close|exists|defined)(\(|\s)/$1<span class="builtin">$2<\/span>$3/gxms;
 
-				# tag builtin functions
+				# tag built-in functions
 				$code =~ s/(\W|^)(sort|keys|values|unlink|push|pop|shift|unshift)(\(|\s)/$1<span class="builtin">$2<\/span>$3/gxms;
 
-				# tab variable declerations
+				# tab variable declarations
 				$code =~ s/(\W|^)(my|our|local)(\W)/$1<span class="declatory">$2<\/span>$3/gxms;
 
 				# tag loop operators

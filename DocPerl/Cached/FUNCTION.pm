@@ -43,7 +43,7 @@ sub process {
 	return ( pod => "File contains dodgy characters ($file)" ) if !$file;
 
 	my $text;
-	open my $fh, '<', $file or carp "Could not open the file '$file': $OS_ERROR\n" and return (func=>'none');
+	open my $fh, '<', $file or carp "Could not open the file '$file': $OS_ERROR\n" and return ( func => 'none' );
 	{
 		local $/;
 		$text = <$fh>;

@@ -48,7 +48,7 @@ sub error {
 	print "Content-Type: text/html; charset=ISO-8859-1\n\n";
 	print "<html><head><title>Error</title></head><body>\n";
 	print "<h1>Error</h1><p>$message</p>\n";
-	for my $hidden ( @hidden ) {
+	for my $hidden (@hidden) {
 		print "<div>\n$hidden\n</div>\n";
 	}
 	print "</body></html>";

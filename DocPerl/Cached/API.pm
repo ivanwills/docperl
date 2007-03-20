@@ -305,7 +305,7 @@ sub get_hirachy {
 			no strict qw/refs/;    ## no critic
 			if ( ( $sub_sym && !exists ${$sym}{$sub_sym} ) || ( !$sub_sym && !%{$sym} ) ) {
 				my $warn = $SIG{__WARN__};
-				$SIG{__WARN__} = sub {};
+				$SIG{__WARN__} = sub { };
 				eval { require $file };
 				$SIG{__WARN__} = $warn;
 			}

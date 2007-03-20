@@ -12,7 +12,6 @@ use version;
 use Carp;
 use Scalar::Util;
 use List::Util;
-#use List::MoreUtils;
 use CGI;
 use Data::Dumper qw/Dumper/;
 use English qw/ -no_match_vars /;
@@ -21,7 +20,6 @@ use base qw/DocPerl::Search/;
 our $VERSION     = version->new('0.9.0');
 our @EXPORT_OK   = qw//;
 our %EXPORT_TAGS = ();
-#our @EXPORT      = qw//;
 
 sub search {
 	my $self = shift;
@@ -31,13 +29,15 @@ sub search {
 	my @results;
 
 	# check if the text is only strings and/or white space so that we can use the fast grep version
-	my $location = $args{'area'} eq 'function'                ? 'function'
-	             : $args{'area'} eq 'code'                    ? 'code'
-                 : -d "$conf->{'General'}{'Data'}/cache/text" ? 'text'
-                 :                                              'pod';
-	my $F        = $args{'terms'} =~ /\A[\w\s]+\Z/xms ? '-F' : '';
-	my $cmd      = "$conf->{'Search'}{'grep'} $F -cR '$args{'terms'}' $conf->{'General'}{'Data'}/cache/$location/";
-	my $out      = `$cmd`;
+	my $location =
+		  $args{'area'} eq 'function'                ? 'function'
+		: $args{'area'} eq 'code'                    ? 'code'
+		: -d "$conf->{'General'}{'Data'}/cache/text" ? 'text'
+		:                                              'pod';
+
+	my $F   = $args{'terms'} =~ /\A[\w\s]+\Z/xms ? '-F' : '';
+	my $cmd = "$conf->{'Search'}{'grep'} $F -cR '$args{'terms'}' $conf->{'General'}{'Data'}/cache/$location/";
+	my $out = `$cmd`;
 
 	# now process all the returned results
 	for my $line ( split /\n/xms, $out ) {

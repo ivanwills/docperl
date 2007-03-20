@@ -22,18 +22,18 @@ sub say;
 our $VERSION = version->new('0.9.0');
 
 my %option = (
-	columns			=> 2,
-	colour			=> 0,
-	verbose 		=> 0,
-	man				=> 0,
-	help			=> 0,
-	VERSION			=> 0,
+	columns => 2,
+	colour  => 0,
+	verbose => 0,
+	man     => 0,
+	help    => 0,
+	VERSION => 0,
 );
 my %colours = (
-	headding	=> 'bold blue',
-	file		=> 'green on_white',
-	module		=> 'bold',
-	content		=> '',
+	headding => 'bold blue',
+	file     => 'green on_white',
+	module   => 'bold',
+	content  => '',
 );
 
 pod2usage( -verbose => 1 ) unless @ARGV;
@@ -62,12 +62,13 @@ sub main {
 
 	# check if the file is actually a module (and find its real file)
 	unless ( -f $file ) {
+
 		# assume file is a module
 		$module = $file;
 		$module =~ s{::}{/}gxs;
 		undef $file;
 
-		for my $path ( @INC ) {
+		for my $path (@INC) {
 			find(
 				$path,
 				$module,
@@ -85,42 +86,42 @@ sub main {
 
 	# Get the API for the file
 	my $api = DocPerl::Cached::API->new(
-		conf			=> {
-			General		=> {
-				Data	=> '/tmp/',
+		conf => {
+			General  => {
+				Data => '/tmp/',
 			},
-			IncFolders	=> {
-				Path	=> '',
+			IncFolders => {
+				Path => '',
 			},
 		},
-		source			=> $file,
-		current_location=> '',
+		source           => $file,
+		current_location => '',
 	);
 	my %data = $api->process();
 	$api = $data{api};
 
 	# print out the API
-	if ( $module ) {
+	if ($module) {
 		say 'module', $module;
-		say 'file', $file;
+		say 'file',   $file;
 	}
 	if ( $api->{modules} ) {
-		say 'headding', "Modules Used:\n";
+		say 'heading', "Modules Used:\n";
 		display( $api->{modules}, %option );
 		print "\n";
 	}
 	if ( $api->{class} ) {
-		say 'headding',  "Class Methods:\n";
+		say 'heading', "Class Methods:\n";
 		display( $api->{class}, %option );
 		print "\n";
 	}
 	if ( $api->{object} ) {
-		say 'headding',  "Object Methods:\n";
+		say 'heading', "Object Methods:\n";
 		display( $api->{object}, %option );
 		print "\n";
 	}
 	if ( $api->{func} ) {
-		say 'headding', "General Functions:";
+		say 'heading', "General Functions:";
 		display( $api->{func}, %option );
 		print "\n";
 	}
@@ -153,12 +154,12 @@ sub display {
 	for ( my $i = 0; $i < @$list; $i += $option{columns} ) {
 		my $out = '';
 		for my $j ( 0 .. $option{columns} - 1 ) {
-			next unless $list->[$i+$j];
-			if ( ref $list->[$i+$j] ) {
-				$out .= $list->[$i+$j]->{name}. ' ' x ( $max - length( $list->[$i+$j]->{name} ) + 1);
+			next unless $list->[ $i + $j ];
+			if ( ref $list->[ $i + $j ] ) {
+				$out .= $list->[ $i + $j ]->{name} . ' ' x ( $max - length( $list->[ $i + $j ]->{name} ) + 1 );
 			}
 			else {
-				$out .= $list->[$i+$j]. ' ' x ( $max - length( $list->[$i+$j] ) + 1);
+				$out .= $list->[ $i + $j ] . ' ' x ( $max - length( $list->[ $i + $j ] ) + 1 );
 			}
 		}
 		say( 'content', $out );
@@ -189,7 +190,6 @@ sub say {
 		print $line;
 	}
 }
-
 
 __DATA__
 
