@@ -3,7 +3,7 @@
 # on the DocPerl side bar.
 [LocalFolders]
 
-# Path - Sets the directories to find "local" perl files
+# Path - Sets the directories to find "local" Perl files
 Path:           .
 
 # Match - A regular expression to determine which files to consider as Perl file
@@ -14,7 +14,7 @@ Exclude:        ./data
 
 
 ## IncFolders
-# This section specifies the options for the Files shown in the 'Inastalled
+# This section specifies the options for the Files shown in the 'Installed
 # Modules' section. The default files affected are those in standard Perl
 # path.
 [IncFolders]
@@ -47,14 +47,14 @@ ClearCache:     0
 # Parameters always passed to templates
 [Template]
 
-# Uncomment to show the local modules only (and not the perl documentation or
+# Uncomment to show the local modules only (and not the Perl documentation or
 # installed modules)
 #LocalOnly:     true
 
 # Sets the number of links shown in the recent modules section of the list page
 history_size:   10
 
-# this sets the time between title changes (in milli seconds)
+# this sets the time between title changes (in milliseconds)
 animation:      60000
 
 # Set the labels for the various sections on the list page
@@ -65,7 +65,7 @@ LocalLabel:     Local Programs
 # The label for the installed modules section
 IncLabel:       Installed Modules
 
-# The label for the perl modules documentation section
+# The label for the Perl modules documentation section
 PerlLabel:      Perl
 
 # Uncomment to allow web users to clear the current cache
@@ -115,7 +115,7 @@ DefaultModule:  perl__Programming__perlfunc
 #   Grep - Fast for simple text and when the POD cache size is large
 #   Perl - Slower but allows more complicated search terms (and works when
 #          the grep command is not available e.g. in Windows)
-Engine:         Perl
+Engine:         Grep
 
 # the location of the grep command (needed when using the Grep Engine)
 grep:           /bin/grep
