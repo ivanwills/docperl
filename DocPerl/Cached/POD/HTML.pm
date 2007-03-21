@@ -1,7 +1,7 @@
 package DocPerl::Cached::POD::HTML;
 
 # Created on: 2007-02-19 20:38:23
-# Create by:  ivan
+# Create by:  Ivan Wills
 # $Id$
 # $Revision$, $HeadURL$, $Date$
 # $Revision$, $Source$, $Date$
@@ -268,7 +268,7 @@ sub make_href {
 			$url = "?page=pod&module=$title&location=$LOCATION";
 		}
 		else {
-			return defined $title ? "M<i>$title</i>" : '';
+			return defined $title ? "<i>$title</i>" : '';
 		}
 	}
 
