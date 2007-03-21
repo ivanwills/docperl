@@ -43,7 +43,7 @@ sub init {
 }
 
 sub process {
-	return carp 'process should not be called directly from DocPerl::Cached is should be called from a drived object';
+	return carp 'process should not be called directly from DocPerl::Cached is should be called from a derived object';
 }
 
 sub _check_cache {
@@ -92,7 +92,7 @@ sub _check_cache {
 		$data = <$cache_fh>;
 	}
 	if ( !close $cache_fh ) {
-		warn "Error in closing file handel for $file: $OS_ERROR\n";    ## no critic
+		warn "Error in closing file handle for $file: $OS_ERROR\n";    ## no critic
 	}
 
 	# return the cached contents
@@ -145,7 +145,7 @@ sub _save_cache {
 	open my $cache_fh, '>', $full or carp "Unable to create the cache file '$full': $!" and return;
 	print {$cache_fh} $arg{content} or carp "No content was able to be added to '$full': $!" and return;
 	if ( !close $cache_fh ) {
-		warn "Error in closing file handel for $full: $OS_ERROR\n";    ## no critic
+		warn "Error in closing file handle for $full: $OS_ERROR\n";    ## no critic
 	}
 
 	# touch the file using the source file's time stamps
