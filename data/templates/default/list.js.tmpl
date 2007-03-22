@@ -275,6 +275,14 @@ function search(force) {
 		search_ajax({ section: 'functions', area: 'function', terms: term });
 	else
 		document.getElementById('functions_doc').style.display = 'none';
+
+	if (document.getElementById('type_cpan').checked)
+		search_cpan({ section: 'cpan', area: 'function', terms: term });
+}
+
+function search_cpan(args) {
+	var main = window.parent.main;
+	main.location = 'http://search.cpan.org/search?mode=all&query=' + args.terms;
 }
 
 function search_ajax(args) {
