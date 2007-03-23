@@ -1,0 +1,102 @@
+=head1 DocPerl Installation
+
+=head2 Downloading
+
+Go to L<http://sourceforge.net/project/showfiles.php?group_id=163244> and
+download a copy of DocPerl and extract the files. E.g.
+
+ $ tar xzf docperl-v0.9.0.tar.gz
+
+=head2 Setup
+
+Then you should run ./checksetup.pl which tell you what required modules are
+installed or not on your system. Also ./checksetup.pl can be used to create
+pre-cached POD files to speed up usage and enable full text searching and
+function name searching. For for example use the command:
+
+  $ ./checksetup.pl -c pod,text,func
+
+or see
+
+  $ ./checksetup.pl -h
+
+for more details on ./checksetup.pl usage
+
+DocPerl needs some Perl modules that may not be already installed these
+include:
+
+Template Toolkit,
+Readonly,
+Config::Std,
+version,
+Pod::POM
+
+to install one of the following commands should work
+
+  $ cpan Template Readonly
+
+or
+
+  $ perl -MCPAN -e 'install Template; install Readonly'
+
+or for active Perl users
+
+  $ ppm install Template
+  $ ppm install Readonly
+
+If you have any problems try going to the help forums at
+L<https://sourceforge.net/forum/forum.php?forum_id=553595>
+
+=head2 Configuring
+
+See L<DocPerl::Configuration> for a detailed description of the docperl.conf
+configuration files options.
+
+=head2 Apache Configuration
+
+To configure DocPerl with Apache adding the following to your configuration
+file is all that is required:
+
+ <Directory "/path/to/docperl">
+     Options +ExecCGI
+     AllowOverride Limit
+     DirectoryIndex docperl.cgi
+     AddHandler cgi-script .cgi
+ </Directory>
+
+Some more work may be required to make DocPerl secure if you have some of the
+less safe configuration options turned on or if you don't want your internal
+modules to be publicly available.
+
+=head1 Windows
+
+Installation on windows has now improved a lot, the dependencies on command
+line programs have been removed. The major problems you may now encounter are
+setting setting the Perl scripts bang line to you Perl location (if you do not
+download the windows zip file or your Perl is not installed into F<C:/Perl>).
+Work-arounds are to change the bang line from:
+
+ #!/usr/bin/perl
+
+to
+
+ #!"C:/perl/bin/perl.exe"
+
+or where ever your Perl is installed. You can set Apache to use file
+extensions instead (see your Apache documentation for details)
+
+
+* If you are using active Perl's ppm to get the Template Toolkit modules
+you may encounter some difficulty as ppm install Template does not appear to
+install the Template Toolkit, you will probably need to use CPAN.
+
+=head1 Upgrading
+
+If you are upgrading from DocPerl version 0.3 or earlier there have been some
+structural changes to DocPerl. Firstly the file docperl.conf has been moved
+from the data directory up one level to the base directory (to allow you to
+set where the data directory is stored). Also the templates have been renamed
+to have the extension .tmpl added to their names so if you have customised
+any templates you will need to add .tmpl to their names.
+
+=cut
