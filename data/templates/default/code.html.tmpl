@@ -3,7 +3,7 @@
 	<div id="code">
 		<pre>
 			[%- FOR line = lines %]
-[% line -%]
+<a name="line[% line.line_no %]" class="line_no"> [% line.line_no %] </a>[% IF line.ext_link %]<a name="[% line.ext_link %]"></a>[% END %] [% line.code -%]
 			[%- END -%]
 		</pre>
 	</div>

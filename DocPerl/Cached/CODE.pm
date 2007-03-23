@@ -27,6 +27,7 @@ sub process {
 	my $here_marker = '';
 	my $here_style;
 	my @lines;
+	my %links;
 
 	return if !-f $code;
 
@@ -38,7 +39,11 @@ sub process {
 		my $code_line = to_spaces( $line, 4 );
 
 		my $j       = $INPUT_LINE_NUMBER;
-		my $line_no = qq{<a name="line$j" class="line_no"> $j </a> };
+
+		# check if the line contains infor that may be linked to esternally
+		if ( my ( $func, $head ) = $line =~ /^(?:\s* sub \s+ (\w+) | =head[1234] \s+ (?:\w<)? (\w+) )/xms ) {
+			$links{ lc ( $func || $head ) }{ $func ? 'func' : 'head' } = $j;
+		}
 
 		# Quote all special characters
 		$code_line =~ s/&/&amp;/gxms;
@@ -137,10 +142,13 @@ sub process {
 		}
 
 		# add the line to the array
-		push @lines, "$line_no$code_line";
+		push @lines, { line_no => $j, code => $code_line };
 	}
 
 	close $file;
+	for my $link ( keys %links ) {
+		$lines[ ($links{$link}{func} || $links{$link}{head}) - 3 ]{ext_link} = $link;
+	}
 
 	return lines => \@lines;
 }

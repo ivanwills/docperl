@@ -48,6 +48,9 @@ sub process {
 	my $out;
 	{
 		local $DocPerl::Cached::POD::HTML::LOCATION = $self->{current_location};
+		local $DocPerl::Cached::POD::HTML::MODULE   = $module;
+		local $DocPerl::Cached::POD::HTML::FILE     = $self->{module_file};
+		local $DocPerl::Cached::POD::HTML::SOURCE   = $file;
 		$out = DocPerl::Cached::POD::HTML->print($pom);
 	}
 

@@ -21,6 +21,9 @@ our $VERSION     = version->new('0.9.0');
 our @EXPORT_OK   = qw//;
 our %EXPORT_TAGS = ();
 our $LOCATION    = 'inc';
+our $MODULE      = 'inc';
+our $FILE        = 'inc';
+our $SOURCE      = 'inc';
 
 sub menu {
 	my ( $self, $pod ) = @_;
@@ -77,45 +80,57 @@ sub view_pod {
 sub view_head1 {
 	my ( $self, $head1 ) = @_;
 	my $title = $head1->title->present($self);
+	my ($link) = $title =~ / (?: <[^>]+> )? (\w+) /xms;
 	return '<h1><a name="'
 		. $self->make_anchor($title)
 		. '" href="#__top" title="to top of page">'
 		. $title
 		. ' <div class="up">&#8593;</div>'
-		. "</a></h1>\n\n"
+		. '</a> '
+		. make_code_href(lc $link)
+		. "</h1>\n\n"
 		. $head1->content->present($self);
 }
 
 sub view_head2 {
 	my ( $self, $head2 ) = @_;
 	my $title = $head2->title->present($self);
+	my ($link) = $title =~ / (?: <[^>]+> )? (\w+) /xms;
 	return '<h2><a name="'
 		. $self->make_anchor($title)
 		. '" href="#__top" title="to top of page">'
 		. $title
-		. "</a></h2>\n\n"
+		. '</a> '
+		. make_code_href(lc $link)
+		. "</h2>\n\n"
 		. $head2->content->present($self);
 }
 
 sub view_head3 {
 	my ( $self, $head3 ) = @_;
 	my $title = $head3->title->present($self);
+	my ($link) = $title =~ / (?: <[^>]+> )? (\w+) /xms;
 	return '<h3><a name="'
 		. $self->make_anchor($title)
 		. '" href="#__top" title="to top of page">'
 		. $title
-		. "</a></h3>\n\n"
+		. '</a> '
+		. make_code_href(lc $link)
+		. "</h3>\n\n"
 		. $head3->content->present($self);
 }
 
 sub view_head4 {
 	my ( $self, $head4 ) = @_;
 	my $title = $head4->title->present($self);
+	my ($link) = $title =~ / (?: <[^>]+> )? (\w+) /xms;
 	return '<h4><a name="'
 		. $self->make_anchor($title)
 		. '" href="#__top" title="to top of page">'
 		. $title
-		. "</a></h4>\n\n"
+		. '</a> '
+		. make_code_href(lc $link)
+		. "</h4>\n\n"
 		. $head4->content->present($self);
 }
 
@@ -276,6 +291,13 @@ sub make_href {
 		$title = $url;
 	}
 	return qq{<a href="$url">$title</a>};
+}
+
+sub make_code_href {
+	my ($title) = @_;
+	my $url = "?page=code&module=$MODULE&file=$FILE&location=$LOCATION&source=$SOURCE#$title";
+
+	return qq{<a href="$url" title="View in code" class="code">C</a>};
 }
 
 1;
