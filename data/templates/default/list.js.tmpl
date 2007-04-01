@@ -282,7 +282,9 @@ function search(force) {
 
 function search_cpan(args) {
 	var main = window.parent.main;
-	main.location = 'http://search.cpan.org/search?mode=all&query=' + args.terms;
+	var mode = document.getElementById('mode');
+	mode = mode.options[mode.selectedIndex].value;
+	main.location = 'http://search.cpan.org/search?mode=' + mode + '&query=' + args.terms;
 }
 
 function search_ajax(args) {

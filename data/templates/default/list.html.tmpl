@@ -223,6 +223,7 @@
 				adv.style.display = 'block';
 				open.style.display = 'none';
 				close.style.display = 'block';
+				adv_cpan();
 			}
 			function adv_close() {
 				var adv   = document.getElementById('advanced');
@@ -231,6 +232,14 @@
 				adv.style.display = 'none';
 				open.style.display = 'block';
 				close.style.display = 'none';
+			}
+			function adv_cpan() {
+				if (document.getElementById('type_cpan').checked) {
+					document.getElementById('mode').style.display = 'block';
+				}
+				else {
+					document.getElementById('mode').style.display = 'none';
+				}
 			}
 		//-->
 		</script>
@@ -255,7 +264,13 @@
 							<input type="checkbox" id="type_names"     name="type" value="modules" checked="checked" /><label>Modules</label>&nbsp;&nbsp;
 							<input type="checkbox" id="type_pod"       name="type" value="pod"      /><label>POD</label>&nbsp;&nbsp;
 							<input type="checkbox" id="type_functions" name="type" value="functions"/><label>Functions</label>&nbsp;&nbsp;
-							<input type="checkbox" id="type_cpan"      name="type" value="functions"/><label>CPAN</label>&nbsp;&nbsp;
+							<input type="checkbox" id="type_cpan"      name="type" value="functions" onchange="adv_cpan();"/><label>CPAN</label>&nbsp;&nbsp;
+							<select name="mode" id="mode" style="display:none;">
+								<option value="all">All</option>
+								<option value="module">Modules</option>
+								<option value="dist">Distributions</option>
+								<option value="author">Authors</option>
+							</select>
 						</div>
 					</td>
 				</tr>
