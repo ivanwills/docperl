@@ -1,13 +1,13 @@
 =head1 DocPerl Installation
 
-=head2 Downloading
+=head1 Downloading
 
 Go to L<http://sourceforge.net/project/showfiles.php?group_id=163244> and
 download a copy of DocPerl and extract the files. E.g.
 
  $ tar xzf docperl-v0.9.0.tar.gz
 
-=head2 Setup
+=head1 Setup
 
 Then you should run ./checksetup.pl which tell you what required modules are
 installed or not on your system. Also ./checksetup.pl can be used to create
@@ -47,9 +47,9 @@ or for active Perl users
 If you have any problems try going to the help forums at
 L<https://sourceforge.net/forum/forum.php?forum_id=553595>
 
-=head2 Configuring
+=head1 Configuring
 
-See L<DocPerl::Configuration> for a detailed description of the docperl.conf
+See L<DocPerl::Config> for a detailed description of the docperl.conf
 configuration files options.
 
 =head2 Apache Configuration

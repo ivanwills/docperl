@@ -1,5 +1,7 @@
 =head1 Welcome to DocPerl
 
+Go to L<DocPerl::Install> for details on installing DocPerl or look at L<DocPerl::Config> for details on configuring DocPerl.
+
 =head1 Things to do?
 
 =head2 Useful Links

@@ -9,7 +9,7 @@ This documentation refers to DocPerl::Config version 0.5.
 =head1 DESCRIPTION
 
 DocPerl's configuration is stored in the file docperl.conf which is an ini
-style file. 
+style file.
 
 =head2 Sections
 
@@ -40,7 +40,7 @@ execpt Path is added to the @INC path.
 
 =head3 Templates
 
-Sets parameters to be sent to Template Toolkit
+Sets parameters to be sent to L<Template> Toolkit
 
 =over 4
 
@@ -50,7 +50,7 @@ Sets the search path for templates
 
 =item history_size
 
-See Template Toolkit documentation
+See L<Template> Toolkit documentation
 
 =back
 
@@ -153,8 +153,8 @@ Instructs DocPerl to clear it's cache (if allowed)
 Alters the link taget on the list page so that when the list page is used for
 a firefox sidebar it displays the pages in the correct place.
 
-=item 
+=item
 
-=item 
+=item
 
 =cut
