@@ -300,8 +300,8 @@ sub shrink_css {
 sub compile {
 	my ( $data, $dp, $compile ) = @_;
 
-	$dp->{cgi}{page} = 'index';
-	$dp->{template}  = 'index.html';
+	$dp->{cgi}{page} = 'list';
+	$dp->{template}  = 'list.html';
 	$dp->process();
 
 	for my $location ( qw/PERL LOCAL INC/ ) {
