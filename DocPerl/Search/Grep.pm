@@ -10,9 +10,7 @@ use strict;
 use warnings;
 use version;
 use Carp;
-use Scalar::Util;
-use List::Util;
-use CGI;
+
 use Data::Dumper qw/Dumper/;
 use English qw/ -no_match_vars /;
 use base qw/DocPerl::Search/;
@@ -35,13 +33,15 @@ sub search {
 		: -d "$conf->{'General'}{'Data'}/cache/text" ? 'text'
 		:                                              'pod';
 
+	my $dir = "$conf->{'General'}{'Data'}/cache/$location/";
 	my $F   = $args{'terms'} =~ /\A[\w\s]+\Z/xms ? '-F' : '';
-	my $cmd = "$conf->{'Search'}{'grep'} $F -cR '$args{'terms'}' $conf->{'General'}{'Data'}/cache/$location/";
+	my $cmd = "$conf->{'Search'}{'grep'} $F -cR '$args{'terms'}' $dir";
 	my $out = `$cmd`;
 
 	# now process all the returned results
 	for my $line ( split /\n/xms, $out ) {
-		my ( $area, $file, $count ) = $line =~ m{^ $conf->{'General'}{'Data'}/cache/$location/ (\w+) / ([^:]+) : (\d+) }xms;
+		my ( $area, $file, $count ) = $line =~ m{^ $dir (\w+) / ([^:]+) : (\d+) }xms;
+
 		if ( defined $count && $count > 0 ) {
 			$file =~ s{/}{::}gxms;
 			$file =~ s{[.]\w+$}{}xms;

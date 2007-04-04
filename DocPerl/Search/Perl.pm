@@ -10,8 +10,7 @@ use strict;
 use warnings;
 use version;
 use Carp;
-use Scalar::Util;
-use List::Util;
+use File::Find qw/find/;
 use Data::Dumper qw/Dumper/;
 use English qw/ -no_match_vars /;
 use base qw/DocPerl::Search/;
@@ -19,6 +18,49 @@ use base qw/DocPerl::Search/;
 our $VERSION     = version->new('0.9.0');
 our @EXPORT_OK   = qw//;
 our %EXPORT_TAGS = ();
+
+sub search {
+	my $self = shift;
+	my %args = @_;
+	my $conf = $self->{'conf'};
+	my %rank;
+	my @results;
+
+	# check if the text is only strings and/or white space so that we can use the fast grep version
+	my $location =
+		  $args{'area'} eq 'function'                ? 'function'
+		: $args{'area'} eq 'code'                    ? 'code'
+		: -d "$conf->{'General'}{'Data'}/cache/text" ? 'text'
+		:                                              'pod';
+
+	my $dir = "$conf->{'General'}{'Data'}/cache/$location/";
+
+	find sub{
+		return if -d $_;
+		open my $f, '<', $_ or return;
+		local $INPUT_RECORD_SEPARATOR = undef;
+		my $text = <$f>;
+		my $count = $text =~ /$args{terms}/gis;
+		return unless $count;
+		my ( $area, $file ) = $File::Find::name =~ m{^ $dir (\w+) / (.+) $}xms;
+		$file =~ s{/}{::}gxms;
+		$file =~ s{[.]\w+$}{}xms;
+		push @{ $rank{$count} }, [ $file => $area ];
+	},
+	$dir;
+
+	$conf->{Search}{result_size} ||= 100;
+
+	# limit the returned results to the amount desired
+RANK:
+	for my $rank ( reverse sort keys %rank ) {
+		push @results, @{ $rank{$rank} };
+		last RANK if @results > $conf->{Search}{result_size};
+	}
+
+	# return the modules found
+	return @results;
+}
 
 1;
 

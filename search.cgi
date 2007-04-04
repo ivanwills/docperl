@@ -13,7 +13,7 @@ use Config::Std;
 use Readonly;
 use lib qw/./;
 use DocPerl::Search::Grep;
-use DocPerl::Search::Simple;
+use DocPerl::Search::Perl;
 
 our $VERSION = version->new('0.9.0');
 
