@@ -127,7 +127,9 @@ sub _save_cache {
 	my $file  = pop @parts;
 	my $dir   = $self->{cache_dir};
 
-	carp "The cache file '$dir/$file' does not have a suffix" if $file !~ /\./xms;
+	if ( $file !~ /\./xms && !$self->{quiet} ) {
+		carp "The cache file '$dir/$file' does not have a suffix";
+	}
 
 	# make sure that we have all the directories up to the cached file
 	$dir .= '/' . join '/', @parts;

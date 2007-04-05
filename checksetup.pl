@@ -139,11 +139,16 @@ sub main {
 		$config{Templates}{ClearCache} = 'on';
 		eval('use DocPerl');
 		delete $config{General}{Cache};
-		my $dp = DocPerl->new( cgi => { page => 'list', }, conf => \%config, save_data => 1, );
+		my $dp = DocPerl->new( cgi => { page => 'list', }, conf => \%config, save_data => 1, quiet => 1, );
 		my %data = $dp->list();
+		$dp->{cgi}{page} = 'list';
+		$dp->{template}  = 'list.html';
+		$dp->process();
+
+		my @locations = $config{Template}{LocalOnly} ? qw/PERL LOCAL INC/ : qw/LOCAL/;
 
 		my @compile = map { split /,/ } @{ $option{compile} };
-		compile( \%data, $dp, \@compile );
+		compile( \%data, $dp, \@compile, \@locations );
 		system("chmod o+w -R $FindBin::Bin/data/cache");
 	}
 }
@@ -166,12 +171,21 @@ sub shrink_file {
 		}
 		close $fh;
 
-		$text = $type eq 'js' ? shrink_js($text) : shrink_css($text);
+		my $shrink = 'shrink_' . $type;
+		{
+			no strict 'refs'; ## no critic
+			$text = $shrink->($text);
+		}
+		#$text = $type eq 'js' ? shrink_js($text) : shrink_css($text);
 
 		## save the template to the local template dir
 		$js = "$data/templates/local/$template";
 		if ( length $text && open $fh, '>', $js ) {
+			print "Saving $js\n";
 			print {$fh} $text;
+			if ( $text !~ /\n\Z/xms ) {
+				print {$fh} "\n";
+			}
 			close $fh;
 		}
 	}
@@ -298,15 +312,11 @@ sub shrink_css {
 }
 
 sub compile {
-	my ( $data, $dp, $compile ) = @_;
+	my ( $data, $dp, $compile, $locations ) = @_;
 
-	$dp->{cgi}{page} = 'list';
-	$dp->{template}  = 'list.html';
-	$dp->process();
-
-	for my $location ( qw/PERL LOCAL INC/ ) {
+	for my $location ( @{ $locations } ) {
 		print "Create $location Cache\n";
-		cache( $data->{$location}, $dp, location => lc $location, top => 1, map {$_=>1} @$compile );
+		cache( $data->{$location}, $dp, location => lc $location, top => 1, map {$_=>1} @{ $compile } );
 	}
 }
 
