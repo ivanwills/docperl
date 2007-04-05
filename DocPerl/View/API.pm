@@ -1,4 +1,4 @@
-package DocPerl::Cached::API;
+package DocPerl::View::API;
 
 # Created on: 2006-03-19 20:32:12
 # Create by:  ivan
@@ -15,7 +15,7 @@ use Symbol qw/delete_package/;
 use Data::Dumper qw/Dumper/;
 use Scalar::Util;
 use English '-no_match_vars';
-use base qw/DocPerl::Cached/;
+use base qw/DocPerl::View/;
 
 our $VERSION   = version->new('0.9.0');
 our @EXPORT_OK = qw//;
@@ -334,20 +334,20 @@ __END__
 
 =head1 NAME
 
-DocPerl::Cached::API - Inspects a perl file to find what functions are defined
+DocPerl::View::API - Inspects a perl file to find what functions are defined
 modules used/inherited etc
 
 =head1 VERSION
 
-This documentation refers to DocPerl::Cached::API version 0.9.0.
+This documentation refers to DocPerl::View::API version 0.9.0.
 
 
 =head1 SYNOPSIS
 
-  use DocPerl::Cached::API;
+  use DocPerl::View::API;
 
   # Create a new API variable
-  my $api = DocPerl::Cached::API->new(
+  my $api = DocPerl::View::API->new(
       conf    => {
           General      => {
               Data     => '/tmp/',

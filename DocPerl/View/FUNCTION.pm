@@ -1,4 +1,4 @@
-package DocPerl::Cached::TEXT;
+package DocPerl::View::FUNCTION;
 
 # Created on: 2007-02-13 19:14:27
 # Create by:  ivan
@@ -17,7 +17,7 @@ use Data::Dumper qw/Dumper/;
 use English qw/ -no_match_vars /;
 use Pod::POM;
 use Pod::POM::View::Text;
-use base qw/DocPerl::Cached/;
+use base qw/DocPerl::View/;
 
 our $VERSION     = version->new('0.9.0');
 our @EXPORT_OK   = qw//;
@@ -29,7 +29,6 @@ sub process {
 	my $module  = $self->{module};
 	my $file    = $self->{source} || '';
 	my @folders = $self->{folders};
-	my @suffixes;
 
 	croak 'No location supplied' if !$self->{current_location};
 
@@ -43,13 +42,15 @@ sub process {
 
 	return ( pod => "File contains dodgy characters ($file)" ) if !$file;
 
-	my $parser = Pod::POM->new( { warn => 0, } );
-	my $pom = $parser->parse($file);
-	my $out;
-	$out = eval { Pod::POM::View::Text->print($pom) };
-	$out ||= 'No POD ' . $@;
+	my $text;
+	open my $fh, '<', $file or carp "Could not open the file '$file': $OS_ERROR\n" and return ( func => 'none' );
+	{
+		local $/;
+		$text = <$fh>;
+	}
+	my @functions = $text =~ /(?:^|\W)sub \s+ (\w+)/gxms;
 
-	return ( pod => $out );
+	return ( functions => \@functions );
 }
 
 1;
@@ -58,15 +59,16 @@ __END__
 
 =head1 NAME
 
-DocPerl::Cached::TEXT - <One-line description of module's purpose>
+DocPerl::View::FUNCTION - <One-line description of module's purpose>
 
 =head1 VERSION
 
-This documentation refers to DocPerl::Cached::TEXT version 0.9.0.
+This documentation refers to DocPerl::View::FUNCTION version 0.9.0.
+
 
 =head1 SYNOPSIS
 
-   use DocPerl::Cached::TEXT;
+   use DocPerl::View::FUNCTION;
 
    # Brief but working code example(s) here showing the most common usage(s)
    # This section will be as far as many users bother reading, so make it as
@@ -99,7 +101,7 @@ context to help them understand the methods that are subsequently described.
 
 Param: C<$search> - type (detail) - description
 
-Return: DocPerl::Cached::TEXT -
+Return: DocPerl::View::FUNCTION -
 
 Description:
 
@@ -132,6 +134,16 @@ modules that use source code filters are mutually incompatible).
 
 =head1 BUGS AND LIMITATIONS
 
+A list of known problems with the module, together with some indication of
+whether they are likely to be fixed in an upcoming release.
+
+Also, a list of restrictions on the features the module does provide: data types
+that cannot be handled, performance issues and the circumstances in which they
+may arise, practical limitations on the size of data sets, special cases that
+are not (yet) handled, etc.
+
+The initial template usually just has:
+
 There are no known bugs in this module.
 
 Please report problems to Ivan Wills (ivan.wills@gmail.com).
@@ -146,6 +158,7 @@ Ivan Wills - (ivan.wills@gmail.com)
 
 Copyright (c) 2007 Ivan Wills (101 Miles St Bald Hills QLD Australia 4036).
 All rights reserved.
+
 
 This module is free software; you can redistribute it and/or modify it under
 the same terms as Perl itself. See L<perlartistic>.  This program is

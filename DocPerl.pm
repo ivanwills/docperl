@@ -13,7 +13,7 @@ use Carp qw/carp croak confess cluck/;
 use Data::Dumper qw/Dumper/;
 use Scalar::Util;
 use Template;
-use DocPerl::Cached;
+use DocPerl::View;
 use English qw/ -no_match_vars /;
 use base qw/Exporter/;
 
@@ -197,7 +197,7 @@ sub process {
 	my $page = $q->{page};
 	my %vars;
 	my $out;
-	my $cache = DocPerl::Cached->new( %{$self} );
+	my $cache = DocPerl::View->new( %{$self} );
 
 	# check if we are meant to clear the cache (and the we are allowed to)
 	if ( $conf->{Templates}{ClearCache} && $q->{clearcache} ) {
@@ -230,8 +230,8 @@ sub process {
 		elsif ( $page =~ /^(pod|text|api|function|code)$/xmsi ) {
 
 			# try to see if the method is a cached module
-			my $module = 'DocPerl::Cached::' . uc $1;
-			my $file = 'DocPerl/Cached/' . ( uc $1 ) . '.pm';
+			my $module = 'DocPerl::View::' . uc $1;
+			my $file = 'DocPerl/View/' . ( uc $1 ) . '.pm';
 			eval { require $file };
 			if ($EVAL_ERROR) {
 				carp $EVAL_ERROR;
@@ -631,10 +631,10 @@ Carp (included with perl 5.6)
 Scalar::Util (included with perl 5.8)
 version
 Template (any)
-DocPerl::Cached (included in DocPerl installation)
-DocPerl::Cached::POD (included in DocPerl installation)
-DocPerl::Cached::API (included in DocPerl installation)
-DocPerl::Cached::CODE (included in DocPerl installation)
+DocPerl::View (included in DocPerl installation)
+DocPerl::View::POD (included in DocPerl installation)
+DocPerl::View::API (included in DocPerl installation)
+DocPerl::View::CODE (included in DocPerl installation)
 
 =head1 INCOMPATIBILITIES
 

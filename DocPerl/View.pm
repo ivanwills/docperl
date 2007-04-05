@@ -1,4 +1,4 @@
-package DocPerl::Cached;
+package DocPerl::View;
 
 # Created on: 2006-03-19 20:28:44
 # Create by:  ivan
@@ -43,7 +43,7 @@ sub init {
 }
 
 sub process {
-	return carp 'process should not be called directly from DocPerl::Cached is should be called from a derived object';
+	return carp 'process should not be called directly from DocPerl::View is should be called from a derived object';
 }
 
 sub _check_cache {
@@ -179,26 +179,26 @@ __END__
 
 =head1 NAME
 
-DocPerl::Cached - Parent object for pages that cache their results.
+DocPerl::View - Parent object for pages that cache their results.
 
 =head1 VERSION
 
-This documentation refers to DocPerl::Cached version 0.9.0.
+This documentation refers to DocPerl::View version 0.9.0.
 
 
 =head1 SYNOPSIS
 
-   use DocPerl::Cached;
+   use DocPerl::View;
 
    # create a new object
-   my $cached = DocPerl::Cached->new( conf => { General => { Data => '/path/to/data' }, );
+   my $cached = DocPerl::View->new( conf => { General => { Data => '/path/to/data' }, );
 
    # clear the cached files
    $cached->clear( '' );
 
 =head1 DESCRIPTION
 
-DocPerl::Cached provides a base for DocPerl classses that produce complex html
+DocPerl::View provides a base for DocPerl classses that produce complex html
 pages that need to be cached for performance.
 
 =head1 SUBROUTINES/METHODS
@@ -207,9 +207,9 @@ pages that need to be cached for performance.
 
 Arg: C<$search> - type (detail) - description
 
-Return: DocPerl::Cached - A new DocPerl::Cached object
+Return: DocPerl::View - A new DocPerl::View object
 
-Description: Creates and initialises a new DocPerl::Cached or inherited object
+Description: Creates and initialises a new DocPerl::View or inherited object
 
 =head3 C<init (  )>
 

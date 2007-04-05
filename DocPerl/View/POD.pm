@@ -1,4 +1,4 @@
-package DocPerl::Cached::FUNCTION;
+package DocPerl::View::POD;
 
 # Created on: 2007-02-13 19:14:27
 # Create by:  ivan
@@ -16,8 +16,8 @@ use Carp;
 use Data::Dumper qw/Dumper/;
 use English qw/ -no_match_vars /;
 use Pod::POM;
-use Pod::POM::View::Text;
-use base qw/DocPerl::Cached/;
+use DocPerl::POM::HTML;
+use base qw/DocPerl::View/;
 
 our $VERSION     = version->new('0.9.0');
 our @EXPORT_OK   = qw//;
@@ -29,6 +29,7 @@ sub process {
 	my $module  = $self->{module};
 	my $file    = $self->{source} || '';
 	my @folders = $self->{folders};
+	my @suffixes;
 
 	croak 'No location supplied' if !$self->{current_location};
 
@@ -42,15 +43,22 @@ sub process {
 
 	return ( pod => "File contains dodgy characters ($file)" ) if !$file;
 
-	my $text;
-	open my $fh, '<', $file or carp "Could not open the file '$file': $OS_ERROR\n" and return ( func => 'none' );
+	my $parser = Pod::POM->new( { warn => 0, } );
+	my $pom = $parser->parse($file);
+	my $out;
 	{
-		local $/;
-		$text = <$fh>;
+		local $DocPerl::POM::HTML::LOCATION = $self->{current_location};
+		local $DocPerl::POM::HTML::MODULE   = $module;
+		local $DocPerl::POM::HTML::FILE     = $self->{module_file};
+		local $DocPerl::POM::HTML::SOURCE   = $file;
+		$out = DocPerl::POM::HTML->print($pom);
 	}
-	my @functions = $text =~ /(?:^|\W)sub \s+ (\w+)/gxms;
 
-	return ( functions => \@functions );
+	if ( defined $out ) {
+		$out =~ s{</pre>(\s+)<pre>}{$1}gxms;
+	}
+
+	return ( pod => $out );
 }
 
 1;
@@ -59,16 +67,15 @@ __END__
 
 =head1 NAME
 
-DocPerl::Cached::FUNCTION - <One-line description of module's purpose>
+DocPerl::View::POD - <One-line description of module's purpose>
 
 =head1 VERSION
 
-This documentation refers to DocPerl::Cached::FUNCTION version 0.9.0.
-
+This documentation refers to DocPerl::View::POD version 0.9.0.
 
 =head1 SYNOPSIS
 
-   use DocPerl::Cached::FUNCTION;
+   use DocPerl::View::POD;
 
    # Brief but working code example(s) here showing the most common usage(s)
    # This section will be as far as many users bother reading, so make it as
@@ -101,7 +108,7 @@ context to help them understand the methods that are subsequently described.
 
 Param: C<$search> - type (detail) - description
 
-Return: DocPerl::Cached::FUNCTION -
+Return: DocPerl::View::POD -
 
 Description:
 

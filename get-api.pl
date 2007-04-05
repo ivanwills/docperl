@@ -15,7 +15,7 @@ use Term::ANSIColor qw/:constants/;
 use FindBin;
 use lib "$FindBin::Bin";
 
-use DocPerl::Cached::API;
+use DocPerl::View::API;
 use DocPerl qw/find/;
 
 sub say;
@@ -85,7 +85,7 @@ sub main {
 	}
 
 	# Get the API for the file
-	my $api = DocPerl::Cached::API->new(
+	my $api = DocPerl::View::API->new(
 		conf => {
 			General  => {
 				Data => '/tmp/',

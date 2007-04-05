@@ -1,4 +1,4 @@
-package DocPerl::Cached::CODE;
+package DocPerl::View::CODE;
 
 # Created on: 2006-03-19 20:32:42
 # Create by:  ivan
@@ -13,7 +13,7 @@ use Carp;
 use Data::Dumper qw/Dumper/;
 use Scalar::Util;
 use English '-no_match_vars';
-use base qw/DocPerl::Cached/;
+use base qw/DocPerl::View/;
 
 our $VERSION   = version->new('0.9.0');
 our @EXPORT    = qw//;
@@ -194,15 +194,15 @@ __END__
 
 =head1 NAME
 
-DocPerl::Cached::CODE - Displays the code of a specified file in syntax highlited HTML
+DocPerl::View::CODE - Displays the code of a specified file in syntax highlited HTML
 
 =head1 VERSION
 
-This documentation refers to DocPerl::Cached::CODE version 0.9.0.
+This documentation refers to DocPerl::View::CODE version 0.9.0.
 
 =head1 SYNOPSIS
 
-   use DocPerl::Cached::CODE;
+   use DocPerl::View::CODE;
 
    # Brief but working code example(s) here showing the most common usage(s)
    # This section will be as far as many users bother reading, so make it as
