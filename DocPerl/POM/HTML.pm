@@ -1,4 +1,4 @@
-package DocPerl::Cached::POD::HTML;
+package DocPerl::POM::HTML;
 
 # Created on: 2007-02-19 20:38:23
 # Create by:  Ivan Wills
@@ -306,16 +306,16 @@ __END__
 
 =head1 NAME
 
-DocPerl::Cached::POD::HTML - <One-line description of module's purpose>
+DocPerl::POM::HTML - <One-line description of module's purpose>
 
 =head1 VERSION
 
-This documentation refers to DocPerl::Cached::POD::HTML version 0.9.0.
+This documentation refers to DocPerl::POM::HTML version 0.9.0.
 
 
 =head1 SYNOPSIS
 
-   use DocPerl::Cached::POD::HTML;
+   use DocPerl::POM::HTML;
 
    # Brief but working code example(s) here showing the most common usage(s)
    # This section will be as far as many users bother reading, so make it as
