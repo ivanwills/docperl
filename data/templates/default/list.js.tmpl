@@ -469,14 +469,14 @@ function list_toggle( id ) {
 		ul.style.display = 'none';
 		link.removeChild( link.firstChild );
 		link.appendChild( document.createTextNode('+') );
-		link.title = 'Show';
+		link.title = '[% str_list_show %]';
 	}
 	else {
 		// list is closed so open
 		ul.style.display = 'block';
 		link.removeChild( link.firstChild );
 		link.appendChild( document.createTextNode('-') );
-		link.title = 'Hide';
+		link.title = '[% str_list_hide %]';
 	}
 }
 
@@ -498,7 +498,7 @@ function section_toggle( section ) {
 		head.style.marginBottom = '';
 		link.removeChild( link.firstChild );
 		link.appendChild( document.createTextNode('-') );
-		link.title = 'Show';
+		link.title = '[% str_section_hide %]';
 		clear_cookie( section );
 	}
 	else {
@@ -507,7 +507,7 @@ function section_toggle( section ) {
 		head.style.marginBottom = '1px';
 		link.removeChild( link.firstChild );
 		link.appendChild( document.createTextNode('+') );
-		link.title = 'Hide';
+		link.title = '[% str_section_hide %]';
 		set_cookie( section, 'hide' );
 	}
 }
@@ -538,10 +538,16 @@ function path_to_module(path) {
 
 function update_current_link() {
 	var link = document.getElementById('current-link');
-	var url  = '?';
+	var url  = window.parent.main.location.href;
+
+	// Alter the url to load the frames page
+	url = url.replace( /page=\w+&?/, '' );
 
 	// add the url to the link
 	link.href = url;
+
+	// make sure if the link is clicked that it replaces the current page
+	link.target = '_TOP';
 }
 
 /*************************\

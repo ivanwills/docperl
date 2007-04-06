@@ -41,6 +41,6 @@
 	</head>
 	<frameset cols="255,*" onload=" setTimeout( title, [% animation %] ); ">
 		<frame name="menu" src="?page=list"></frame>
-		<frame name="main" src="?page=pod&amp;module=[% module %]"></frame>
+		<frame name="main" src="?page=pod&amp;module=[% module %][% IF location %]&location=[% location %][% END %][% IF file %]&file=[% file %][% END %][% IF source %]&source=[% source %][% END %]"></frame>
 	</frameset>
 </html>
