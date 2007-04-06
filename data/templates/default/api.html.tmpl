@@ -1,3 +1,4 @@
+[% PROCESS strings.tmpl -%]
 [% UNLESS ApiColumns %][% ApiColumns = 3 %][% END -%]
 [% WRAPPER module_head.html.tmpl
 	view = 'API' %]
@@ -35,13 +36,13 @@
 		<table>
 			[% IF api.package %]
 			<tr>
-				<th>Package</th>
+				<th>[% str_package %]</th>
 				<td colspan="[% ApiColumns %]">[% module %]</td>
 			</tr>
 			[% END -%]
 			[% IF api.packages %]
 			<tr>
-				<th rowspan="[% (api.packages.size - api.packages.size % ApiColumns + ApiColumns) / ApiColumns %]">Other Packages</th>
+				<th rowspan="[% (api.packages.size - api.packages.size % ApiColumns + ApiColumns) / ApiColumns %]">[% str_other_package %]</th>
 				[% counter = 1 -%]
 				[% FOR package = api.packages %]
 				<td[% IF counter == api.packages.size %] colspan="[% ApiColumns - api.packages.size % ApiColumns + 1 %]"[% END %]>
@@ -57,21 +58,21 @@
 			[% END -%]
 			[% IF api.version %]
 			<tr>
-				<th>Version</th>
+				<th>[% str_version %]</th>
 				<td colspan="[% ApiColumns %]">[% api.version %]</td>
 			</tr>
 			[% END -%]
 			<tr>
-				<th>File</th>
+				<th>[% str_file %]</th>
 				<td colspan="[% ApiColumns %]">[% api.size %] bytes, [% api.lines %] lines</td>
 			</tr>
 			<tr>
-				<th>Contains POD</th>
+				<th>[% str_contains_pod %]</th>
 				<td colspan="[% ApiColumns %]">[% IF api.pod %][% api.pod %] Lines[% ELSE %]No POD[% END %]</td>
 			</tr>
 			[% IF api.modules %]
 			<tr>
-				<th rowspan="[% (api.modules.size - api.modules.size % ApiColumns + ApiColumns) / ApiColumns %]">Modules</th>
+				<th rowspan="[% (api.modules.size - api.modules.size % ApiColumns + ApiColumns) / ApiColumns %]">[% str_modules %]</th>
 				[% counter = 1 -%]
 				[% FOR inc_module = api.modules %]
 				<td[% IF counter == api.modules.size %] colspan="[% ApiColumns - api.modules.size % ApiColumns + 1 %]"[% END %]>
@@ -89,7 +90,7 @@
 			[% END -%]
 			[% IF api.parents -%]
 			<tr>
-				<th rowspan="[% (api.parents.size - api.parents.size % ApiColumns + ApiColumns) / ApiColumns || 1 %]">Inherited Modules</th>
+				<th rowspan="[% (api.parents.size - api.parents.size % ApiColumns + ApiColumns) / ApiColumns || 1 %]">[% str_inherited_modules %]</th>
 				[% counter = 1 -%]
 				[% FOR inc_parents = api.parents %]
 				<td[% IF counter == api.parents.size %] colspan="[% ApiColumns - api.parents.size % ApiColumns + 1 %]"[% END %]>
@@ -107,7 +108,7 @@
 			[% END %]
 			[% IF api.class -%]
 			<tr>
-				<th rowspan="[% (api.class.size - api.class.size % ApiColumns + ApiColumns) / ApiColumns || 1 %]">Class Methods</th>
+				<th rowspan="[% (api.class.size - api.class.size % ApiColumns + ApiColumns) / ApiColumns || 1 %]">[% str_class_methods %]</th>
 				[% counter = 1 -%]
 				[% FOR sub = api.class %]
 				<td[% IF counter == api.class.size %] colspan="[% ApiColumns - api.class.size % ApiColumns + 1 %]"[% END %]>
@@ -125,7 +126,7 @@
 			[% END -%]
 			[% IF api.object -%]
 			<tr>
-				<th rowspan="[% (api.object.size - api.object.size % ApiColumns + ApiColumns) / ApiColumns || 1 %]">Object Methods</th>
+				<th rowspan="[% (api.object.size - api.object.size % ApiColumns + ApiColumns) / ApiColumns || 1 %]">[% str_object_methods %]</th>
 				[% counter = 1 -%]
 				[% FOR sub = api.object %]
 				<td[% IF counter == api.object.size %] colspan="[% ApiColumns - api.object.size % ApiColumns + 1 %]"[% END %]>
@@ -143,7 +144,7 @@
 			[% END -%]
 			[% IF api.func -%]
 			<tr>
-				<th rowspan="[% (api.func.size - api.func.size % ApiColumns + ApiColumns) / ApiColumns || 1 %]">General Subroutines</th>
+				<th rowspan="[% (api.func.size - api.func.size % ApiColumns + ApiColumns) / ApiColumns || 1 %]">[% str_general_subroutines %]</th>
 				[% counter = 1 -%]
 				[% FOR sub = api.func %]
 				<td[% IF counter == api.func.size %] colspan="[% ApiColumns - api.func.size % ApiColumns + 1 %]"[% END %]>
@@ -161,7 +162,7 @@
 			[% END -%]
 			[% IF api.vars -%]
 			<tr>
-				<th rowspan="[% (api.vars.size - api.vars.size % ApiColumns + ApiColumns) / ApiColumns || 1 %]">Package Variables</th>
+				<th rowspan="[% (api.vars.size - api.vars.size % ApiColumns + ApiColumns) / ApiColumns || 1 %]">[% str_package_variables %]</th>
 				[% counter = 1 -%]
 				[% FOR vars = api.vars %]
 				<td[% IF counter == api.vars.size %] colspan="[% ApiColumns - api.vars.size % ApiColumns + 1 %]"[% END %]>
@@ -182,10 +183,10 @@
 		<br />
 		<br />
 		<div id="note">
-			<b>Note:</b> This API is just a guess on the meaning of the subroutines in the file.<br />
+			<b>Note:</b> [% str_api_note %]<br />
 			<div id="details">
 				<div>
-					<i>Class Methods</i> are assumed be in one of the following forms:
+					<i>[% str_class_methods_note %]</i> [% str_api_notes_final %]
 					<pre style="width:18em;float: left">
 sub class_method {
 	my $class = shift;

@@ -1,3 +1,4 @@
+[% PROCESS strings.tmpl -%]
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html
 	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
@@ -64,14 +65,14 @@
 			[%- UNLESS src.file == source and page == 'pod' %]
 							<a title="Documentation [% module %]"  href="?page=pod&amp;module=[% module %]&amp;file=[% file %]&amp;location=[% location %]&amp;source=[% src.file %]">
 			[%- ELSE -%]<b>
-			[%- END -%]POD
+			[%- END -%][% str_head_pod %]
 			[%- IF src.file == source and page == 'pod' -%]</b>[%- ELSE -%]</a>[%- END %]
 		[%- IF show_text %]
 							|
 			[%- UNLESS src.file == source and page == 'text' %]
 							<a title="Documentation [% module %]"  href="?page=text&amp;module=[% module %]&amp;file=[% file %]&amp;location=[% location %]&amp;source=[% src.file %]">
 			[%- ELSE -%]<b>
-			[%- END -%]Text
+			[%- END -%][% str_head_text %]
 			[%- IF src.file == source and page == 'text' -%]</b>[%- ELSE -%]</a>[%- END %]
 		[%- END -%]
 		[%- UNLESS src.suffix == 'pod' %]
@@ -79,14 +80,14 @@
 			[%- UNLESS src.file == source and page == 'api' %]
 							<a title="Functions defined, modules used, inheritance etc" href="?page=api&amp;module=[% module %]&amp;file=[% file %]&amp;location=[% location %]&amp;source=[% src.file %]">
 			[%- ELSE -%]<b>
-			[%- END -%]API
+			[%- END -%][% str_head_api %]
 			[%- IF src.file == source and page == 'api' -%]</b>[%- ELSE -%]</a>[%- END %]
 		[%- END %]
 							|
 			[%- UNLESS src.file == source and page == 'code' %]
 							<a title="View source code" href="?page=code&amp;module=[% module %]&amp;file=[% file %]&amp;location=[% location %]&amp;source=[% src.file %]">
 			[%- ELSE -%]<b>
-			[%- END -%]CODE
+			[%- END -%][% str_head_code %]
 			[%- IF src.file == source and page == 'code' -%]</b>[%- ELSE -%]</a>[%- END %]
 		[%- IF location != 'local' %]
 							| <a title="See latest documentation on CPAN" href="http://search.cpan.org/search?query=[% IF location == 'perl' %]pod::[% END %][% module %]&amp;mode=module">
