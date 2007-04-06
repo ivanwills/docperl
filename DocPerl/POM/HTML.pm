@@ -69,6 +69,7 @@ sub make_anchor {
 	my $anchor = lc $title;
 	$anchor =~ s/::/__/gxms;
 	$anchor =~ s/\s/_/gxms;
+	$anchor =~ s/<[^>]*>//gxms;
 	return $anchor;
 }
 
