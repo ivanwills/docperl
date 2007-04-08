@@ -8,122 +8,122 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en-AU" xml:lang="en-AU">
 	<head>
 		<title>DocPerl Index</title>
-		<meta http-equiv="Content-Type"		content="text/html; charset=utf-8" />
-		<meta http-equiv="Content-Language"	content="en-au" />
-		<meta name="author"		 content="Ivan Wills" />
-		<meta name="copyright"	 content="Copyright (c) 2006 Ivan Wills, All Rights Reserved" />
+		<meta http-equiv="Content-Type"     content="text/html; charset=utf-8" />
+		<meta http-equiv="Content-Language" content="en-au" />
+		<meta name="author"      content="Ivan Wills" />
+		<meta name="copyright"   content="Copyright (c) 2006 Ivan Wills, All Rights Reserved" />
 		<meta name="description" content="" />
-		<meta name="keywords"	 content="" />
+		<meta name="keywords"    content="" />
 		<style type="text/css">
 		<!--/* <![CDATA[ */
 			@import url("?page=css.css");
 			body {
-				font-size:			8pt;
-				padding:			0px;
-				margin:				0px;
+				font-size:          8pt;
+				padding:            0px;
+				margin:             0px;
 			}
 			h1, h2, h3 {
-				margin-top:			0px;
-				padding:			5px 2px 4px 2px;
-				font-family:		sans-serif;
+				margin-top:         0px;
+				padding:            5px 2px 4px 2px;
+				font-family:        sans-serif;
 			}
 			h1 {
-				font-size:			1.4em;
-				text-align:			center;
-				-moz-border-radius:	0px;
+				font-size:          1.4em;
+				text-align:         center;
+				-moz-border-radius: 0px;
 			}
 			h2 {
-				font-size:			1.2em;
-				-moz-border-radius:	0px;
+				font-size:          1.2em;
+				-moz-border-radius: 0px;
 
 			}
 			table {
-				font-size:			0.9em;
+				font-size:          0.9em;
 
 			}
 			ul {
-				font-size:			1em;
-				list-style-type:	none;
-				padding-left:		0px;
-				margin-left:		0px;
+				font-size:          1em;
+				list-style-type:    none;
+				padding-left:       0px;
+				margin-left:        0px;
 			}
 			li {
-				clear:				left;
+				clear:              left;
 			}
 			ul li {
-				padding-left:		0.3em;
+				padding-left:       0.3em;
 			}
 			ul ul {
-				padding-left:		0.3em;
-				margin-left:		0.3em;
+				padding-left:       0.3em;
+				margin-left:        0.3em;
 			}
 			li > ul {
-				display:			none;
+				display:            none;
 			}
 			.plus {
-				padding-left:		2px;
-				padding-right:		2px;
-				border-style:		solid;
-				border-width:		1px;
+				padding-left:       2px;
+				padding-right:      2px;
+				border-style:       solid;
+				border-width:       1px;
 			}
 			.mod_expand {
-				width:				1em;
-				margin-right:		0.8em;
-				text-align:			center;
-				vertical-align:		middle;
-				display:			block;
-				float:				left;
-				border-style:		solid;
-				border-width:		1px;
-				clear:				left;
-				-moz-border-radius:	4px;
-				border-radius:		4px;
-				text-decoration:	none;
+				width:              1em;
+				margin-right:       0.8em;
+				text-align:         center;
+				vertical-align:     middle;
+				display:            block;
+				float:              left;
+				border-style:       solid;
+				border-width:       1px;
+				clear:              left;
+				-moz-border-radius: 4px;
+				border-radius:      4px;
+				text-decoration:    none;
 			}
 			.mod_expand {
-				-moz-border-radius:	3px;
-				border-radius:		3px;
+				-moz-border-radius: 3px;
+				border-radius:      3px;
 			}
 			.info {
-				width:				10px;
-				-moz-border-radius:	10px;
-				border-width:		1px;
-				border-color:		red;
-				border-style:		solid;
-				float:				right;
-				text-align:			center;
+				width:              10px;
+				-moz-border-radius: 10px;
+				border-width:       1px;
+				border-color:       red;
+				border-style:       solid;
+				float:              right;
+				text-align:         center;
 			}
 			.info span {
-				display:			none;
-				float:				right;
-				border:				1px solid black;
-				background-color:	white;
-				padding:			3px;
-				position:			relative;
-				left:				1px;
-				top:				1px;
+				display:            none;
+				float:              right;
+				border:             1px solid black;
+				background-color:   white;
+				padding:            3px;
+				position:           relative;
+				left:               1px;
+				top:                1px;
 			}
 			.info:hover span {
-				display:			block;
+				display:            block;
 			}
 			#adv_open,
 			#adv_close {
-				border:      solid black 1px;
-				padding:     2px;
-				font-weight: bold;
-				font-size:   1.4em;
-				cursor:      pointer;
+				border:             solid black 1px;
+				padding:            2px;
+				font-weight:        bold;
+				font-size:          1.4em;
+				cursor:             pointer;
 			}
 			#adv_open {
 			}
 			#adv_close {
-				display: none;
+				display:           none;
 			}
 			#advanced {
-				display: none;
+				display:           none;
 			}
 			#advanced label {
-				font-size: 1.2em;
+				font-size:         1.2em;
 			}
 		/* ]]> */-->
 		</style>
@@ -150,7 +150,7 @@
 					[% ELSE %]
 					group++;
 					[% END %]
-					create_tree( local,	'local',	'local' );
+					create_tree( local, 'local', 'local' );
 					add_count( 'local', count_tree( local, 'local' ) );
 					setTimeout( setup_modules, 10 );
 					if ( get_cookie('local') == 'hide' )
@@ -158,7 +158,7 @@
 				}
 				else if ( group == 1 ) {
 					level = 0;
-					var total_perl = create_tree( perl,	'perl',	'perl' );
+					var total_perl = create_tree( perl, 'perl', 'perl' );
 					add_count( 'perl', count_tree( perl, 'perl' ) );
 					group++;
 					setTimeout( setup_modules, 10 );
@@ -168,7 +168,7 @@
 				else if ( group == 2 ) {
 					level = 0;
 					group++;
-					create_tree( inc,	'inc',	'inc' );
+					create_tree( inc, 'inc', 'inc' );
 					add_count( 'inc', count_tree( inc, 'inc' ) );
 					setTimeout( setup_modules, 10 );
 					if ( get_cookie('inc') == 'hide' )
@@ -178,8 +178,8 @@
 					group++;
 					var name = 'DocPerl_recent';
 					if ( exists_cookie( name ) ) {
-						var list	= get_cookie( name );
-						var modules	= list.split(':');
+						var list    = get_cookie( name );
+						var modules = list.split(':');
 
 						for ( var module in modules ) {
 							display_recent( modules[module] );
@@ -253,10 +253,10 @@
 			<table>
 				<tr>
 					<td class="advanced">
-						<div id="adv_open"  onclick="adv_open(); " title="Open Advanced Search Options ">&#8595;</div>
-						<div id="adv_close" onclick="adv_close();" title="Close Advanced Search Options">&#8593;</div>
+						<div id="adv_open"  onclick="adv_open(); " title="[% str_adv_open_title %] ">&#8595;</div>
+						<div id="adv_close" onclick="adv_close();" title="[% str_adv_close_title %]">&#8593;</div>
 					</td>
-					<td><input type="text" name="search" id="search" size="15" onkeyup="search(false);" title="Find modules by name"/></td>
+					<td><input type="text" name="search" id="search" size="15" onkeyup="search(false);" title="[% str_search_input_title %]"/></td>
 					<td><input type="button" value="Search" onclick="search(true);"/></td>
 				</tr>
 				<tr>
@@ -279,28 +279,28 @@
 		</center>
 		<div id="functions_doc" style="display:none">
 			<h2 id="functions_head">
-			<a id="plus__functions" href="javascript: section_toggle('functions');" class="mod_expand" title="Hide">-</a>
+			<a id="plus__functions" href="javascript: section_toggle('functions');" class="mod_expand" title="[% str_section_hide %]">-</a>
 			Search - Functions (<span id="functions_count">0</span>)</h2>
 			<div id="functions">
 			</div>
 		</div>
 		<div id="pod_doc" style="display:none">
 			<h2 id="pod_head">
-			<a id="plus__pod" href="javascript: section_toggle('pod');" class="mod_expand" title="Hide">-</a>
+			<a id="plus__pod" href="javascript: section_toggle('pod');" class="mod_expand" title="[% str_section_hide %]">-</a>
 			Search - POD (<span id="pod_count">0</span>)</h2>
 			<div id="pod">
 			</div>
 		</div>
 		<div id="names_doc" style="display:none">
 			<h2 id="names_head">
-			<a id="plus__names" href="javascript: section_toggle('names');" class="mod_expand" title="Hide">-</a>
+			<a id="plus__names" href="javascript: section_toggle('names');" class="mod_expand" title="[% str_section_hide %]">-</a>
 			Search - Names (<span id="names_count">0</span>)</h2>
 			<div id="names">
 			</div>
 		</div>
 		<div id="recent_doc" style="display:none">
 			<h2 id="recent_head">
-			<a id="plus__recent" href="javascript: section_toggle('recent');" class="mod_expand" title="Hide">-</a>
+			<a id="plus__recent" href="javascript: section_toggle('recent');" class="mod_expand" title="[% str_section_hide %]">-</a>
 			Recent Modules (<span id="recent_count">0</span>)</h2>
 			<div id="recent">
 				<ul id="ul_recent" class="mod_list" style="display:block">
@@ -311,7 +311,7 @@
 		[% UNLESS LocalOnly %]
 		<div id="perl_doc">
 			<h2 id="perl_head"><span class="info">i<span>[% perl_path %]</span></span>
-			<a id="plus__perl" href="javascript: section_toggle('perl');" class="mod_expand" title="Hide">-</a>
+			<a id="plus__perl" href="javascript: section_toggle('perl');" class="mod_expand" title="[% str_section_hide %]">-</a>
 			[% PerlLabel || 'Perl' %] (<span id="perl_count">0</span>)</h2>
 			<div id="perl">
 			</div>
@@ -319,7 +319,7 @@
 		[%- END %]
 		<div id="local_doc">
 			<h2 id="local_head"><span class="info">i<span>[% local_path %]</span></span>
-			<a id="plus__local" href="javascript: section_toggle('local');" class="mod_expand" title="Hide">-</a>
+			<a id="plus__local" href="javascript: section_toggle('local');" class="mod_expand" title="[% str_section_hide %]">-</a>
 			[% LocalLabel || 'Local Programs' %] (<span id="local_count">0</span>)</h2>
 			<div id="local">
 			</div>
@@ -327,7 +327,7 @@
 		[% UNLESS LocalOnly %]
 		<div id="inc_doc">
 			<h2 id="inc_head"><span class="info">i<span>[% inc_path %]</span></span>
-			<a id="plus__inc" href="javascript: section_toggle('inc');" class="mod_expand" title="Hide">-</a>
+			<a id="plus__inc" href="javascript: section_toggle('inc');" class="mod_expand" title="[% str_section_hide %]">-</a>
 			[% IncLabel || 'Installed Modules' %] (<span id="inc_count">0</span>)</h2>
 			<div id="inc">
 			</div>
