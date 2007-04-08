@@ -19,19 +19,14 @@
 		<!--
 			var show = 'perl';
 			function title () {
-				var module = '';
-				var frames = window.frames;
-				for ( var i = 0; i < frames.length; i++ ) {
-					if ( frames[i].name == main && frames[i].document.title )
-						module = frames[i].document.title;
-				}
+				var module = window.main.document.title;
 
 				if ( show == 'perl' ) {
-					document.title = 'DocPerl' + ' ' + module;
+					document.title = '[% str_frame_title_short %]' + ' - ' + module;
 					show = 'docperl';
 				}
 				else {
-					document.title = 'Perl Documentation';
+					document.title = '[% str_frame_title_long %]';
 					show = 'perl';
 				}
 				setTimeout( title, [% animation %] );
@@ -39,7 +34,7 @@
 		//-->
 		</script>
 	</head>
-	<frameset cols="255,*" onload=" setTimeout( title, [% animation %] ); ">
+	<frameset cols="255,*" onload="title();">
 		<frame name="menu" src="?page=list"></frame>
 		<frame name="main" src="?page=pod&amp;module=[% module %][% IF location %]&location=[% location %][% END %][% IF file %]&file=[% file %][% END %][% IF source %]&source=[% source %][% END %]"></frame>
 	</frameset>
