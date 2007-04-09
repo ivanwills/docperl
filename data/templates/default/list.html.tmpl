@@ -122,7 +122,8 @@
 			#advanced {
 				display:           none;
 			}
-			#advanced label {
+			#advanced label,
+			#advanced select {
 				font-size:         1.2em;
 			}
 		/* ]]> */-->
@@ -236,10 +237,10 @@
 			}
 			function adv_cpan() {
 				if (document.getElementById('type_cpan').checked) {
-					document.getElementById('mode').style.display = 'block';
+					document.getElementById('mode').disabled = false;
 				}
 				else {
-					document.getElementById('mode').style.display = 'none';
+					document.getElementById('mode').disabled = 'disabled';
 				}
 			}
 		//-->
@@ -264,9 +265,9 @@
 						<div id="advanced">
 							<input type="checkbox" id="type_names"     name="type" value="modules" checked="checked" /><label>Modules</label>&nbsp;&nbsp;
 							<input type="checkbox" id="type_pod"       name="type" value="pod"      /><label>POD</label>&nbsp;&nbsp;
-							<input type="checkbox" id="type_functions" name="type" value="functions"/><label>Functions</label>&nbsp;&nbsp;
+							<input type="checkbox" id="type_functions" name="type" value="functions"/><label>Functions</label><br/>
 							<input type="checkbox" id="type_cpan"      name="type" value="functions" onchange="adv_cpan();"/><label>CPAN</label>&nbsp;&nbsp;
-							<select name="mode" id="mode" style="display:none;">
+							<select name="mode" id="mode" disabled="disabled">
 								<option value="all">All</option>
 								<option value="module">Modules</option>
 								<option value="dist">Distributions</option>
