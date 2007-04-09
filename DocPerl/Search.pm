@@ -16,7 +16,7 @@ use Carp;
 use English qw/ -no_match_vars /;
 use base qw/Exporter/;
 
-our $VERSION     = version->new('0.9.0');
+our $VERSION     = version->new('0.9.1');
 our @EXPORT_OK   = qw//;
 our %EXPORT_TAGS = ();
 
@@ -49,7 +49,7 @@ DocPerl::Search - The base module for performing searches in DocPerl
 
 =head1 VERSION
 
-This documentation refers to DocPerl::Search version 0.9.0.
+This documentation refers to DocPerl::Search version 0.9.1.
 
 
 =head1 SYNOPSIS

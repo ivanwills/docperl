@@ -19,7 +19,7 @@ use DocPerl::View::API;
 use DocPerl qw/find/;
 
 sub say;
-our $VERSION = version->new('0.9.0');
+our $VERSION = version->new('0.9.1');
 
 my %option = (
 	columns => 2,
@@ -199,7 +199,7 @@ get-api - Displays a summary of the API used by the file or module passed
 
 =head1 VERSION
 
-This documentation refers to get-api version 0.9.0.
+This documentation refers to get-api version 0.9.1.
 
 =head1 SYNOPSIS
 

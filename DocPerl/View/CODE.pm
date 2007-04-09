@@ -15,7 +15,7 @@ use Scalar::Util;
 use English '-no_match_vars';
 use base qw/DocPerl::View/;
 
-our $VERSION   = version->new('0.9.0');
+our $VERSION   = version->new('0.9.1');
 our @EXPORT    = qw//;
 our @EXPORT_OK = qw//;
 
@@ -198,7 +198,7 @@ DocPerl::View::CODE - Displays the code of a specified file in syntax highlited 
 
 =head1 VERSION
 
-This documentation refers to DocPerl::View::CODE version 0.9.0.
+This documentation refers to DocPerl::View::CODE version 0.9.1.
 
 =head1 SYNOPSIS
 

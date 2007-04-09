@@ -17,7 +17,7 @@ use Scalar::Util;
 use English '-no_match_vars';
 use base qw/DocPerl::View/;
 
-our $VERSION   = version->new('0.9.0');
+our $VERSION   = version->new('0.9.1');
 our @EXPORT_OK = qw//;
 
 Readonly my $QW       => qr/qw[^\w\s;] ( [\w:\s]+ ) [^\w\s;]/xms;
@@ -339,7 +339,7 @@ modules used/inherited etc
 
 =head1 VERSION
 
-This documentation refers to DocPerl::View::API version 0.9.0.
+This documentation refers to DocPerl::View::API version 0.9.1.
 
 
 =head1 SYNOPSIS

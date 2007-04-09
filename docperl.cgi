@@ -13,7 +13,7 @@ use Readonly;
 use lib qw/./;
 use DocPerl;
 
-our $VERSION = version->new('0.9.0');
+our $VERSION = version->new('0.9.1');
 
 Readonly my $BASE   => $Bin;
 Readonly my $CONFIG => "$BASE/docperl.conf";
@@ -63,7 +63,7 @@ docperl.cgi - Displays the documentation/api/code of perl modules and other file
 
 =head1 VERSION
 
-This documentation refers to docperl.cgi version 0.9.0.
+This documentation refers to docperl.cgi version 0.9.1.
 
 =head1 SYNOPSIS
 

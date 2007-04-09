@@ -5,7 +5,7 @@
 Go to L<http://sourceforge.net/project/showfiles.php?group_id=163244> and
 download a copy of DocPerl and extract the files. E.g.
 
- $ tar xzf docperl-v0.9.0.tar.gz
+ $ tar xzf docperl-v0.9.1.tar.gz
 
 =head1 Setup
 
