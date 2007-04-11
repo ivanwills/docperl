@@ -2,19 +2,25 @@
 
 # Created on: 2006-03-24 05:48:19
 # Create by:  ivan
+# $Id$
+# # $Revision$, $HeadURL$, $Date$
+# # $Revision$, $Source$, $Date$
 
 use strict;
 use warnings;
-use FindBin;
+use Carp;
+use FindBin qw/$Bin/;
 use File::Copy qw/copy/;
 use Getopt::Long;
 use Pod::Usage;
 use Data::Dumper qw/Dumper/;
+use English qw/ -no_match_vars /;
 
 our $VERSION = 0.9;
 
-use lib ($FindBin::Bin);
-my $CONFIG = "$FindBin::Bin/docperl.conf";
+use lib ($Bin);
+my $CONFIG = "$Bin/docperl.conf";
+my ($name) = $PROGRAM_NAME =~ m{^.*/(.*?)$}mxs;
 
 my %option = (
 	compile => [],
@@ -27,21 +33,21 @@ my %option = (
 );
 
 my %required_modules = (
-	Readonly      => { },
-	Template      => { },
-	'Config::Std' => { },
-	'Pod::POM'    => { },
-	version       => { },
-	'File::stat'  => { },
-	'File::Path'  => { },
+	Readonly      => {},
+	Template      => {},
+	'Config::Std' => {},
+	'Pod::POM'    => {},
+	version       => {},
+	'File::stat'  => {},
+	'File::Path'  => {},
 );
 
 main();
-exit(0);
+exit 0;
 
 sub main {
 
-	Getopt::Long::Configure("bundling");
+	Getopt::Long::Configure('bundling');
 	GetOptions(
 		\%option,
 		'compile|c=s@',
@@ -53,37 +59,47 @@ sub main {
 		'version'
 	) or pod2usage( 2 );
 
-	print "checksetup.pl Version = $VERSION\n" and exit(1) if $option{version};
-	pod2usage( -verbose => 2 ) if $option{man};
-	pod2usage( -verbose => 1 ) if $option{help};
+	if ( $option{VERSION} ) {
+		print "$name Version = $VERSION";
+		exit 1;
+	}
+	elsif ( $option{man} ) {
+		pod2usage( -verbose => 2 );
+	}
+	elsif ( $option{help} ) {
+		pod2usage( -verbose => 1 );
+	}
 
-	# Check module existance
+	# Check module existence
 	my @missing;
 	for my $module ( sort keys %required_modules ) {
-		print $module, (' 'x(24 - length $module) );
-		eval("require $module");
-		if ( $@ ) {
+		print $module, ( q/ / x ( 24 - length $module ) );
+		my $file = $module . '.pm';
+		$file =~ s{::}{/}xms;
+		eval { require $file };
+		if ($EVAL_ERROR) {
 			print "Missing\n";
 			push @missing, $module;
 			$required_modules{$module}{missing} = 1;
 		}
 		else {
-			my $version = eval("\$${module}::VERSION");
+			no strict 'refs';    ## no critic
+			my $version = ${"${module}::VERSION"};
 			print "OK    $version\n";
 		}
 	}
-	if ( @missing ) {
+	if (@missing) {
 		print "\n\nTo install all missing modules try the following commands:\n\n";
-		print '$ cpan '.join(' ', @missing)."\nor\n";
-		print "\$ perl -MCPAN -e 'install ", join( "'\n\$ perl -MCPAN -e 'install ", @missing ), "'\n\n";
+		print '$ cpan ' . ( join q/ /, @missing ) . "\nor\n";
+		print "\$ perl -MCPAN -e 'install ", ( join "'\n\$ perl -MCPAN -e 'install ", @missing ), "'\n\n";  ## no critic
 		print "Windows/ActivePerl users try useing ppm\n";
 	}
 
 	print "\n";
-	unless ( -f $CONFIG ) {
+	if ( !-f $CONFIG ) {
 		my $eg = "$CONFIG.example";
 		die "Serious problem trying to set up config '$CONFIG': Missing $eg\n"
-			unless -f $eg;
+			if !-f $eg;
 		print "Setting default config. Please check the settings in $CONFIG\n";
 		copy $eg, $CONFIG;
 	}
@@ -95,27 +111,28 @@ sub main {
 	exit 20 if $required_modules{'Config::Std'}{missing};
 
 	# read the config file
-	eval('use Config::Std qw/read_config/');
+	require Config::Std;
+	Config::Std->import qw/read_config/;
 	my %config;
 	read_config( $CONFIG, \%config );
 
 	# get the data directory
-	my $data  = $config{General}{Data};
-	unless ( -d $data ) {
+	my $data = $config{General}{Data};
+	if ( !-d $data ) {
 		warn "Cannot find the data directory at '$data' please update docperl.conf to point to the correct location\n";
 		exit 30;
 	}
 
 	# set up the cache directory
 	my $cache = "$data/cache";
-	unless ( -d $cache ) {
+	if ( !-d $cache ) {
 		print "Creating cache directory, '$cache'\n";
 		mkdir $cache or warn "Could not create the cache directory '$cache': $!\n";
 	}
 
 	# set up the local directory
 	my $local = "$data/templates/local";
-	unless ( -d $local ) {
+	if ( !-d $local ) {
 		print "Creating local template directory, '$local'\n";
 		mkdir $local or warn "Could not create the local template directory '$local': $!\n";
 	}
@@ -124,20 +141,20 @@ sub main {
 	# purge the cache files (if requested)
 	if ( $option{purge} ) {
 		print "Clearing old cache files\n";
-		system "rm -rf $FindBin::Bin/data/cache/*";
+		system "rm -rf $Bin/data/cache/*";
 	}
 
 	# create shrunken versions of files
 	if ( $option{shrink} ) {
 		print "Shrinking CSS and Javascript files ...\n";
-		shrink_file($data, 'list.js.tmpl', 'js');
-		shrink_file($data, 'css.css.tmpl', 'css');
+		shrink_file( $data, 'list.js.tmpl', 'js' );
+		shrink_file( $data, 'css.css.tmpl', 'css' );
 	}
 
 	# compile the cache files (if requrested)
 	if ( ref $option{compile} && @{ $option{compile} } ) {
 		$config{Templates}{ClearCache} = 'on';
-		eval('use DocPerl');
+		require DocPerl;
 		delete $config{General}{Cache};
 		my $dp = DocPerl->new( cgi => { page => 'list', }, conf => \%config, save_data => 1, quiet => 1, );
 		my %data = $dp->list();
@@ -147,10 +164,12 @@ sub main {
 
 		my @locations = $config{Template}{LocalOnly} ? qw/LOCAL/ : qw/PERL LOCAL INC/;
 
-		my @compile = map { split /,/ } @{ $option{compile} };
+		my @compile = map { split /,/xms } @{ $option{compile} };
 		compile( \%data, $dp, \@compile, \@locations );
-		system("chmod o+w -R $FindBin::Bin/data/cache");
+		system "chmod o+w -R $Bin/data/cache";
 	}
+
+	return;
 }
 
 sub shrink_file {
@@ -158,7 +177,7 @@ sub shrink_file {
 
 	# shrink the JS template
 	my $js = "$data/templates/default/$template";
-	open my $fh, '<', $js;
+	open my $fh, '<', $js or carp "Could not opeh '$js': $OS_ERROR\n" and return;
 
 	if ( !$fh ) {
 		warn "Could not open the javascript template file $js! $!\n";
@@ -166,16 +185,17 @@ sub shrink_file {
 	else {
 		my $text;
 		{
-			local $/ = undef;
+			local $INPUT_RECORD_SEPARATOR = undef;
 			$text = <$fh>;
 		}
-		close $fh;
+		close $fh or carp "Problem in closing file '$js': $OS_ERROR\n";
 
 		my $shrink = 'shrink_' . $type;
 		{
-			no strict 'refs'; ## no critic
+			no strict 'refs';    ## no critic
 			$text = $shrink->($text);
 		}
+
 		#$text = $type eq 'js' ? shrink_js($text) : shrink_css($text);
 
 		## save the template to the local template dir
@@ -186,40 +206,46 @@ sub shrink_file {
 			if ( $text !~ /\n\Z/xms ) {
 				print {$fh} "\n";
 			}
-			close $fh;
+			close $fh or carp "Problem in closing file '$js': $OS_ERROR\n";
 		}
 	}
 
+	return;
 }
 
 sub shrink_js {
-	my ( $text ) = @_;
+	my ($text) = @_;
 
-	## remove the unnessesary text
+	## remove the unnecessary text
 	# multi line comments
 	$text =~ s{/[*][*] .*? [*]/\n*}{}gxms;
+
 	# end of line comments
 	$text =~ s{\s*//[^\n]*\n}{\n}gxms;
+
 	# multiple new lines
 	$text =~ s/\n\n+/\n/gxms;
+
 	# new line after statements
 	$text =~ s/;\n\s+/;/gxms;
-	# white space arround brackets
+
+	# white space around brackets
 	$text =~ s/\s* ( [(){] ) \s*/$1/gxms;
 	$text =~ s/\s*{\n/{/gxms;
 	$text =~ s/\s* ( [^\w\s'] ) \s*/$1/gxms;
 	$text =~ s/\n}/}/gxms;
 	$text =~ s/}\n([^f])/}$1/gxms;
+
 	# multiple white space
 	$text =~ s/\s\s+/ /gxms;
 	$text =~ s/;}/}/gxms;
 
 	my %replace = (
-		'document.getElementById' => '$',
-		'document.createTextNode' => '$ct',
-		'document.createElement'  => '$ce',
+		'document.getElementById' => '$',      ## no critic
+		'document.createTextNode' => '$ct',    ## no critic
+		'document.createElement'  => '$ce',    ## no critic
 	);
-	my $func = join '', map { "function $replace{$_}(a){return $_(a)}" } keys %replace;
+	my $func = join '', map {"function $replace{$_}(a){return $_(a)}"} keys %replace;
 	my $list = join '|', keys %replace;
 
 	$text =~ s/($list)/$replace{$1}/gxms;
@@ -287,23 +313,28 @@ sub shrink_js {
 }
 
 sub shrink_css {
-	my ( $text ) = @_;
+	my ($text) = @_;
 
-	## remove the unnessesary text
+	## remove the unnecessary text
 	# multi line comments
 	$text =~ s{/[*] .*? [*]/\n*}{}gxms;
+
 	# end of line comments
 	$text =~ s{\s*//[^\n]*\n}{\n}gxms;
+
 	# multiple new lines
 	$text =~ s/\n\n+/\n/gxms;
+
 	# new line after statements
 	$text =~ s/;\n\s+/;/gxms;
-	# white space arround brackets
+
+	# white space around brackets
 	$text =~ s/\s* ( [(){] ) \s*/$1/gxms;
 	$text =~ s/\s*{\n/{/gxms;
 	$text =~ s/\s* ( [^\w\s'] ) \s*/$1/gxms;
 	$text =~ s/\n}/}/gxms;
 	$text =~ s/}\n([^f])/$1/gxms;
+
 	# multiple white space
 	$text =~ s/\s\s+/ /gxms;
 	$text =~ s/;}/}/gxms;
@@ -314,28 +345,35 @@ sub shrink_css {
 sub compile {
 	my ( $data, $dp, $compile, $locations ) = @_;
 
-	for my $location ( @{ $locations } ) {
+	for my $location ( @{$locations} ) {
 		print "Create $location Cache\n";
-		cache( $data->{$location}, $dp, location => lc $location, top => 1, map {$_=>1} @{ $compile } );
+		cache( $data->{$location}, $dp, location => lc $location, top => 1, map { $_ => 1 } @{$compile} );
 	}
+
+	return;
 }
 
 sub cache {
 	my ( $data, $dp, %arg ) = @_;
 	my $location = $arg{location};
 	my $parent   = $arg{parent};
-	$parent    ||= '';
-	$arg{all}  ||= '';
+	$parent   ||= '';
+	$arg{all} ||= '';
 
-	for my $module ( keys %{ $data } ) {
-		next unless $module;
+	for my $module ( keys %{$data} ) {
+		next if !$module;
 		next if $module eq '*';
 		next if $data->{$module} == 1;
 
 		# check that the module is not the numeral 1 (just an alphabetic place holder)
 		# and that there is an actual file for it (ie not just a name space prefix)
 		if ( !$arg{top} && $data->{$module}{'*'}[0] ) {
-			$dp->{cgi} = { page => 'pod', module => "$parent$module", location => $location, source => $data->{$module}{'*'}[0] };
+			$dp->{cgi} = {
+				page     => 'pod',
+				module   => "$parent$module",
+				location => $location,
+				source   => $data->{$module}{'*'}[0]
+			};
 			$dp->init();
 			if ( $arg{pod} ) {
 				$dp->process();
@@ -348,16 +386,18 @@ sub cache {
 			if ( $arg{api} ) {
 				$dp->{cgi}{page} = 'api';
 				$dp->{template}  = 'api.html';
+
 				# Unfortunatly repeated processing of api's can be dangerous to this is now disabled
 				#$dp->process();
 			}
 			if ( $arg{function} ) {
 				$dp->{cgi}{page} = 'function';
 				$dp->{template}  = 'function.html';
+
 				# catch errors (which occur due to no output) because some files will declare no functions
 				my $sig = $SIG{__WARN__};
-				$SIG{__WARN__} = sub {};
-				eval{ $dp->process() };
+				$SIG{__WARN__} = sub { };
+				eval { $dp->process() };
 				$SIG{__WARN__} = $sig;
 			}
 			if ( $arg{code} ) {
@@ -370,6 +410,8 @@ sub cache {
 		my $super = !$arg{top} ? "$parent$module\:\:" : '';
 		cache( $data->{$module}, $dp, %arg, parent => $super, top => 0, all => "$arg{all}/$module" );
 	}
+
+	return;
 }
 
 __DATA__
