@@ -145,7 +145,7 @@ sub main {
 		$dp->{template}  = 'list.html';
 		$dp->process();
 
-		my @locations = $config{Template}{LocalOnly} ? qw/PERL LOCAL INC/ : qw/LOCAL/;
+		my @locations = $config{Template}{LocalOnly} ? qw/LOCAL/ : qw/PERL LOCAL INC/;
 
 		my @compile = map { split /,/ } @{ $option{compile} };
 		compile( \%data, $dp, \@compile, \@locations );
