@@ -30,7 +30,7 @@ Match:          \.(?:pm|pod)$
 Exclude:        ./data
 
 ## Templates
-# These parameters are passed to all of the templates.
+# These parameters are passed to the template tool kit
 [Templates]
 
 # set the template search path
@@ -91,7 +91,7 @@ StyleSheet:     cpan
 # the location of the data directory
 Data:           ./data
 
-# Enable/Disable caching
+# Enable/Disable caching (on by default)
 #Cache:         off
 
 # DefaultModule
