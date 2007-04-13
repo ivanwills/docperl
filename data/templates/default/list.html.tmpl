@@ -35,11 +35,9 @@
 			h2 {
 				font-size:          1.2em;
 				-moz-border-radius: 0px;
-
 			}
 			table {
 				font-size:          0.9em;
-
 			}
 			ul {
 				font-size:          1em;
@@ -130,7 +128,7 @@
 		</style>
 		<script type="text/javascript" src="?page=list.js&amp;sidebar=[% IF sidebar %]1[% ELSE %]0[% END %]"></script>
 		<script type="text/javascript">
-		<!--
+		<!--/* <![CDATA[ */
 			[% js.pod %]
 			[% js.inc %]
 			[% js.local %]
@@ -243,11 +241,10 @@
 					document.getElementById('mode').disabled = 'disabled';
 				}
 			}
-		//-->
+		/* ]]> */-->
 		</script>
 	</head>
 	<body onload="setup_modules();">
-
 		<h1 id="headding" style="overflow: hidden">Perl&nbsp;Documentation</h1>
 		<!--h2>Search</h2-->
 		<center style="padding-bottom: 1em">
@@ -263,15 +260,15 @@
 				<tr>
 					<td colspan="3" style="vertical-align: middle; text-align: center; font-size: 0.8em;">
 						<div id="advanced">
-							<input type="checkbox" id="type_names"     name="type" value="modules" checked="checked" /><label>Modules</label>&nbsp;&nbsp;
-							<input type="checkbox" id="type_pod"       name="type" value="pod"      /><label>POD</label>&nbsp;&nbsp;
-							<input type="checkbox" id="type_functions" name="type" value="functions"/><label>Functions</label><br/>
-							<input type="checkbox" id="type_cpan"      name="type" value="functions" onchange="adv_cpan();"/><label>CPAN</label>&nbsp;&nbsp;
+							<input type="checkbox" id="type_names"     name="type" value="modules" checked="checked" /><label>[% str_search_check_module %]</label>&nbsp;&nbsp;
+							<input type="checkbox" id="type_pod"       name="type" value="pod"      /><label>[% str_search_check_pod %]</label>&nbsp;&nbsp;
+							<input type="checkbox" id="type_functions" name="type" value="functions"/><label>[% str_search_check_func %]</label><br/>
+							<input type="checkbox" id="type_cpan"      name="type" value="functions" onchange="adv_cpan();"/><label>[% str_search_check_cpan %]</label>&nbsp;&nbsp;
 							<select name="mode" id="mode" disabled="disabled">
-								<option value="all">All</option>
-								<option value="module">Modules</option>
-								<option value="dist">Distributions</option>
-								<option value="author">Authors</option>
+								<option value="all"   >[% str_search_cpan_all    %]</option>
+								<option value="module">[% str_search_cpan_module %]</option>
+								<option value="dist"  >[% str_search_cpan_dist   %]</option>
+								<option value="author">[% str_search_cpan_author %]</option>
 							</select>
 						</div>
 					</td>
@@ -281,28 +278,28 @@
 		<div id="functions_doc" style="display:none">
 			<h2 id="functions_head">
 			<a id="plus__functions" href="javascript: section_toggle('functions');" class="mod_expand" title="[% str_section_hide %]">-</a>
-			Search - Functions (<span id="functions_count">0</span>)</h2>
+			[% str_list_search_func %] (<span id="functions_count">0</span>)</h2>
 			<div id="functions">
 			</div>
 		</div>
 		<div id="pod_doc" style="display:none">
 			<h2 id="pod_head">
 			<a id="plus__pod" href="javascript: section_toggle('pod');" class="mod_expand" title="[% str_section_hide %]">-</a>
-			Search - POD (<span id="pod_count">0</span>)</h2>
+			[% str_list_search_pod %] (<span id="pod_count">0</span>)</h2>
 			<div id="pod">
 			</div>
 		</div>
 		<div id="names_doc" style="display:none">
 			<h2 id="names_head">
 			<a id="plus__names" href="javascript: section_toggle('names');" class="mod_expand" title="[% str_section_hide %]">-</a>
-			Search - Modules (<span id="names_count">0</span>)</h2>
+			[% str_list_search_module %] (<span id="names_count">0</span>)</h2>
 			<div id="names">
 			</div>
 		</div>
 		<div id="recent_doc" style="display:none">
 			<h2 id="recent_head">
 			<a id="plus__recent" href="javascript: section_toggle('recent');" class="mod_expand" title="[% str_section_hide %]">-</a>
-			Recent Modules (<span id="recent_count">0</span>)</h2>
+			[% str_list_recent %] (<span id="recent_count">0</span>)</h2>
 			<div id="recent">
 				<ul id="ul_recent" class="mod_list" style="display:block">
 					<li></li>
@@ -313,7 +310,7 @@
 		<div id="perl_doc">
 			<h2 id="perl_head"><span class="info">i<span>[% perl_path %]</span></span>
 			<a id="plus__perl" href="javascript: section_toggle('perl');" class="mod_expand" title="[% str_section_hide %]">-</a>
-			[% PerlLabel || 'Perl' %] (<span id="perl_count">0</span>)</h2>
+			[% PerlLabel || str_list_perl %] (<span id="perl_count">0</span>)</h2>
 			<div id="perl">
 			</div>
 		</div>
@@ -321,7 +318,7 @@
 		<div id="local_doc">
 			<h2 id="local_head"><span class="info">i<span>[% local_path %]</span></span>
 			<a id="plus__local" href="javascript: section_toggle('local');" class="mod_expand" title="[% str_section_hide %]">-</a>
-			[% LocalLabel || 'Local Programs' %] (<span id="local_count">0</span>)</h2>
+			[% LocalLabel || str_list_local %] (<span id="local_count">0</span>)</h2>
 			<div id="local">
 			</div>
 		</div>
@@ -329,22 +326,22 @@
 		<div id="inc_doc">
 			<h2 id="inc_head"><span class="info">i<span>[% inc_path %]</span></span>
 			<a id="plus__inc" href="javascript: section_toggle('inc');" class="mod_expand" title="[% str_section_hide %]">-</a>
-			[% IncLabel || 'Installed Modules' %] (<span id="inc_count">0</span>)</h2>
+			[% IncLabel || str_list_inc %] (<span id="inc_count">0</span>)</h2>
 			<div id="inc">
 			</div>
 		</div>
 		[%- END %]
 		<hr />
 		<div style="padding-left: 3px">
-			<a href="http://docperl.sourceforge.net/" target="_blank">DocPerl Home Page</a>
+			<a href="http://docperl.sourceforge.net/" target="_blank">[% str_link_docperl_home %]</a>
 			[% IF ClearCache -%]
 			<br />
-			<a href="?clearcache=1" target="_top">Clear Cache</a>
+			<a href="?clearcache=1" target="_top">[% str_link_clear_cache %]</a>
 			[%- END %]
 			<br />
-			<a href="?page=list&amp;sidebar=1">Bookmark for Firefox sidebar</a>
+			<a href="?page=list&amp;sidebar=1">[% str_link_firefox %]</a>
 			<br />
-			<a href="?" id="current-link" onmouseover="update_current_link();">Bookmark the page</a>
+			<a href="?" id="current-link" onmouseover="update_current_link();">[% str_link_bookmark %]</a>
 			[% IF Debug %]
 			<div id="debug"></div>
 			[% END %]
