@@ -205,7 +205,7 @@ sub process {
 	}
 
 	# create a cache object
-	my $cache_path = $page || '';
+	my $cache_path = $page || q//;
 	if ( $self->{current_location} ) {
 		$cache_path .= "/$self->{current_location}";
 	}
@@ -227,22 +227,16 @@ sub process {
 		if ( $page !~ /^_/xms && $self->can($page) ) {
 			%vars = $self->$page();
 		}
-		elsif ( $page =~ /^(pod|text|api|function|code)$/xmsi ) {
+		elsif ( my ($type) = $page =~ /^(pod|text|api|function|code)$/xmsi ) {
 
 			# try to see if the method is a cached module
-			my $module = 'DocPerl::View::' . uc $1;
-			my $file = 'DocPerl/View/' . ( uc $1 ) . '.pm';
-			eval { require $file };
-			if ($EVAL_ERROR) {
-				carp $EVAL_ERROR;
-			}
-			else {
+			my $module = 'DocPerl::View::' . uc $type;
+			my $file   = 'DocPerl/View/' . ( uc $type ) . '.pm';
+			require $file;
 
-				# use the cached object to get the data
-				#warn Dumper $self;
-				my $cache = $module->new( %{$self} );
-				%vars = $cache->process();
-			}
+			# use the cached object to get the data
+			my $cache = $module->new( %{$self} );
+			%vars = $cache->process();
 		}
 	}
 	else {
@@ -276,11 +270,19 @@ sub process {
 			. Dumper \%vars, $out;
 	}
 
-	if ( $page && ( !$self->{source} || -f $self->{source} ) ) {
-		$cache->_save_cache( cache => $cache_path, source => $self->{source} || 1, content => $out );
-	}
+	$self->cache( $page, $cache, $cache_path, $out );
 
 	return $out;
+}
+
+sub cache {
+	my ( $self, $page, $cache, $path, $out ) = @_;
+
+	if ( $page && ( !$self->{source} || -f $self->{source} ) ) {
+		$cache->_save_cache( cache => $path, source => $self->{source} || 1, content => $out );
+	}
+
+	return;
 }
 
 sub error {
@@ -405,8 +407,8 @@ sub _get_files {
 				}
 
 				# now should have a deep ref to the last part of the modules name
-				$tmp->{'*'} ||= [];
-				push @{ $tmp->{'*'} }, $full;
+				$tmp->{q/*/} ||= [];
+				push @{ $tmp->{q/*/} }, $full;
 			},
 		);
 	}
@@ -423,7 +425,7 @@ sub find {
 	closedir DIR || print {*STDERR} "Error in closing the dir handel for $path: $OS_ERROR\n";
 
 	for my $file (@files) {
-		next if $file eq '.' || $file eq '..' || $file =~ /^\d+$/xms;
+		next if $file eq q/./ || $file eq q/../ || $file =~ /^\d+$/xms;
 		my $full = "$path/$file";
 		if ( -d $full ) {
 			find( $full, $match, $action );
@@ -448,7 +450,7 @@ sub _create_js {
 	for my $module ( sort keys %{$vars} ) {
 		my $result = $self->_create_js_object( $module, $vars->{$module} );
 		if ($result) {
-			$js .= $result . ',';
+			$js .= $result . q/,/;
 		}
 	}
 	$js =~ s/,$//xms;
@@ -461,18 +463,18 @@ sub _create_js_object {
 	my $self = shift;
 	my ( $name, $vars, ) = @_;
 
-	return '' if !ref $vars;
+	return q// if !ref $vars;
 
 	my $js = "'$name':{'*':[";
 
-	if ( $vars->{'*'} and ref $vars->{'*'} eq 'ARRAY' ) {
-		$js .= q{'} . join( q{','}, @{ $vars->{'*'} } ) . q{'};
+	if ( $vars->{q/*/} and ref $vars->{q/*/} eq 'ARRAY' ) {
+		$js .= q{'} . join( q{','}, @{ $vars->{q/*/} } ) . q{'};
 	}
 	$js .= '],';
 
 	for my $module ( sort keys %{$vars} ) {
-		next if $module eq '*' or not ref $vars->{$module};
-		$js .= $self->_create_js_object( $module, $vars->{$module} ) . ',';
+		next if $module eq q/*/ or not ref $vars->{$module};
+		$js .= $self->_create_js_object( $module, $vars->{$module} ) . q/,/;
 	}
 	$js =~ s/,$//xms;
 
