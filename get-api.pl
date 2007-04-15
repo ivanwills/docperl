@@ -2,6 +2,9 @@
 
 # Created on: 2006-05-24 20:25:32
 # Create by:  ivan
+# $Id$
+# # $Revision$, $HeadURL$, $Date$
+# # $Revision$, $Source$, $Date$
 
 use strict;
 use warnings;
@@ -13,13 +16,15 @@ use Pod::Usage;
 use Data::Dumper qw/Dumper/;
 use Term::ANSIColor qw/:constants/;
 use FindBin;
-use lib "$FindBin::Bin";
+use lib qw/$FindBin::Bin/;
+use English qw/ -no_match_vars /;
 
 use DocPerl::View::API;
 use DocPerl qw/find/;
 
-sub say;
+sub colour_line;
 our $VERSION = version->new('0.9.1');
+my ($name)   = $PROGRAM_NAME =~ m{^.*/(.*?)$}mxs;
 
 my %option = (
 	columns => 2,
@@ -33,17 +38,19 @@ my %colours = (
 	headding => 'bold blue',
 	file     => 'green on_white',
 	module   => 'bold',
-	content  => '',
+	content  => q//,
 );
 
-pod2usage( -verbose => 1 ) unless @ARGV;
+if ( !@ARGV ) {
+	pod2usage( -verbose => 1 );
+}
 
 main();
-exit(0);
+exit 0;
 
 sub main {
 
-	Getopt::Long::Configure("bundling");
+	Getopt::Long::Configure('bundling');
 	GetOptions(
 		\%option,
 		'columns|c=i',
@@ -51,21 +58,28 @@ sub main {
 		'man',
 		'help',
 		'version'
-	) or pod2usage( 2 );
+	) or pod2usage(2);
 
 	my $file = pop @ARGV;
 	my $module;
 
-	print "get-api Version = $VERSION\n" and exit(1) if $option{version};
-	pod2usage( -verbose => 2 ) if $option{man};
-	pod2usage( -verbose => 1 ) if $option{help};
+	if ( $option{VERSION} ) {
+		print "$name Version = $VERSION";
+		exit 1;
+	}
+	elsif ( $option{man} ) {
+		pod2usage( -verbose => 2 );
+	}
+	elsif ( $option{help} ) {
+		pod2usage( -verbose => 1 );
+	}
 
 	# check if the file is actually a module (and find its real file)
-	unless ( -f $file ) {
+	if ( !-f $file ) {
 
 		# assume file is a module
 		$module = $file;
-		$module =~ s{::}{/}gxs;
+		$module =~ s{::}{/}gxms;
 		undef $file;
 
 		for my $path (@INC) {
@@ -74,8 +88,8 @@ sub main {
 				$module,
 				sub {
 					my $full = shift;
-					return if $full =~ m{^\./data}xs || $full =~ m{.svn|/t/}xs;
-					if ( $full =~ m{^ (?:$path) /? (?:$module) ([.]p(?:m|l)) $}xs ) {
+					return if $full =~ m{^\./data}xms || $full =~ m{.svn|/t/}xms;
+					if ( $full =~ m{^ (?:$path) /? (?:$module) ([.]p(?:m|l)) $}xms ) {
 						$file ||= $full;
 					}
 				}
@@ -87,101 +101,85 @@ sub main {
 	# Get the API for the file
 	my $api = DocPerl::View::API->new(
 		conf => {
-			General  => {
-				Data => '/tmp/',
-			},
-			IncFolders => {
-				Path => '',
-			},
+			General    => { Data => '/tmp/', },
+			IncFolders => { Path => q//, },
 		},
 		source           => $file,
-		current_location => '',
+		current_location => q//,
 	);
 	my %data = $api->process();
 	$api = $data{api};
 
 	# print out the API
 	if ($module) {
-		say 'module', $module;
-		say 'file',   $file;
+		colour_line 'module', $module;
+		colour_line 'file',   $file;
 	}
 	if ( $api->{modules} ) {
-		say 'heading', "Modules Used:\n";
+		colour_line 'heading', "Modules Used:\n";
 		display( $api->{modules}, %option );
 		print "\n";
 	}
 	if ( $api->{class} ) {
-		say 'heading', "Class Methods:\n";
+		colour_line 'heading', "Class Methods:\n";
 		display( $api->{class}, %option );
 		print "\n";
 	}
 	if ( $api->{object} ) {
-		say 'heading', "Object Methods:\n";
+		colour_line 'heading', "Object Methods:\n";
 		display( $api->{object}, %option );
 		print "\n";
 	}
 	if ( $api->{func} ) {
-		say 'heading', "General Functions:";
+		colour_line 'heading', "General Functions:\n";
 		display( $api->{func}, %option );
 		print "\n";
 	}
+
+	return;
 }
-
-=head3 C<display ( $list )>
-
-Param: C<$list> - type (detail) - description
-
-Return:  -
-
-Description:
-
-=cut
 
 sub display {
 	my ( $list, %option ) = @_;
 	my $max = 10;
-	$list = [ sort keys %$list ] if ref $list eq 'HASH';
+	if ( ref $list eq 'HASH' ) {
+		$list = [ sort keys %{$list} ];
+	}
 
 	map {
 		if ( ref $_ ) {
-			$max = length $_->{name} if length $_->{name} > $max;
+			if ( length $_->{name} > $max ) {
+				$max = length $_->{name};
+			}
 		}
-		else {
-			$max = length $_ if length $_ > $max;
+		elsif ( length $_ > $max ) {
+			$max = length $_;
 		}
-	} @$list;
+	} @{$list};
 
-	for ( my $i = 0; $i < @$list; $i += $option{columns} ) {
-		my $out = '';
+	for ( my $i = 0; $i < @$list; $i += $option{columns} ) {    ## no critic
+		my $out = q//;
 		for my $j ( 0 .. $option{columns} - 1 ) {
-			next unless $list->[ $i + $j ];
+			next if !$list->[ $i + $j ];
 			if ( ref $list->[ $i + $j ] ) {
-				$out .= $list->[ $i + $j ]->{name} . ' ' x ( $max - length( $list->[ $i + $j ]->{name} ) + 1 );
+				$out .= $list->[ $i + $j ]->{name} . q/ / x ( $max - length( $list->[ $i + $j ]->{name} ) + 1 );
 			}
 			else {
-				$out .= $list->[ $i + $j ] . ' ' x ( $max - length( $list->[ $i + $j ] ) + 1 );
+				$out .= $list->[ $i + $j ] . q/ / x ( $max - length( $list->[ $i + $j ] ) + 1 );
 			}
 		}
-		say( 'content', $out );
+		colour_line( 'content', $out );
 	}
+
+	return;
 }
 
-=head3 C<say ( $type, @line )>
-
-Param: C<$type> - string (detail) - The type of line to print
-
-Param: C<@line> - strings (detail) - the data to print
-
-Return: none -
-
-Description: Prints colourised lines
-
-=cut
-
-sub say {
+sub colour_line {
 	my ( $type, @line ) = @_;
-	my $line = join '', @line;
-	$line .= "\n" unless $line =~ /\n$/;
+	my $line = join q//, @line;
+	if ( $line !~ /\n\Z/xms ) {
+		$line .= "\n";
+	}
 
 	if ( $option{colour} ) {
 		print Term::ANSIColor::colored( $line, $colours{$type} );
@@ -189,6 +187,8 @@ sub say {
 	else {
 		print $line;
 	}
+
+	return;
 }
 
 __DATA__
@@ -215,28 +215,27 @@ This documentation refers to get-api version 0.9.1.
      --help     Prints this help information
      --man      Prints the full documentation for get-api
 
-
-
 =head1 DESCRIPTION
-
-A full description of the module and its features.
-
-May include numerous subsections (i.e., =head2, =head3, etc.).
-
 
 =head1 SUBROUTINES/METHODS
 
-A separate section listing the public components of the module's interface.
+=head3 C<display ( $list )>
 
-These normally consist of either subroutines that may be exported, or methods
-that may be called on objects belonging to the classes that the module
-provides.
+Param: C<$list> - type (detail) - description
 
-Name the section accordingly.
+Return:  -
 
-In an object-oriented module, this section should begin with a sentence (of the
-form "An object of this class represents ...") to give the reader a high-level
-context to help them understand the methods that are subsequently described.
+Description:
+
+=head3 C<colour_line ( $type, @line )>
+
+Param: C<$type> - string (detail) - The type of line to print
+
+Param: C<@line> - strings (detail) - the data to print
+
+Return: none -
+
+Description: Prints colourised lines
 
 =head1 DIAGNOSTICS
 
@@ -267,16 +266,6 @@ modules that use source code filters are mutually incompatible).
 
 =head1 BUGS AND LIMITATIONS
 
-A list of known problems with the module, together with some indication of
-whether they are likely to be fixed in an upcoming release.
-
-Also, a list of restrictions on the features the module does provide: data types
-that cannot be handled, performance issues and the circumstances in which they
-may arise, practical limitations on the size of data sets, special cases that
-are not (yet) handled, etc.
-
-The initial template usually just has:
-
 There are no known bugs in this module.
 
 Please report problems to Ivan Wills (ivan.wills@gmail.com).
@@ -291,7 +280,6 @@ Ivan Wills - (ivan.wills@gmail.com)
 
 Copyright (c) 2006 Ivan Wills (101 Miles St Bald Hills QLD Australia 4036).
 All rights reserved.
-
 
 This module is free software; you can redistribute it and/or modify it under
 the same terms as Perl itself. See L<perlartistic>.  This program is
