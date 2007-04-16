@@ -35,19 +35,18 @@ sub search {
 
 	my $dir = "$conf->{'General'}{'Data'}/cache/$location/";
 
-	find sub{
+	find sub {
 		return if -d $_;
 		open my $f, '<', $_ or return;
 		local $INPUT_RECORD_SEPARATOR = undef;
 		my $text = <$f>;
-		my $count = $text =~ /$args{terms}/gis;
-		return unless $count;
+		my $count = $text =~ /$args{terms}/gisxm;
+		return if not $count;
 		my ( $area, $file ) = $File::Find::name =~ m{^ $dir (\w+) / (.+) $}xms;
 		$file =~ s{/}{::}gxms;
 		$file =~ s{[.]\w+$}{}xms;
 		push @{ $rank{$count} }, [ $file => $area ];
-	},
-	$dir;
+	}, $dir;
 
 	$conf->{Search}{result_size} ||= 100;
 

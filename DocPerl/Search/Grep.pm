@@ -34,7 +34,7 @@ sub search {
 		:                                              'pod';
 
 	my $dir = "$conf->{'General'}{'Data'}/cache/$location/";
-	my $F   = $args{'terms'} =~ /\A[\w\s]+\Z/xms ? '-F' : '';
+	my $F   = $args{'terms'} =~ /\A[\w\s]+\Z/xms ? '-F' : q{};
 	my $cmd = "$conf->{'Search'}{'grep'} $F -cR '$args{'terms'}' $dir";
 	my $out = `$cmd`;
 
