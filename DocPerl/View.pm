@@ -53,14 +53,14 @@ sub _check_cache {
 	my $source = $arg{source};
 	my $cache  = $arg{cache};
 
-	return '' if $conf->{General}{Cache} && $conf->{General}{Cache} eq 'off';
+	return q{} if $conf->{General}{Cache} && $conf->{General}{Cache} eq 'off';
 
 	# check that the arguments are supplied
 	croak 'Missing required argument - source, file'    if !$source;
 	croak 'Missing required argument - cache, location' if !$cache;
 	if ( $source =~ /[.][.]/xms || $cache =~ /[.][.]/xms ) {
 		carp "possible hack attempt with $source or $cache";
-		return '';
+		return q{};
 	}
 
 	# check if the cache file has a suffix
@@ -75,17 +75,17 @@ sub _check_cache {
 	my $file = "$self->{cache_dir}/$cache";
 
 	# check that there is a cache file
-	return '' if !-f $file;
+	return q{} if !-f $file;
 
 	# get the file stats for the source and cached files
 	my $source_stat = $source ne '1' ? stat $source : undef;
 	my $cache_stat = stat $file;
 
 	# check that the last modified times of both files are the same
-	return '' if $source ne '1' && $source_stat->mtime != $cache_stat->mtime;
+	return q{} if $source ne '1' && $source_stat->mtime != $cache_stat->mtime;
 
 	# read the contents of the cached file
-	open my $cache_fh, '<', $file or carp "Could not read the cache file $file: $!" and return '';
+	open my $cache_fh, '<', $file or carp "Could not read the cache file $file: $!" and return q{};
 	my $data;
 	{
 		local $INPUT_RECORD_SEPARATOR = undef;
@@ -132,7 +132,7 @@ sub _save_cache {
 	}
 
 	# make sure that we have all the directories up to the cached file
-	$dir .= '/' . join '/', @parts;
+	$dir .= q{/} . join q{/}, @parts;
 	my ($path) = $dir =~ m{^ ( [\w\-\./]+ ) $}xms;
 	return if !$path;
 
