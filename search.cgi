@@ -2,6 +2,9 @@
 
 # Created on: 2006-06-25 05:55:36
 # Create by:  ivan
+# $Id$
+# $Revision$, $HeadURL$, $Date$
+# $Revision$, $Source$, $Date$
 
 use strict;
 use warnings;
@@ -24,7 +27,7 @@ Readonly my $CONFIG => "$BASE/docperl.conf";
 delete $ENV{PATH};
 
 main();
-exit(0);
+exit 0;
 
 sub main {
 	my $cgi = CGI->new();
@@ -32,11 +35,15 @@ sub main {
 
 	my $engine = $config{'Search'}{'Engine'} eq 'Grep'
 		&& -x $config{'Search'}{'grep'} ? 'DocPerl::Search::Grep' : 'DocPerl::Search::Perl';
-	my $terms  = $cgi->param('terms') || $ARGV[0] || 'test';
-	my $type   = $cgi->param('type')  || $ARGV[1] || 'xml';
-	my $area   = $cgi->param('area')  || $ARGV[2] || 'text';
+	my $terms = $cgi->param('terms') || $ARGV[0] || 'test';
+	my $type  = $cgi->param('type')  || $ARGV[1] || 'xml';
+	my $area  = $cgi->param('area')  || $ARGV[2] || 'text';
+
+	# get the search engine object
 	my $search = $engine->new( conf => \%config, );
-	my @files  = $search->search( terms => $terms, area => $area );
+
+	# find the files
+	my @files = $search->search( terms => $terms, area => $area );
 
 	if ( $type eq 'jason' ) {
 		jason( $cgi, $terms, @files );
@@ -57,8 +64,10 @@ sub jason {
 	}
 	print $cgi->header('text/jason');
 	print "{'terms':'$terms','count':$count,'results':{";
-	print join ',', map { "'$_':['" . ( join "','", @{ $results{$_} } ) . "']" } keys %results;
+	print join q{,}, map { "'$_':['" . ( join q{','}, @{ $results{$_} } ) . q{']} } keys %results;
 	print "}}\n";
+
+	return;
 }
 
 sub xml {
@@ -69,6 +78,8 @@ sub xml {
 		print "\t\t<file area=\"$file->[1]\">$file->[0]</file>\n";
 	}
 	print "\t</results>\n</search>\n";
+
+	return;
 }
 
 __DATA__

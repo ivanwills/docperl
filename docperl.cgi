@@ -2,6 +2,9 @@
 
 # Created on: 2006-01-20 07:10:57
 # Create by:  ivanw
+# $Id$
+# $Revision$, $HeadURL$, $Date$
+# $Revision$, $Source$, $Date$
 
 use strict;
 use warnings;
@@ -24,7 +27,7 @@ Readonly my $CONFIG => "$BASE/docperl.conf";
 delete $ENV{PATH};
 
 main();
-exit(0);
+exit 0;
 
 sub main {
 	my $cgi = CGI->new();
@@ -40,6 +43,8 @@ sub main {
 
 	print $cgi->header( $docperl->mime() );
 	print $docperl->process();
+
+	return;
 }
 
 # catastrophic error page
@@ -51,7 +56,7 @@ sub error {
 	for my $hidden (@hidden) {
 		print "<div>\n$hidden\n</div>\n";
 	}
-	print "</body></html>";
+	print '</body></html>';
 	exit 1;
 }
 
