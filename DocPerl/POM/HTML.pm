@@ -24,10 +24,12 @@ our $LOCATION    = 'inc';
 our $MODULE      = 'inc';
 our $FILE        = 'inc';
 our $SOURCE      = 'inc';
+our $ANCHORS     = {};
 
 sub menu {
 	my ( $self, $pod ) = @_;
 
+	$ANCHORS  = {};
 	my $menu  = '<ul class="menu">' . "\n";
 	my @items = $self->menu_items($pod);
 
@@ -57,6 +59,16 @@ sub menu_items {
 		my $type = $item->type();
 		if ( $type eq 'head1' || $type eq 'head2' || $type eq 'head3' || $type eq 'head4' ) {
 			push @items, $item;
+			my $title = $item->title->present();
+			$title =~ s/\s.*$//xms;
+			$ANCHORS->{$title} = 1;
+		}
+		if ( $type eq 'item' ) {
+			my $title = $item->title->present();
+			$title =~ s/\s.*$//xms;
+			if ( $title !~ /\A\s*\*\s*/xms && $title !~ /\A\s*\d+\.?\s*/xms ) {
+				$ANCHORS->{$title} = 1;
+			}
 		}
 		push @items, $self->menu_items($item);
 	}
@@ -140,7 +152,7 @@ sub view_over {
 	my ( $start, $end, $strip );
 
 	my $items = $over->item();
-	return '' if !@{$items};
+	return q{} if !@{$items};
 
 	my $first_title = $items->[0]->title();
 
@@ -161,7 +173,7 @@ sub view_over {
 	else {
 		$start = "<dl>\n";
 		$end   = "</dl>\n";
-		$strip = '';
+		$strip = q{};
 	}
 
 	my $overstack = ref $self ? $self->{OVER} : \@SUPER::OVER;
@@ -180,8 +192,8 @@ sub view_item {
 	my $strip = $over->[-1];
 
 	my $start_title   = '<li>';
-	my $end_title     = '';
-	my $start_content = '';
+	my $end_title     = q{};
+	my $start_content = q{};
 	my $end_content   = '</li>';
 
 	if ( defined $title ) {
@@ -213,7 +225,10 @@ sub view_seq_code {
 	my ( $self, $text ) = @_;
 
 	# check if the text loosk like a Module
-	if ( $text =~ /^[\w:]+$/xms ) {
+	if ( $ANCHORS->{$text} ) {
+		$text = "<a href=\"#item_$text\">$text</a>";
+	}
+	elsif ( $text =~ /^[\w:]+$/xms ) {
 		$text = "<a href=\"?page=pod&module=$text&location=$LOCATION\">$text</a>";
 	}
 
@@ -252,10 +267,10 @@ sub view_seq_link {
 		( $page, $section ) = ( $1, $2 );
 	}
 	elsif ( $link =~ /\s/xms ) {                       # this must be a section with missing quotes
-		( $page, $section ) = ( '', $link );
+		( $page, $section ) = ( q{}, $link );
 	}
 	else {
-		( $page, $section ) = ( $link, '' );
+		( $page, $section ) = ( $link, q{} );
 	}
 
 	# warning; show some text.
@@ -263,7 +278,7 @@ sub view_seq_link {
 		$linktext = $orig_link;
 	}
 
-	my $url = '';
+	my $url = q{};
 	if ( defined $page && length $page ) {
 		$url = $self->view_seq_link_transform_path($page);
 	}
@@ -284,7 +299,7 @@ sub make_href {
 			$url = "?page=pod&module=$title&location=$LOCATION";
 		}
 		else {
-			return defined $title ? "<i>$title</i>" : '';
+			return defined $title ? "<i>$title</i>" : q{};
 		}
 	}
 
