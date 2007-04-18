@@ -59,12 +59,12 @@ sub menu_items {
 		my $type = $item->type();
 		if ( $type eq 'head1' || $type eq 'head2' || $type eq 'head3' || $type eq 'head4' ) {
 			push @items, $item;
-			my $title = $item->title->present();
+			my $title = ref $item->title ? $item->title->present() : $item->title;
 			$title =~ s/\s.*$//xms;
 			$ANCHORS->{$title} = 1;
 		}
 		if ( $type eq 'item' ) {
-			my $title = $item->title->present();
+			my $title = ref $item->title ? $item->title->present() : $item->title;
 			$title =~ s/\s.*$//xms;
 			if ( $title !~ /\A\s*\*\s*/xms && $title !~ /\A\s*\d+\.?\s*/xms ) {
 				$ANCHORS->{$title} = 1;
