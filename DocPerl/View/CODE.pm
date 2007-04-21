@@ -3,8 +3,8 @@ package DocPerl::View::CODE;
 # Created on: 2006-03-19 20:32:42
 # Create by:  ivan
 # $Id$
-# # $Revision$, $HeadURL$, $Date$
-# # $Revision$, $Source$, $Date$
+# $Revision$, $HeadURL$, $Date$
+# $Revision$, $Source$, $Date$
 
 use strict;
 use warnings;
@@ -24,7 +24,7 @@ sub process {
 	my $q           = $self->{cgi};
 	my $code        = $self->{source};
 	my $in_pod      = 0;
-	my $here_marker = '';
+	my $here_marker = q{};
 	my $here_style;
 	my @lines;
 	my %links;
@@ -38,7 +38,7 @@ sub process {
 		# convert tabs into spaces of width 4
 		my $code_line = to_spaces( $line, 4 );
 
-		my $j       = $INPUT_LINE_NUMBER;
+		my $j = $INPUT_LINE_NUMBER;
 
 		# check if the line contains infor that may be linked to esternally
 		if ( my ( $func, $head ) = $line =~ /^(?:\s* sub \s+ (\w+) | =head[1234] \s+ (?:\w<)? (\w+) )/xms ) {
@@ -72,44 +72,15 @@ sub process {
 			# check if the line is that sort of line
 			if ( not $code and not $char and not $comment ) {
 				$code    = $code_line;
-				$char    = '';
-				$comment = '';
+				$char    = q{};
+				$comment = q{};
 			}
 			elsif ($comment) {
 				$comment = qq{<span class="comment">#$comment</span>};
 			}
 
 			# tag the various parts of perl code
-			if ($code) {
-
-				# tag operators
-				$code =~ s/(=~?|\.=|\|\|=|\*=|\\=|\+=|-=|\|\|?|&amp;(?:&amp;)?|<=>)/<span class="operator">$1<\/span>/gxms;
-
-				# tag string operators
-				$code =~ s/([^\w&])(eq|ne|le|ge|lt|gt|cmp)(\W)/$1<span class="operator">$2<\/span>$3/gxms;
-
-				# tag operators missed by other re's
-				$code =~ s/([^-])(&lt;|&gt;)/$1<span class="operator">$2<\/span>/gxms;
-
-				# tag reserved words
-				$code =~ s/(\W|^)(if|else|elsif|unless|while|do|for|foreach|sub|return|my|our|local|use|require|no)(\W|$)/$1<span class="reserved">$2<\/span>$3/gxms;
-
-				# tag built-in functions
-				$code =~ s/(\W|^)(shift|warn|die|exit|print|open|close|exists|defined)(\(|\s)/$1<span class="builtin">$2<\/span>$3/gxms;
-
-				# tag built-in functions
-				$code =~ s/(\W|^)(sort|keys|values|unlink|push|pop|shift|unshift)(\(|\s)/$1<span class="builtin">$2<\/span>$3/gxms;
-
-				# tab variable declarations
-				$code =~ s/(\W|^)(my|our|local)(\W)/$1<span class="declatory">$2<\/span>$3/gxms;
-
-				# tag loop operators
-				$code =~ s/(\W)(next|last|exit)(\W|$)/$1<span class="other">$2<\/span>$3/gxms;
-
-				# tag logical opperators
-				$code =~ s/(\s)(not|or\s+not|or|and\s+not|and)(\s)/$1<span class="logic">$2<\/span>$3/gxms;
-				$code =~ s/(->|\s)(new)(\(|\s)/$1<span class="builtin">$2<\/span>$3/gxms;
-			}
+			$code = $code ? tag_code($code) : $code;
 
 			# reassemble the line of code
 			$code_line = $code;
@@ -145,7 +116,7 @@ sub process {
 		push @lines, { line_no => $j, code => $code_line };
 	}
 
-	close $file;
+	close $file or carp "Problem in closing file handle: $OS_ERROR\n";
 	for my $link ( keys %links ) {
 		$lines[ ($links{$link}{func} || $links{$link}{head}) - 3 ]{ext_link} = $link;
 	}
@@ -153,12 +124,46 @@ sub process {
 	return lines => \@lines;
 }
 
+sub tag_code {
+	my ( $self, $code ) = @_;
+
+	# tag operators
+	$code =~ s/(=~?|\.=|\|\|=|\*=|\\=|\+=|-=|\|\|?|&amp;(?:&amp;)?|<=>)/<span class="operator">$1<\/span>/gxms;
+
+	# tag string operators
+	$code =~ s/([^\w&])(eq|ne|le|ge|lt|gt|cmp)(\W)/$1<span class="operator">$2<\/span>$3/gxms;
+
+	# tag operators missed by other re's
+	$code =~ s/([^-])(&lt;|&gt;)/$1<span class="operator">$2<\/span>/gxms;
+
+	# tag reserved words
+	$code =~ s/(\W|^)(if|else|elsif|unless|while|do|for|foreach|sub|return|my|our|local|use|require|no)(\W|$)/$1<span class="reserved">$2<\/span>$3/gxms;
+
+	# tag built-in functions
+	$code =~ s/(\W|^)(shift|warn|die|exit|print|open|close|exists|defined)(\(|\s)/$1<span class="builtin">$2<\/span>$3/gxms;
+
+	# tag built-in functions
+	$code =~ s/(\W|^)(sort|keys|values|unlink|push|pop|shift|unshift)(\(|\s)/$1<span class="builtin">$2<\/span>$3/gxms;
+
+	# tab variable declarations
+	$code =~ s/(\W|^)(my|our|local)(\W)/$1<span class="declatory">$2<\/span>$3/gxms;
+
+	# tag loop operators
+	$code =~ s/(\W)(next|last|exit)(\W|$)/$1<span class="other">$2<\/span>$3/gxms;
+
+	# tag logical opperators
+	$code =~ s/(\s)(not|or\s+not|or|and\s+not|and)(\s)/$1<span class="logic">$2<\/span>$3/gxms;
+	$code =~ s/(->|\s)(new)(\(|\s)/$1<span class="builtin">$2<\/span>$3/gxms;
+
+	return $code;
+}
+
 sub to_spaces {
 	my ( $line, $tab_size ) = @_;
 
 	# only do the check if there are tabs
 	return $line if $line !~ /\t/xms;
-	my $spaces = ' ' x $tab_size;
+	my $spaces = q{ } x $tab_size;
 	return $spaces if $line eq "\t";
 
 	# remove any initial spaces
@@ -169,10 +174,10 @@ sub to_spaces {
 	# split the line into tabs
 	my @parts = split /\t/xms, $line;
 	if ( $line =~ /^\t/xms ) {
-		unshift @parts, '';
+		unshift @parts, q{};
 	}
 	my $final = ( $line =~ /\t$/xms ) ? 1 : 0;
-	$line = '';
+	$line = q{};
 
 	for my $i ( 0 .. $#parts ) {
 		my $part = $parts[$i];
@@ -182,7 +187,7 @@ sub to_spaces {
 		}
 		$line .= $part;
 		if ( $i != $#parts or $final ) {
-			$line .= ' ' x ( 4 - length($part) % $tab_size );
+			$line .= q{ } x ( 4 - length($part) % $tab_size );
 		}
 	}
 	return $line;

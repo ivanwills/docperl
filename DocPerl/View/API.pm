@@ -3,8 +3,8 @@ package DocPerl::View::API;
 # Created on: 2006-03-19 20:32:12
 # Create by:  ivan
 # $Id$
-# # $Revision$, $HeadURL$, $Date$
-# # $Revision$, $Source$, $Date$
+# $Revision$, $HeadURL$, $Date$
+# $Revision$, $Source$, $Date$
 
 use strict;
 use warnings;
@@ -118,7 +118,7 @@ LINE:
 			}
 		}
 	}
-	close $fh;
+	close $fh or carp "Problem closing filehandle: $OS_ERROR\n";
 
 	if ( !@{ $api{parents} } ) {
 		delete $api{parents};
@@ -136,7 +136,7 @@ LINE:
 			$api{hirachy} = $api{parents};
 		}
 		elsif ( !@{ $api{hirachy}[0]{hirachy} } && $api{parents} ) {
-			carp "Found parents of $api{package} (" . ( join ',', @{ $api{parents} } ) . ') but not hirachy!';
+			carp "Found parents of $api{package} (" . ( join q{,}, @{ $api{parents} } ) . ') but not hirachy!';
 			$api{hirachy}[0]{hirachy} = [ map { { class => $_ } } @{ $api{parents} } ];
 		}
 
@@ -289,10 +289,10 @@ sub get_hirachy {
 		my $have_sym = 0;
 		$sym =~ s/::(\w+)$/::/xms;
 		if ($sub_sym) {
-			$sub_sym .= '::';
+			$sub_sym .= q{::};
 		}
 		else {
-			$sym .= '::';
+			$sym .= q{::};
 		}
 
 		if ( !$file ) {
