@@ -462,7 +462,13 @@ function list_toggle( id ) {
 	if (!ul) {
 		ul = create_tree( null, 'li__'+id, id, 'inc');
 	}
-	var link = document.getElementById( 'plus__' + id );
+	if (!ul) return;
+
+	// get the link element
+	var link      = document.getElementById( 'plus__' + id );
+	var open_str  = get_cookie('DocPerl_opened');
+	var open_list = open_str ? open_str.split(':').sort() : [];
+
 	// check the status of the list
 	if ( ul.style && ul.style.display == 'block' ) {
 		// list is open so close
@@ -470,6 +476,15 @@ function list_toggle( id ) {
 		link.removeChild( link.firstChild );
 		link.appendChild( document.createTextNode('+') );
 		link.title = '[% str_list_show %]';
+
+		// remove the id from the list if present
+		var new_open_list = [];
+		for ( var i = 0; i < open_list.length; i++ ) {
+			if ( open_list[i] != id ) {
+				new_open_list.push(open_list[i]);
+			}
+		}
+		open_list = new_open_list;
 	}
 	else {
 		// list is closed so open
@@ -477,7 +492,17 @@ function list_toggle( id ) {
 		link.removeChild( link.firstChild );
 		link.appendChild( document.createTextNode('-') );
 		link.title = '[% str_list_hide %]';
+
+		// append the id to the list if not already present
+		var found = false;
+		for ( var i = 0; i < open_list.length; i++ ) {
+			if ( open_list[i] == id ) {
+				found = true;
+			}
+		}
+		if (!found) open_list.push(id);
 	}
+	set_cookie('DocPerl_opened', open_list.join(':'));
 }
 
 /**

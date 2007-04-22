@@ -179,7 +179,6 @@
 					if ( exists_cookie( name ) ) {
 						var list    = get_cookie( name );
 						var modules = list.split(':');
-
 						for ( var module in modules ) {
 							display_recent( modules[module] );
 						}
@@ -193,6 +192,17 @@
 					group++;
 					setTimeout( setup_modules, 10 );
 					setTimeout( fade_headding, [% animation %] );
+				}
+				else if ( group == 5 ) {
+					level = 0;
+					group++;
+					setTimeout( setup_modules, 10 );
+					var open_str  = get_cookie('DocPerl_opened');
+					if (!open_str) return;
+					var open_list = open_str.split(':').sort();
+					for ( var i = 0; i < open_list.length; i++ ) {
+						list_toggle(open_list[i]);
+					}
 				}
 			}
 			var state      = 'perl';
