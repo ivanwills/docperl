@@ -3,8 +3,8 @@
 # Created on: 2006-03-24 05:48:19
 # Create by:  ivan
 # $Id$
-# # $Revision$, $HeadURL$, $Date$
-# # $Revision$, $Source$, $Date$
+# $Revision$, $HeadURL$, $Date$
+# $Revision$, $Source$, $Date$
 
 use strict;
 use warnings;
@@ -221,7 +221,7 @@ sub shrink_js {
 	$text =~ s{/[*][*] .*? [*]/\n*}{}gxms;
 
 	# end of line comments
-	$text =~ s{\s*//[^\n]*\n}{\n}gxms;
+	$text =~ s{\s+//[^\n]*\n}{\n}gxms;
 
 	# multiple new lines
 	$text =~ s/\n\n+/\n/gxms;
@@ -252,21 +252,21 @@ sub shrink_js {
 	$text .= $func;
 
 	%replace = (
-		'add_count'         => 'ac',
+#		'add_count'         => 'ac',  #
 		'clear_cookie'      => 'cc',
 		'cookie_number'     => 'cn',
 		'create_module'     => 'Cm',
 		'create_plus'       => 'Cp',
-		'create_tree'       => 'Ct',
+#		'create_tree'       => 'Ct',  #
 		'container_id'      => 'ci',
 		'count'             => 'C',
-		'count_tree'        => 'ct',
+#		'count_tree'        => 'ct',  #
 		'counter'           => 'c',
 		'counter_span'      => 'cs',
 		'counter_value'     => 'cv',
-		'display_recent'    => 'dr',
+#		'display_recent'    => 'dr',  #
 		'end_of_cookie'     => 'eoc',
-		'exists_cookie'     => 'ec',
+#		'exists_cookie'     => 'ec',  #
 		'expiry_date'       => 'ed',
 		'expiry_string'     => 'es',
 		'found'             => 'f',
@@ -275,16 +275,16 @@ sub shrink_js {
 		'debug_div'         => 'dd',
 		'debug_found'       => 'df',
 		'domain_string'     => 'ds',
-		'get_cookie'        => 'gc',
+#		'get_cookie'        => 'gc',  #
 		'get_cookie_count'  => 'gcc',
 		'get_cookie_number' => 'gcn',
 		'head'              => 'h',
 		'lable'             => 'L',
 		'link'              => 'l',
 		'list'              => 'l',
-		'list_toggle'       => 'lt',
+#		'list_toggle'       => 'lt',  #
 		'li_sub'            => 'ls',
-		'module'            => 'm',
+#		'module'            => 'm',
 		'my_cookie'         => 'mc',
 		'name'              => 'c',
 		'name_length'       => 'nl',
