@@ -12,6 +12,12 @@ Match:          \.(?:pm|pl|pod|cgi)$
 # Exclude: directories to exclude from the search path
 Exclude:        ./data
 
+# suffixes - a competing way of acheaving the same effect as Match,
+# probably should be the dominant way
+suffixes:       pod
+suffixes:       pm
+suffixes:       pl
+suffixes:       cgi
 
 ## IncFolders
 # This section specifies the options for the Files shown in the 'Installed

@@ -31,6 +31,17 @@ A colon seperated list of directories to exclude from the search path
 
 A regular expression to decide which files to include in the list
 
+=item suffixes
+
+Specifies file suffixes that can be to search for specific files. To
+specify more that one suffix repeat the suffixes option multiple tiems e.g.
+
+ suffixes: pm
+ suffixes: pod
+ suffixes: pl
+
+It should replace Match for general file searching.
+
 =back
 
 =head3 IncFolders
