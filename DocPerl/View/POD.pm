@@ -6,9 +6,6 @@ package DocPerl::View::POD;
 # $Revision$, $HeadURL$, $Date$
 # $Revision$, $Source$, $Date$
 
-# Created on: 2007-02-13 19:14:27
-# Create by:  ivan
-
 use strict;
 use warnings;
 use version;
@@ -29,7 +26,6 @@ sub process {
 	my $module  = $self->{module};
 	my $file    = $self->{source} || '';
 	my @folders = $self->{folders};
-	my @suffixes;
 
 	croak 'No location supplied' if !$self->{current_location};
 
