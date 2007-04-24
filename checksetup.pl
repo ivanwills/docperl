@@ -281,7 +281,7 @@ sub shrink_js {
 		'head'              => 'h',
 		'lable'             => 'L',
 		'link'              => 'l',
-		'list'              => 'l',
+		'list'              => 'li',
 #		'list_toggle'       => 'lt',  #
 		'li_sub'            => 'ls',
 #		'module'            => 'm',
@@ -290,7 +290,7 @@ sub shrink_js {
 		'name_length'       => 'nl',
 		'path_string'       => 'ps',
 		'path_to_module'    => 'ptm',
-		'plus'              => 'l',
+		'plus'              => 'pl',
 		'result'            => 'r',
 		'search_name'       => 'sn',
 		'sect'              => 'S',
