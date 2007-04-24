@@ -179,7 +179,7 @@ sub find_matches {
 	$self->{sources}  = \@files;                           # all files that match the module name
 	$self->{source}   = $q->{source} || $files[0]{file};
 
-	#warn "$self->{current_location}: $self->{source}\nfolders = ".(join ', ', @folders);
+	#warn "$self->{current_location}: $self->{source}\nfolders = ".(join ', ', @folders)."\n files = ".(join ', ', map { keys %{$_} } @files);
 
 	if ( ( !$self->{source} || !-e $self->{source} )
 		&& $self->{current_location} eq 'local' ) {
@@ -253,7 +253,7 @@ sub process {
 	$vars{sources}    = $self->{sources};
 	$vars{source}     = $self->{source};
 	$vars{page}       = $page;
-	$vars{module_1st} = ( uc substr $self->{module}, 0, 1 ) || 'A';
+	$vars{module_1st} = uc substr $self->{module} || 'A', 0, 1;
 
 	# get the template object
 	my $tmpl = $self->get_templ_object();
