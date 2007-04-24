@@ -80,7 +80,7 @@ sub process {
 			}
 
 			# tag the various parts of perl code
-			$code = $code ? tag_code($code) : $code;
+			$code = $code ? $self->tag_code($code) : $code;
 
 			# reassemble the line of code
 			$code_line = $code;
