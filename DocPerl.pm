@@ -246,13 +246,14 @@ sub process {
 	}
 
 	# set up other required params
-	$vars{DUMP}     = Dumper( \%vars );
-	$vars{module}   = $self->{module};
-	$vars{file}     = $self->{module_file};
-	$vars{location} = $self->{current_location};
-	$vars{sources}  = $self->{sources};
-	$vars{source}   = $self->{source};
-	$vars{page}     = $page;
+	$vars{DUMP}       = Dumper( \%vars );
+	$vars{module}     = $self->{module};
+	$vars{file}       = $self->{module_file};
+	$vars{location}   = $self->{current_location};
+	$vars{sources}    = $self->{sources};
+	$vars{source}     = $self->{source};
+	$vars{page}       = $page;
+	$vars{module_1st} = substr $self->{module}, 0, 1;
 
 	# get the template object
 	my $tmpl = $self->get_templ_object();

@@ -46,7 +46,10 @@
 				next.style.display    = 'block';
 				current_file = select.options[index].value;
 			}
-			window.parent.menu.click_module('[% location %]__[% module.substr(0,1) %]__[% module.replace(':','_') %]');
+			if (window.parent.menu.click_module)
+				window.parent.menu.click_module('[% location %]__[% module.substr(0,1) %]__[% module.replace(':','_') %]');
+			else
+				setTimeout("window.parent.menu.click_module('[% location %]__[% module_1st %]__[% module.replace(':','_') %]')", 3000);
 		//-->
 		</script>
 	</head>
