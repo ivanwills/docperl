@@ -253,7 +253,7 @@ sub process {
 	$vars{sources}    = $self->{sources};
 	$vars{source}     = $self->{source};
 	$vars{page}       = $page;
-	$vars{module_1st} = substr $self->{module}, 0, 1;
+	$vars{module_1st} = ( uc substr $self->{module}, 0, 1 ) || 'A';
 
 	# get the template object
 	my $tmpl = $self->get_templ_object();
