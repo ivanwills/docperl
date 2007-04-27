@@ -29,7 +29,8 @@ A colon seperated list of directories to exclude from the search path
 
 =item Match
 
-A regular expression to decide which files to include in the list
+A regular expression to decide which files to include in the list. If not
+specified it will be created from the suffixes option
 
 =item suffixes
 
@@ -47,7 +48,7 @@ It should replace Match for general file searching.
 =head3 IncFolders
 
 The system wide installed perl modules section. Similar to LocalFolders
-execpt Path is added to the @INC path.
+execpt Path is added to the global @INC path.
 
 =head3 Templates
 
