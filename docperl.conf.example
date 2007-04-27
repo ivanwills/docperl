@@ -7,17 +7,17 @@
 Path:           .
 
 # Match - A regular expression to determine which files to consider as Perl file
-Match:          \.(?:pm|pl|pod|cgi)$
+#         This is not required as it can be determined from the suffixes allowed
+#Match:          \.(?:pm|pl|pod|cgi)$
 
-# Exclude: directories to exclude from the search path
-Exclude:        ./data
-
-# suffixes - a competing way of acheaving the same effect as Match,
-# probably should be the dominant way
+# suffixes - Defines the file suffixes that can be found by docperl
 suffixes:       pod
 suffixes:       pm
 suffixes:       pl
 suffixes:       cgi
+
+# Exclude: directories to exclude from the search path
+Exclude:        ./data
 
 ## IncFolders
 # This section specifies the options for the Files shown in the 'Installed
@@ -29,8 +29,12 @@ suffixes:       cgi
 Path:           .
 
 # Match - Set the regular expression for finding files in those directories
-# By default it is limited to Perl modules and POD files
-Match:          \.(?:pm|pod)$
+#         This is not required as it can be determined from the suffixes allowed
+#Match:          \.(?:pm|pl)$
+
+# suffixes - Defines the file suffixes that can be found by docperl
+suffixes:       pod
+suffixes:       pm
 
 # Exclude: directories to exclude from the search path
 Exclude:        ./data
