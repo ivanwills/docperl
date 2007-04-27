@@ -23,7 +23,7 @@ use DocPerl::View::API;
 use DocPerl qw/find/;
 
 sub colour_line;
-our $VERSION = version->new('0.9.1');
+our $VERSION = version->new('0.9.2');
 my ($name)   = $PROGRAM_NAME =~ m{^.*/(.*?)$}mxs;
 
 my %option = (
@@ -199,7 +199,7 @@ get-api - Displays a summary of the API used by the file or module passed
 
 =head1 VERSION
 
-This documentation refers to get-api version 0.9.1.
+This documentation refers to get-api version 0.9.2.
 
 =head1 SYNOPSIS
 

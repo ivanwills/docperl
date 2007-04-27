@@ -15,7 +15,7 @@ use Data::Dumper qw/Dumper/;
 use English qw/ -no_match_vars /;
 use base qw/DocPerl::Search/;
 
-our $VERSION     = version->new('0.9.1');
+our $VERSION     = version->new('0.9.2');
 our @EXPORT_OK   = qw//;
 our %EXPORT_TAGS = ();
 
@@ -72,7 +72,7 @@ DocPerl::Search::Grep - <One-line description of module's purpose>
 
 =head1 VERSION
 
-This documentation refers to DocPerl::Search::Grep version 0.9.1.
+This documentation refers to DocPerl::Search::Grep version 0.9.2.
 
 
 =head1 SYNOPSIS

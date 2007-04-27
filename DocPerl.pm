@@ -17,7 +17,7 @@ use DocPerl::View;
 use English qw/ -no_match_vars /;
 use base qw/Exporter/;
 
-our $VERSION   = version->new('0.9.1');
+our $VERSION   = version->new('0.9.2');
 our @EXPORT_OK = qw/find/;
 
 sub new {
@@ -534,7 +534,7 @@ DocPerl - Module for DocPerl stuff
 
 =head1 VERSION
 
-This documentation refers to DocPerl version 0.9.1.
+This documentation refers to DocPerl version 0.9.2.
 
 =head1 SYNOPSIS
 

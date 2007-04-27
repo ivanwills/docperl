@@ -18,7 +18,7 @@ use lib qw/./;
 use DocPerl::Search::Grep;
 use DocPerl::Search::Perl;
 
-our $VERSION = version->new('0.9.1');
+our $VERSION = version->new('0.9.2');
 
 Readonly my $BASE   => $Bin;
 Readonly my $CONFIG => "$BASE/docperl.conf";
@@ -90,7 +90,7 @@ search.cgi - Searches the POD, API's and Code cached DocPerl files
 
 =head1 VERSION
 
-This documentation refers to search.cgi version 0.9.1.
+This documentation refers to search.cgi version 0.9.2.
 
 =head1 SYNOPSIS
 
