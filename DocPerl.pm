@@ -349,6 +349,11 @@ sub list {
 	$self->_get_files( \@local_folders, $conf->{LocalFolders}{Match}, $vars{LOCAL}, );
 	$vars{'local'} = $self->_create_js( 'local', $vars{LOCAL} );
 
+	# split the javascript into lines not much longer than 1000 characters (attempt to fix KHTML issue
+#	$vars{perl}  =~ s/([^\n]{1000}[^\n]*?):/\1:\n/gxms;
+#	$vars{inc}   =~ s/([^\n]{1000}[^\n]*?):/\1:\n/gxms;
+#	$vars{local} =~ s/([^\n]{1000}[^\n]*?):/\1:\n/gxms;
+
 	# create the path info for the list page
 	$vars{local_path} = join '<br/>', @local_folders;
 
