@@ -427,11 +427,11 @@ This documentation refers to checksetup.pl version 0.9.2.
 =head1 SYNOPSIS
 
    checksetup.pl [ --version | --help | --man ]
-   checksetup.pl [ -v ] [ -p ] [ -c [ pod||,api||,code ]
+   checksetup.pl [ -v ] [ -p ] [ -c [ pod||,api||,code||,text||,function ]
 
  OPTIONS:
-  -c --compile=opt Pre compile the pod/api/code (seperate with commas to
-                   compile more than one option eg -c pod,code)
+  -c --compile=opt Pre compile the pod/api/code/text/function (seperate with
+                   commas to compile more than one option eg -c pod,code)
   -p --purge       Purge the current cache files.
   -s --shrink      Shrink the size of the js & css files (makes them less
                    readable but smaller)
@@ -441,7 +441,11 @@ This documentation refers to checksetup.pl version 0.9.2.
      --help        Prints this help information
      --man         Prints the full documentation for checksetup.pl
 
-  Note: Creating cached api files (-c api) can cause checksetup.pl to crash
+  Note 1: Creating cached api files (-c api) can cause checksetup.pl to crash
+  Note 2: Compiling text or pod and function will enable searching of POD and
+          function names respectivly.
+  Note 3: Any compile action will compile the list file so a purge will be
+          needed if new modules are instaled.
 
 =head1 DESCRIPTION
 
