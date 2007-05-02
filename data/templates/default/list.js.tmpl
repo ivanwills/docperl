@@ -13,6 +13,168 @@
  */
 
 /**
+ *  @todo
+ *  @bug
+ *
+ *  Takes the module data and displaies all of the trees
+ */
+function setup_modules() {
+	// set up each of perl, inc and local
+	if ( group == 0 ) {
+		level = 0;
+		[% IF LocalOnly %]
+		group = 3;
+		[% ELSE %]
+		group++;
+		[% END %]
+		create_tree( local, 'local', 'local' );
+		add_count( 'local', count_tree( local, 'local' ) );
+		setTimeout( setup_modules, 10 );
+		if ( get_cookie('local') == 'hide' )
+			section_toggle('local');
+	}
+	else if ( group == 1 ) {
+		level = 0;
+		var total_perl = create_tree( perl, 'perl', 'perl' );
+		add_count( 'perl', count_tree( perl, 'perl' ) );
+		group++;
+		setTimeout( setup_modules, 10 );
+		if ( get_cookie('perl') == 'hide' )
+			section_toggle('perl');
+	}
+	else if ( group == 2 ) {
+		level = 0;
+		group++;
+		create_tree( inc, 'inc', 'inc' );
+		add_count( 'inc', count_tree( inc, 'inc' ) );
+		setTimeout( setup_modules, 10 );
+		if ( get_cookie('inc') == 'hide' )
+			section_toggle('inc');
+	}
+	else if ( group == 3 ) {
+		group++;
+		var name = 'DocPerl_recent';
+		if ( exists_cookie( name ) ) {
+			var list    = get_cookie( name );
+			var modules = list.split(':');
+			for ( var module in modules ) {
+				display_recent( modules[module] );
+			}
+		}
+		setTimeout( setup_modules, 10 );
+		if ( get_cookie('recent') == 'hide' )
+			section_toggle('recent');
+	}
+	else if ( group == 4 ) {
+		level = 0;
+		group++;
+		setTimeout( setup_modules, 10 );
+		setTimeout( fade_headding, [% animation %] );
+	}
+	else if ( group == 5 ) {
+		level = 0;
+		group++;
+		setTimeout( setup_modules, 10 );
+		var open_str  = get_cookie('DocPerl_opened');
+		if (!open_str) return;
+		var open_list = open_str.split(':').sort();
+		for ( var i = 0; i < open_list.length; i++ ) {
+			list_toggle(open_list[i]);
+		}
+	}
+}
+
+/**
+ *  @todo
+ *  @bug
+ *
+ *  Animates the main docperl headding
+ */
+var state      = 'perl';
+var fade_count = 0;
+var FADE_MAX   = 60;
+function animate_headding () {
+	var head = document.getElementById('headding');
+	fade_count = 0;
+	if ( state == 'perl' ) {
+		state = 'docperl';
+		head.replaceChild( document.createTextNode('DocPerl'), head.firstChild );
+	}
+	else {
+		state = 'perl';
+		head.replaceChild( document.createTextNode('Perl\240Documentation'), head.firstChild );
+	}
+	setTimeout( fade_headding, [% animation %] );
+}
+
+/**
+ *  @param : 
+ *  @param :  
+ *  @todo  rename
+ *  @bug
+ *
+ *  Slides out the headding
+ */
+function fade_headding () {
+	var head = document.getElementById('headding');
+	head.textContent = '\240' + head.textContent;
+	setTimeout( FADE_MAX == ++fade_count ? animate_headding : fade_headding, 100 );
+}
+
+/**
+ *  @param : 
+ *  @param :  
+ *  @todo
+ *  @bug
+ *
+ *  Opens the advanced search options
+ */
+function adv_open() {
+	var adv   = document.getElementById('advanced');
+	var open  = document.getElementById('adv_open');
+	var close = document.getElementById('adv_close');
+	adv.style.display = 'block';
+	open.style.display = 'none';
+	close.style.display = 'block';
+	adv_cpan();
+}
+
+/**
+ *  @param : 
+ *  @param :  
+ *  @todo
+ *  @bug
+ *
+ *  Closes the advanced search options
+ */
+function adv_close() {
+	var adv   = document.getElementById('advanced');
+	var open  = document.getElementById('adv_open');
+	var close = document.getElementById('adv_close');
+	adv.style.display = 'none';
+	open.style.display = 'block';
+	close.style.display = 'none';
+}
+
+/**
+ *  @param : 
+ *  @param :  
+ *  @todo
+ *  @bug
+ *
+ *  Enables/Disables the cpan search detail depending on weather the cpan
+ *  option is selected or not.
+ */
+function adv_cpan() {
+	if (document.getElementById('type_cpan').checked) {
+		document.getElementById('mode').disabled = false;
+	}
+	else {
+		document.getElementById('mode').disabled = 'disabled';
+	}
+}
+
+/**
  *  @param counter: The counter to increment
  *  @param amount:  The amount to increment the counter by
  *  @todo
