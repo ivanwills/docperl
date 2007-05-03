@@ -256,6 +256,7 @@ sub process {
 	$vars{source}     = $self->{source};
 	$vars{page}       = $page;
 	$vars{module_1st} = uc substr $self->{module} || 'A', 0, 1;
+	$vars{ENV}        = \%ENV;
 
 	# get the template object
 	my $tmpl = $self->get_templ_object();

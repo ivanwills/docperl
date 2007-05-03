@@ -16,15 +16,12 @@
 		<meta name="keywords"    content="" />
 		<style type="text/css">
 		<!--/* <![CDATA[ */
-			@import url("?page=css.css");
+			@import url("[% ENV.SCRIPT_NAME %]?page=css.css");
 		/* ]]> */-->
 		</style>
 		<script type="text/javascript" src="?page=list.js&amp;sidebar=[% IF sidebar %]1[% ELSE %]0[% END %]"></script>
 		<script type="text/javascript">
 		<!--/* <![CDATA[ */
-			[% js.pod %]
-			[% js.inc %]
-			[% js.local %]
 			[% perl %]
 			[% inc %]
 			[% local %]
@@ -32,7 +29,6 @@
 			var level;
 			var group = 0;
 			var counter = { perl:0, local:0, inc:0 };
-
 		/* ]]> */-->
 		</script>
 	</head>
