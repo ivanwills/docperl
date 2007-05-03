@@ -14,8 +14,8 @@
 		<meta name="keywords"	 content="" />
 		<style type="text/css">
 		<!--/* <![CDATA[ */
-			@import url("?page=common.css");
-			@import url("?page=[% StyleSheet || 'cpan' %].css");
+			@import url("[% ENV.SCRIPT_NAME %]?page=common.css");
+			@import url("[% ENV.SCRIPT_NAME %]?page=[% StyleSheet || 'cpan' %].css");
 	[%- current_file = 0 -%]
 	[%- IF sources.size > 1 -%]
 		[%- file_count = 0 -%]
