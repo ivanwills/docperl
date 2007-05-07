@@ -19,13 +19,14 @@
  *  Takes the module data and displaies all of the trees
  */
 function setup_modules() {
+	if ( !setup_modules.group ) setup_modules.group = 0;
 	// set up each of perl, inc and local
-	if ( group == 0 ) {
+	if ( setup_modules.group == 0 ) {
 		level = 0;
 		[% IF LocalOnly %]
-		group = 3;
+		setup_modules.group = 3;
 		[% ELSE %]
-		group++;
+		setup_modules.group++;
 		[% END %]
 		create_tree( local, 'local', 'local' );
 		add_count( 'local', count_tree( local, 'local' ) );
@@ -33,26 +34,26 @@ function setup_modules() {
 		if ( get_cookie('local') == 'hide' )
 			section_toggle('local');
 	}
-	else if ( group == 1 ) {
+	else if ( setup_modules.group == 1 ) {
 		level = 0;
 		var total_perl = create_tree( perl, 'perl', 'perl' );
 		add_count( 'perl', count_tree( perl, 'perl' ) );
-		group++;
+		setup_modules.group++;
 		setTimeout( setup_modules, 10 );
 		if ( get_cookie('perl') == 'hide' )
 			section_toggle('perl');
 	}
-	else if ( group == 2 ) {
+	else if ( setup_modules.group == 2 ) {
 		level = 0;
-		group++;
+		setup_modules.group++;
 		create_tree( inc, 'inc', 'inc' );
 		add_count( 'inc', count_tree( inc, 'inc' ) );
 		setTimeout( setup_modules, 10 );
 		if ( get_cookie('inc') == 'hide' )
 			section_toggle('inc');
 	}
-	else if ( group == 3 ) {
-		group++;
+	else if ( setup_modules.group == 3 ) {
+		setup_modules.group++;
 		var name = 'DocPerl_recent';
 		if ( exists_cookie( name ) ) {
 			var list    = get_cookie( name );
@@ -65,15 +66,15 @@ function setup_modules() {
 		if ( get_cookie('recent') == 'hide' )
 			section_toggle('recent');
 	}
-	else if ( group == 4 ) {
+	else if ( setup_modules.group == 4 ) {
 		level = 0;
-		group++;
+		setup_modules.group++;
 		setTimeout( setup_modules, 10 );
 		setTimeout( fade_headding, [% animation %] );
 	}
-	else if ( group == 5 ) {
+	else if ( setup_modules.group == 5 ) {
 		level = 0;
-		group++;
+		setup_modules.group++;
 		setTimeout( setup_modules, 10 );
 		var open_str  = get_cookie('DocPerl_opened');
 		if (!open_str) return;
@@ -108,8 +109,8 @@ function animate_headding () {
 }
 
 /**
- *  @param : 
- *  @param :  
+ *  @param :
+ *  @param :
  *  @todo  rename
  *  @bug
  *
@@ -122,8 +123,8 @@ function fade_headding () {
 }
 
 /**
- *  @param : 
- *  @param :  
+ *  @param :
+ *  @param :
  *  @todo
  *  @bug
  *
@@ -140,8 +141,8 @@ function adv_open() {
 }
 
 /**
- *  @param : 
- *  @param :  
+ *  @param :
+ *  @param :
  *  @todo
  *  @bug
  *
@@ -157,8 +158,8 @@ function adv_close() {
 }
 
 /**
- *  @param : 
- *  @param :  
+ *  @param :
+ *  @param :
  *  @todo
  *  @bug
  *
