@@ -3,24 +3,25 @@
 =head1 Downloading
 
 Go to L<http://sourceforge.net/project/showfiles.php?group_id=163244> and
-download a copy of DocPerl and extract the files. E.g.
+download a copy of DocPerl. Then extract the archive to the directory that
+you want to install DocPerl into. E.g.
 
- $ tar xzf docperl-v0.9.2.tar.gz
+ $ tar xvzf docperl-v0.9.2.tar.gz
 
 =head1 Setup
 
-Then you should run ./checksetup.pl which tell you what required modules are
-installed or not on your system. Also ./checksetup.pl can be used to create
-pre-cached POD files to speed up usage and enable full text searching and
-function name searching. For for example use the command:
+Then you should then run C<./checksetup.pl> from the docperl directory,
+which tell you what required modules (if any) are missing from your system.
+C<./checksetup.pl> can also be used to create cached versions of POD files
+to speed up usage and enable full text searching and function name searching.
+For for example use the command:
 
-  $ ./checksetup.pl -c pod,text,func
+  $ ./checksetup.pl -c pod,text,function
 
-or see
+this will cache the POD and enable full text and function searching. For
+more details on the C<checksetup.pl> program run:
 
   $ ./checksetup.pl -h
-
-for more details on ./checksetup.pl usage
 
 DocPerl needs some Perl modules that may not be already installed these
 include:
@@ -33,16 +34,17 @@ Pod::POM
 
 to install one of the following commands should work
 
-  $ cpan Template Readonly
+  $ perl -MCPAN -e 'install Template; install Readonly ...'
 
-or
+or (on Debian baised systems?)
 
-  $ perl -MCPAN -e 'install Template; install Readonly'
+  $ cpan Template Readonly ...
 
-or for active Perl users
+For Windows Active Perl users
 
   $ ppm install Template
   $ ppm install Readonly
+  ...
 
 If you have any problems try going to the help forums at
 L<https://sourceforge.net/forum/forum.php?forum_id=553595>
@@ -66,7 +68,8 @@ file is all that is required:
 
 Some more work may be required to make DocPerl secure if you have some of the
 less safe configuration options turned on or if you don't want your internal
-modules to be publicly available.
+modules to be publicly available. Also look at the B<.htaccess.example> for
+more security settings.
 
 =head1 Windows
 
