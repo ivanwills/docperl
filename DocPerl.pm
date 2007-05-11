@@ -30,6 +30,8 @@ sub new {
 	carp 'Need conf parameters' if !$self->{conf};
 
 	bless $self, $class;
+	$self->{conf}{LocalFolders}{suffixes} ||= [qw/pm pod/];
+	$self->{conf}{IncFolders}{suffixes}   ||= [qw/pm pod/];
 	$self->{conf}{LocalFolders}{Match} ||= '[.](:?' . ( join '|', @{ $self->{conf}{LocalFolders}{suffixes} } ) . ')$';
 	$self->{conf}{IncFolders}{Match}   ||= '[.](:?' . ( join '|', @{ $self->{conf}{IncFolders}{suffixes} } ) . ')$';
 

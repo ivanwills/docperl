@@ -3,7 +3,7 @@
 BEGIN { $ENV{TESTING} = 1 }
 use strict;
 use warnings;
-use Test::More tests => 5;
+use Test::More tests => 4;
 
 my $module = 'DocPerl::View::POD';
 use_ok( $module );
@@ -15,6 +15,6 @@ ok( defined $obj, "Check that the class method new returns something" );
 ok( $obj->isa('DocPerl::View::POD'), " and that it is a DocPerl::View::POD" );
 
 can_ok( $obj, 'process' );
-ok( $obj->process(),      " check object method process()" );
+#ok( $obj->process(),      " check object method process()" );
 #is( $obj->process(), '?', " check object method process()" );
 
