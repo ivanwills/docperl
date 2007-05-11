@@ -16,7 +16,7 @@ use Pod::POM;
 use Pod::POM::View::Text;
 use base qw/DocPerl::View/;
 
-our $VERSION     = version->new('0.9.2');
+our $VERSION     = version->new('1.0.0');
 our @EXPORT_OK   = qw//;
 our %EXPORT_TAGS = ();
 
@@ -58,7 +58,7 @@ DocPerl::View::TEXT - <One-line description of module's purpose>
 
 =head1 VERSION
 
-This documentation refers to DocPerl::View::TEXT version 0.9.2.
+This documentation refers to DocPerl::View::TEXT version 1.0.0.
 
 =head1 SYNOPSIS
 

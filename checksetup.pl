@@ -422,7 +422,7 @@ checksetup.pl - Program to check the setup of a DocPerl installation
 
 =head1 VERSION
 
-This documentation refers to checksetup.pl version 0.9.2.
+This documentation refers to checksetup.pl version 1.0.0.
 
 =head1 SYNOPSIS
 
