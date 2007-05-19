@@ -1,46 +1,68 @@
 =head1 DocPerl Installation
 
-=head1 Downloading
+DocPerl is straightforward to install.  It consists of wholely of Perl scripts
+in text files and is therefore quite transparent to anyone wishing to delve
+into the internals or to troubleshoot particular errors.  Installation on a
+standard Unix/Linux system is performed with no requirement to have more than
+basic Unix skills.
 
-Go to L<http://sourceforge.net/project/showfiles.php?group_id=163244> and
-download a copy of DocPerl. Then extract the archive to the directory that
-you want to install DocPerl into. E.g.
+DocPerl is designed to run on any platform that has Perl installed.
 
- $ tar xvzf docperl-v1.0.0.tar.gz
+=head1 Prerequisites
 
-=head1 Setup
+DocPerl requires
 
-Then you should then run C<./checksetup.pl> from the docperl directory,
-which tell you what required modules (if any) are missing from your system.
-C<./checksetup.pl> can also be used to create cached versions of POD files
-to speed up usage and enable full text searching and function name searching.
-For for example use the command:
+=over 4
 
-  $ ./checksetup.pl -c pod,text,function
+=item *
 
-this will cache the POD and enable full text and function searching. For
-more details on the C<checksetup.pl> program run:
+Perl version 5.6 or greater
 
-  $ ./checksetup.pl -h
+=item *
 
-DocPerl needs some Perl modules that may not be already installed these
-include:
+A webserver (eg. Apache, IIS, LightHTTPD etc...)
 
-Template Toolkit,
-Readonly,
-Config::Std,
-version,
+=back
+
+Perl modules required that may not be already installed are:
+
+=over 4
+
+=item *
+
+Template Toolkit
+
+=item *
+
+Readonly
+
+=item *
+
+Config::Std
+
+=item *
+
+version
+
+=item *
+
 Pod::POM
 
-to install one of the following commands should work
+=back
 
-  $ perl -MCPAN -e 'install Template; install Readonly ...'
+The installation of DocPerl checks if these modules have been installed. If
+any of these modules has not been installed you can install them via the
+following methods:
 
-or (on Debian baised systems?)
+Generic Unix/Linux
+
+ $ perl -MCPAN -e 'install Template; install Readonly ...'
+
+or (on Debian based systems?)
 
   $ cpan Template Readonly ...
 
-For Windows Active Perl users
+Windows Active Perl
 
   $ ppm install Template
   $ ppm install Readonly
@@ -49,12 +71,52 @@ For Windows Active Perl users
 If you have any problems try going to the help forums at
 L<https://sourceforge.net/forum/forum.php?forum_id=553595>
 
-=head1 Configuring
+=head1 Download
 
-See L<DocPerl::Config> for a detailed description of the docperl.conf
+To install DocPerl download the latest version from
+L<http://sourceforge.net/project/showfiles.php?group_id=163244>.
+
+The download is an archive file in the form F<docperl-vX.X.X.tar.gz>.
+Extract the archive to the directory that you wish DocPerl to run from.
+
+E.g.
+
+ $ tar xvzf docperl-v1.0.0.tar.gz
+
+=head1 Installation
+
+From the DocPerl directory run C<./checksetup.pl>
+
+This performs a check that your installation of Perl has all the modules
+required to run DocPerl.  If you have all the required modules then you can
+proceed to the next step.  If you don't have all the required modules you
+will need to install them before you can proceed in your installation of
+DocPerl.  Please see the Prerequisites section for further information.
+
+C<./checksetup.pl> can also be used to create cached versions of POD files
+to speed usage and enable full text searching and function name searching.
+
+For for example use the command:
+
+  $ ./checksetup.pl -c pod,text,function
+
+this will cache the POD and enable full text and function searching.
+
+For more details on the checksetup.pl program run:
+
+  $ ./checksetup.pl --help
+
+See L<DocPerl::Config> for a detailed description of the F<docperl.conf>
 configuration files options.
 
-=head2 Apache Configuration
+This is as much configuration as the DocPerl files require.  Now all that
+is needed to use your DocPerl installation is to configure your web server
+to see DocPerl.
+
+=head1 Web Server Configuration
+
+Included in this documentation is example Apache configuration.  For other
+web servers you will need to configure as appropriate.
 
 To configure DocPerl with Apache adding the following to your configuration
 file is all that is required:
@@ -66,18 +128,22 @@ file is all that is required:
      AddHandler cgi-script .cgi
  </Directory>
 
+=head2 Security
+
 Some more work may be required to make DocPerl secure if you have some of the
 less safe configuration options turned on or if you don't want your internal
-modules to be publicly available. Also look at the B<.htaccess.example> for
-more security settings.
+modules to be publicly available. Also look at the F<.htaccess.example> (found
+in the DocPerl directory) for more security settings.
 
 =head1 Windows
 
-Installation on windows has now improved a lot, the dependencies on command
-line programs have been removed. The major problems you may now encounter are
-setting setting the Perl scripts bang line to you Perl location (if you do not
-download the windows zip file or your Perl is not installed into F<C:/Perl>).
-Work-arounds are to change the bang line from:
+Installation on Windows has improved since the initial realeses. The
+dependencies on command line programs have been removed.
+
+The major problems you may now encounter are setting setting the Perl scripts
+bang line to you Perl location (if you do not download the windows zip file
+or your Perl is not installed into F<C:/Perl>). Work-arounds are to change the
+bang line from:
 
  #!/usr/bin/perl
 
@@ -85,21 +151,26 @@ to
 
  #!"C:/perl/bin/perl.exe"
 
-or where ever your Perl is installed. You can set Apache to use file
-extensions instead (see your Apache documentation for details)
+or where ever your Perl is installed.
 
+You can set Apache to use file extensions instead (see your Apache
+documentation for details)
 
-* If you are using active Perl's ppm to get the Template Toolkit modules
-you may encounter some difficulty as ppm install Template does not appear to
-install the Template Toolkit, you will probably need to use CPAN.
+* If you are using Active Perl's ppm to get the Template Toolkit modules
+you may encounter some difficulty, as ppm install Template does not appear to
+install the Template Toolkit. You will probably need to use CPAN.
 
 =head1 Upgrading
 
 If you are upgrading from DocPerl version 0.3 or earlier there have been some
-structural changes to DocPerl. Firstly the file docperl.conf has been moved
-from the data directory up one level to the base directory (to allow you to
-set where the data directory is stored). Also the templates have been renamed
-to have the extension .tmpl added to their names so if you have customised
-any templates you will need to add .tmpl to their names.
+structural changes to DocPerl.
+
+Firstly the file docperl.conf has been moved from the data directory up one
+level to the base directory (to allow you to set where the data directory
+is stored).
+
+Also the templates have been renamed to have the extension .tmpl added to
+their names, so if you have customized any templates, you will need to add
+F<.tmpl> to their names.
 
 =cut
