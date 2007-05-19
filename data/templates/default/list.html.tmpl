@@ -126,7 +126,7 @@
 			<a href="?clearcache=1" target="_top">[% str_link_clear_cache %]</a>
 			[%- END %]
 			<br />
-			<a href="?page=list&amp;sidebar=1">[% str_link_firefox %]</a>
+			<a href="javascript:window.sidebar.addPanel('DocPerl sidebar',window.location+'&amp;sidebar=1','');">[% str_link_firefox %]</a>
 			<br />
 			<a href="?" id="current-link" onmouseover="update_current_link();">[% str_link_bookmark %]</a>
 			[% IF Debug %]
