@@ -46,10 +46,13 @@
 				next.style.display    = 'block';
 				current_file = select.options[index].value;
 			}
-			if (window.parent.menu.click_module)
-				window.parent.menu.click_module('[% location %]__[% module_1st %]__[% module.replace(':','_') %]');
-			else
-				setTimeout("window.parent.menu.click_module('[% location %]__[% module_1st %]__[% module.replace(':','_') %]')", 3000);
+			function set_history() {
+				if (window.parent.menu.click_module)
+					window.parent.menu.click_module('[% location %]__[% module_1st %]__[% module.replace(':','_') %]');
+				else
+					setTimeout("set_history()", 3000);
+			}
+			set_history();
 		//-->
 		</script>
 	</head>
