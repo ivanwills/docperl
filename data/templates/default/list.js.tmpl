@@ -251,6 +251,9 @@ function create_tree( files, container_id, path, counter ) {
 	ul.id        = 'ul__'+path;
 	level++;
 
+	// usually occurs when reopening trees at load when parients are not open
+	if ( !container ) return;
+
 	if ( !counter )
 		counter = path;
 	else
