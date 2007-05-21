@@ -58,9 +58,10 @@ function setup_modules() {
 		if ( exists_cookie( name ) ) {
 			var list    = get_cookie( name );
 			var modules = list.split(':');
-			for ( var module in modules ) {
+			for ( var module = modules.length - 1;  module >= 0; module-- ) {
 				display_recent( modules[module] );
 			}
+			add_count( 'recent', 1 );
 		}
 		setTimeout( setup_modules, 10 );
 		if ( get_cookie('recent') == 'hide' )
@@ -369,22 +370,49 @@ function create_plus(path) {
  */
 function click_module( path ) {
 	var name = 'DocPerl_recent';
-	if ( exists_cookie( name ) ) {
-		var list    = get_cookie( name );
+	if ( exists_cookie(name) ) {
+		if (!display_recent.called)
+			return;
+		var recent  = document.getElementById('ul_recent');
+		var list    = get_cookie(name);
 		var modules = list.split(':');
-		for ( var module in modules ) {
-			if ( modules[module] == path )
-				return;
+		var new_list = [path];
+		var remove  = [];
+		var count   = 0;
+		var max     = [% history_size %];
+
+		for ( var i in modules ) {
+			var module = modules[i];
+			if ( module != path ) {
+				new_list.push(module);
+			}
+			else {
+				remove.push(count);
+			}
+			count++;
 		}
-		list += ':' + path;
-		modules.push(path);
-		if ( modules.length >= [% history_size %] ) {
-			var recent = document.getElementById('ul_recent');
-			recent.removeChild( recent.firstChild );
+
+		if ( remove.length ) {
+			count = 0;
+			for ( var i = 0; i < recent.childNodes.length; i++ ) {
+				if ( recent.childNodes[i].nodeName == 'LI' ) {
+					if ( count++ == remove[0] ) {
+						remove.shift();
+						add_count( 'recent', -1 );
+						recent.removeChild(recent.childNodes[i]);
+					}
+				}
+			}
+		}
+
+		if ( new_list.length >= max ) {
 			add_count( 'recent', -1 );
-			modules.splice( 0,  modules.length - [% history_size %] );
+			while ( recent.childNodes.length >= max )
+				recent.removeChild(recent.childNodes[recent.childNodes.length - 1]);
+			new_list.pop();
 		}
-		set_cookie( name, modules.join(':') );
+
+		set_cookie( name, new_list.join(':') );
 	}
 	else {
 		set_cookie( name, path );
@@ -400,6 +428,7 @@ function click_module( path ) {
  *  Adds a path to the recent module list.
  */
 function display_recent(path) {
+	display_recent.called = true;
 	var path_parts = path.split('__');
 	var recent_doc = document.getElementById('recent_doc');
 	var recent_ul  = document.getElementById('ul_recent');
@@ -411,7 +440,12 @@ function display_recent(path) {
 	li.appendChild( create_plus() );
 	li.appendChild( create_module( path, name ) );
 
-	recent_ul.appendChild( li );
+	if ( recent_ul.firstChild ) {
+		recent_ul.insertBefore( li, recent_ul.firstChild );
+	}
+	else {
+		recent_ul.appendChild(li);
+	}
 	add_count( 'recent', 1 );
 }
 
