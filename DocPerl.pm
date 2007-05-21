@@ -259,6 +259,7 @@ sub process {
 	$vars{page}       = $page;
 	$vars{module_1st} = uc substr $self->{module} || 'A', 0, 1;
 	$vars{ENV}        = \%ENV;
+	$vars{VERSION}    = $DocPerl::VERSION;
 
 	# get the template object
 	my $tmpl = $self->get_templ_object();
