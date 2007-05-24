@@ -419,8 +419,15 @@ function click_module( path ) {
 	display_recent(path);
 }
 
+/**
+ *  @todo
+ *  @bug
+ *
+ *  Clears all modules in the recent module list and from the recent
+ *  cookie. It also resets the counter.
+ */
 function clear_recent() {
-	if (confirm('Clear recent module list?')) {
+	if (confirm('[% str_reset_confirm %]')) {
 		clear_cookie( 'DocPerl_recent');
 		var recent  = document.getElementById('ul_recent');
 		while (recent.firstChild)
