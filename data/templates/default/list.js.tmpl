@@ -61,7 +61,6 @@ function setup_modules() {
 			for ( var module = modules.length - 1;  module >= 0; module-- ) {
 				display_recent( modules[module] );
 			}
-			add_count( 'recent', 1 );
 		}
 		setTimeout( setup_modules, 10 );
 		if ( get_cookie('recent') == 'hide' )
@@ -405,7 +404,7 @@ function click_module( path ) {
 			}
 		}
 
-		if ( new_list.length >= max ) {
+		if ( new_list.length > max ) {
 			add_count( 'recent', -1 );
 			while ( recent.childNodes.length >= max )
 				recent.removeChild(recent.childNodes[recent.childNodes.length - 1]);
