@@ -420,6 +420,16 @@ function click_module( path ) {
 	display_recent(path);
 }
 
+function clear_recent() {
+	if (confirm('Clear recent module list?')) {
+		clear_cookie( 'DocPerl_recent');
+		var recent  = document.getElementById('ul_recent');
+		while (recent.firstChild)
+			recent.removeChild(recent.firstChild);
+		reset_count('recent');
+	}
+}
+
 /**
  *  @param path: The path to add to the recent list
  *  @todo
