@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -T
 
 # Created on: 2006-01-20 07:10:57
 # Create by:  Ivan Wills
