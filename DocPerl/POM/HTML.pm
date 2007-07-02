@@ -276,6 +276,7 @@ sub view_seq_link {
 	# warning; show some text.
 	if ( !defined $linktext ) {
 		$linktext = $orig_link;
+		$linktext =~ s{^/}{}xms;
 	}
 
 	my $url = q{};
