@@ -504,7 +504,7 @@ sub _organise_perl {
 		'Tutorials'             => { map { 'perl'.$_ => 1 } qw/book boot bot cheat dsc tooc toot trap / },
 		'Internals'             => { map { 'perl'.$_ => 1 } qw/api apio call clib compile filter guts hack iol debguts intern / },
 		'Regular Expressions'   => { map { 'perl'.$_ => 1 } qw/re reref requick re / },
-		'Debug'                 => { map { 'perl'.$_ => 1 } qw/debug diag/ },
+		'Debug'                 => { map { 'perl'.$_ => 1 } qw/debug diag debtut/ },
 		'Licence'               => { map { 'perl'.$_ => 1 } qw/artistic gpl / },
 		'Processes and Threads' => { map { 'perl'.$_ => 1 } qw/fork ipc thrtut / },
 		'Programming'           => { map { 'perl'.$_ => 1 } qw/data form func lol number obj op pod podspec port ref sec style sub syn tie unicode unintro var xs/ },
