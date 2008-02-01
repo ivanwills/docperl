@@ -94,6 +94,9 @@ PerlLabel:      Perl
 #StyleSheet:     css
 StyleSheet:     cpan
 
+# Hide the default module from the recent module list
+HideDefaultModule: on
+
 ## General
 # General configuration
 [General]

@@ -368,6 +368,15 @@ function create_plus(path) {
  *  recent modules list.
  */
 function click_module( path ) {
+
+[% IF HideDefaultModule %]
+	// Check if the path is the default path and the first module to be displayed (and don't disply)
+	if ( !click_module.clicked_once && path == '[% DefaultModule %]' ) {
+		return;
+	}
+	click_module.clicked_once = true;
+[% END %]
+
 	var name = 'DocPerl_recent';
 	if ( exists_cookie(name) ) {
 		if (!display_recent.called)

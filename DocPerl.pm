@@ -266,7 +266,7 @@ sub process {
 
 	# process the template
 	$conf->{Template} ||= {};
-	$tmpl->process( $self->template(), { %{$q}, %{ $conf->{Template} }, %vars }, \$out )
+	$tmpl->process( $self->template(), { %{$q}, %{ $conf->{Template} }, %vars, DefaultModule => $conf->{General}{DefaultModule} }, \$out )
 		or error( $tmpl->error );
 
 	if ( $out =~ /\A\s+\Z/xms ) {
