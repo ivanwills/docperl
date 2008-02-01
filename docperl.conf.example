@@ -97,6 +97,10 @@ StyleSheet:     cpan
 # Hide the default module from the recent module list
 HideDefaultModule: on
 
+# show/hide option of viewing the cpan test status of the module
+#ShowTestStatus:    on
+
+
 ## General
 # General configuration
 [General]

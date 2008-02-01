@@ -99,6 +99,11 @@
 							| <a title="See latest documentation on CPAN" href="http://search.cpan.org/search?query=[% IF location == 'perl' %]pod::[% END %][% module %]&amp;mode=module">
 								CPAN
 							</a>
+			[% IF location == 'inc' && ShowTestStatus %]
+							| <a title="See the CPAN test status" href="http://cpandeps.cantrell.org.uk/?module=[% module %]">
+								T
+							</a>
+			[%- END %]
 		[%- END %]
 						</div>
 	[%- END -%]
