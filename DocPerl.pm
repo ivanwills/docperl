@@ -47,27 +47,23 @@ sub init {
 	my $conf = $self->{conf};
 	my $page = $q->{page};
 
+	if (!$page) {
+		$page = $q->{page} = 'list';
+	}
+
 	# initialise the template name and mime type
-	if ($page) {
-		my $template = $page;
-		if ( $template =~ /\.(\w+)$/xms ) {
-			$self->{template} = $template;
-			my $type =
-				  $1 eq 'css' ? 'css'
-				: $1 eq 'js'  ? 'javascript'
-				:               $1;
-			$self->{mime} = "text/$type";
-		}
-		else {
-			$self->{template} = "$template.html";
-			$self->{mime} = $page eq 'text' ? 'text/plain' : 'text/html';
-		}
+	my $template = $page;
+	if ( $template =~ /\.(\w+)$/xms ) {
+		$self->{template} = $template;
+		my $type =
+			  $1 eq 'css' ? 'css'
+			: $1 eq 'js'  ? 'javascript'
+			:               $1;
+		$self->{mime} = "text/$type";
 	}
 	else {
-
-		# if no page is given the default template is to create the frames page
-		$self->{template} = 'frames.html';
-		$self->{mime}     = 'text/html';
+		$self->{template} = "$template.html";
+		$self->{mime} = $page eq 'text' ? 'text/plain' : 'text/html';
 	}
 
 	# check if a module has been passed as a CGI parameter
@@ -217,35 +213,30 @@ sub process {
 		$cache_path .= "/$self->{module_file}";
 	}
 
-	# Check if there is a page to view specified
-	if ($page) {
+	# check the cache for the page
+	$out = $cache->_check_cache( cache => $cache_path, source => $self->{source} || 1 );
 
-		# check the cache for the page
-		$out = $cache->_check_cache( cache => $cache_path, source => $self->{source} || 1 );
+	# return the cached output
+	return $out if $out;
 
-		# return the cached output
-		return $out if $out;
-
-		# Check that the page is OK to execute (ie if a method of this module
-		# and is not a hidden method)
-		if ( $page !~ /^_/xms && $self->can($page) ) {
-			%vars = $self->$page();
-		}
-		elsif ( my ($type) = $page =~ /^(pod|text|api|function|code)$/xmsi ) {
-
-			# try to see if the method is a cached module
-			my $module = 'DocPerl::View::' . uc $type;
-			my $file   = 'DocPerl/View/' . ( uc $type ) . '.pm';
-			require $file;
-
-			# use the cached object to get the data
-			my $cache = $module->new( %{$self} );
-			%vars = $cache->process();
-		}
+	# Check that the page is OK to execute (ie if a method of this module
+	# and is not a hidden method)
+	if ( $page !~ /^_/xms && $self->can($page) ) {
+		%vars = $self->$page();
 	}
-	else {
+	elsif ( my ($type) = $page =~ /^(pod|text|api|function|code)$/xmsi ) {
 
-		# this only occurs when showing frames page
+		# try to see if the method is a cached module
+		my $module = 'DocPerl::View::' . uc $type;
+		my $file   = 'DocPerl/View/' . ( uc $type ) . '.pm';
+		require $file;
+
+		# use the cached object to get the data
+		my $cache = $module->new( %{$self} );
+		%vars = $cache->process();
+	}
+
+	if ( $page eq 'list' ) {
 		$self->{module} = $q->{module} || $conf->{General}{DefaultModule} || 'perl__pod__perlfunc';
 	}
 
