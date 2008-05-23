@@ -21,6 +21,7 @@ our $VERSION = 0.9;
 use lib ($Bin);
 my $CONFIG = "$Bin/docperl.conf";
 my ($name) = $PROGRAM_NAME =~ m{^.*/(.*?)$}mxs;
+my $api_warned;
 
 my %option = (
 	compile => [],
@@ -53,6 +54,7 @@ sub main {
 		'compile|c=s@',
 		'purge|p!',
 		'shrink|s!',
+		'force|f',
 		'verbose|v!',
 		'man',
 		'help',
@@ -153,6 +155,9 @@ sub main {
 
 	# compile the cache files (if requrested)
 	if ( ref $option{compile} && @{ $option{compile} } ) {
+		if ( $option{compile}[0] eq 'all' ) {
+			$option{compile} = [qw/pod api code text function/];
+		}
 		$config{Templates}{ClearCache} = 'on';
 		require DocPerl;
 		delete $config{General}{Cache};
@@ -360,10 +365,11 @@ sub cache {
 	$parent   ||= '';
 	$arg{all} ||= '';
 
+	MODULE:
 	for my $module ( keys %{$data} ) {
-		next if !$module;
-		next if $module eq '*';
-		next if $data->{$module} == 1;
+		next MODULE if !$module;
+		next MODULE if $module eq '*';
+		next MODULE if $data->{$module} == 1;
 
 		# check that the module is not the numeral 1 (just an alphabetic place holder)
 		# and that there is an actual file for it (ie not just a name space prefix)
@@ -388,7 +394,13 @@ sub cache {
 				$dp->{template}  = 'api.html';
 
 				# Unfortunatly repeated processing of api's can be dangerous to this is now disabled
-				#$dp->process();
+				if ($option{'force'}) {
+					$dp->process();
+				}
+				elsif ( !$api_warned ) {
+					warn "Wont try to create api cache without a --force\n";
+					$api_warned++;
+				}
 			}
 			if ( $arg{function} ) {
 				$dp->{cgi}{page} = 'function';
@@ -427,14 +439,16 @@ This documentation refers to checksetup.pl version 1.0.0.
 =head1 SYNOPSIS
 
    checksetup.pl [ --version | --help | --man ]
-   checksetup.pl [ -v ] [ -p ] [ -c [ pod||,api||,code||,text||,function ]
+   checksetup.pl [ -v ] [ -p ] [ -c [ all||,pod||,api||,code||,text||,function ]
 
  OPTIONS:
   -c --compile=opt Pre compile the pod/api/code/text/function (seperate with
-                   commas to compile more than one option eg -c pod,code)
+                   commas to compile more than one option eg -c pod,code).
+                   The all option will cause all views to be compiled.
   -p --purge       Purge the current cache files.
   -s --shrink      Shrink the size of the js & css files (makes them less
                    readable but smaller)
+  -f --force       Forces the compiling of the api view
 
   -v --verbose     Show more detailed option
      --version     Prints the version information
@@ -455,6 +469,39 @@ file and the security settings on the file system are setup correctly
 (still to be fully completed). Also checksetup.pl can precompile all templates
 for all pages to improve performance (at the expence of diskspace). Note that
 in the future the compiled templates will be searchable.
+
+=head2 Compiling
+
+C<checksetup.pl> can pre compile the various views of modules to speed up
+display and allow searching of its contents. The following lists the views
+
+=over 4
+
+=item pod
+
+This is the standard view of a module
+
+=item api
+
+This shows the functions/methods declared in a module along with the modules
+use/required and its inheritance tree. This view can sometimes have problems
+with compiling so it is disabled without using the --force option.
+
+=item code
+
+This view shows the modules code with some syntax highliting and line
+numbers.
+
+=item text
+
+The saved results from this view are used for the full text searching
+capabilities of docperl.
+
+=item function
+
+Similarly used for function/method name searching.
+
+=back
 
 =head1 DIAGNOSTICS
 
@@ -511,4 +558,3 @@ without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
 PARTICULAR PURPOSE.
 
 =cut
-

@@ -136,7 +136,12 @@ LINE:
 			$api{hirachy} = $api{parents};
 		}
 		elsif ( !@{ $api{hirachy}[0]{hirachy} } && $api{parents} ) {
-			carp "Found parents of $api{package} (" . ( join q{,}, @{ $api{parents} } ) . ') but not hirachy!';
+
+			if ( $location ne 'local' ) {
+				# only warn if not in local as these modules are likely not to have the @INC path set correctly
+				warn "Found parents of $api{package} (" . ( join q{,}, @{ $api{parents} } ) . ') but not hirachy!'; ## no critic
+			}
+
 			$api{hirachy}[0]{hirachy} = [ map { { class => $_ } } @{ $api{parents} } ];
 		}
 
