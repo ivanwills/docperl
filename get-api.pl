@@ -15,10 +15,10 @@ use Getopt::Long;
 use Pod::Usage;
 use Data::Dumper qw/Dumper/;
 use Term::ANSIColor qw/:constants/;
-use FindBin;
-use lib qw/$FindBin::Bin/;
+use FindBin qw/$Bin/;
 use English qw/ -no_match_vars /;
 
+use lib ("$Bin/lib");
 use DocPerl::View::API;
 use DocPerl qw/find/;
 

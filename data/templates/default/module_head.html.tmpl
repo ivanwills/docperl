@@ -12,6 +12,7 @@
 		<meta name="copyright"	 content="Copyright (c) 2006 Ivan Wills, All Rights Reserved" />
 		<meta name="description" content="" />
 		<meta name="keywords"	 content="" />
+		<link rel="icon" href="[% static %]docperl.png" type="image/png" />
 		<style type="text/css">
 		<!--/* <![CDATA[ */
 			@import url("[% ENV.SCRIPT_NAME %]?page=common.css");
@@ -47,9 +48,12 @@
 				current_file = select.options[index].value;
 			}
 			function set_history() {
-				if (window.parent.menu.click_module)
-					window.parent.menu.click_module('[% location %]__[% module_1st %]__[% module.replace(':','_') %]');
+				// check how the module is being displayed
+				if (window.parent.click_module)
+					// The module is being displaied in an iframe
+					window.parent.click_module('[% location %]__[% module_1st %]__[% module.replace(':','_') %]');
 				else
+					// The module is being displaied by its self
 					setTimeout("set_history()", 3000);
 			}
 			set_history();

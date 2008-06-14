@@ -13,7 +13,7 @@ use FindBin qw/$Bin/;
 use CGI;
 use Config::Std;
 use Readonly;
-use lib qw/./;
+use lib qw/lib/;
 use DocPerl;
 
 our $VERSION = version->new('1.0.0');

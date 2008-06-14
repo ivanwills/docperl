@@ -34,6 +34,8 @@ sub new {
 	$self->{conf}{IncFolders}{suffixes}   ||= [qw/pm pod/];
 	$self->{conf}{LocalFolders}{Match} ||= '[.](:?' . ( join '|', @{ $self->{conf}{LocalFolders}{suffixes} } ) . ')$';
 	$self->{conf}{IncFolders}{Match}   ||= '[.](:?' . ( join '|', @{ $self->{conf}{IncFolders}{suffixes} } ) . ')$';
+	$self->{conf}{General}{data}       ||= './data';
+	$self->{conf}{General}{db_source}  ||= "dbi:SQLite:dbname=$self->{conf}{General}{data}/docperl.db";
 
 	# initialise the object
 	$self->init();

@@ -18,7 +18,7 @@ use English qw/ -no_match_vars /;
 
 our $VERSION = 0.9;
 
-use lib ($Bin);
+use lib ("$Bin/lib");
 my $CONFIG = "$Bin/docperl.conf";
 my ($name) = $PROGRAM_NAME =~ m{^.*/(.*?)$}mxs;
 my $api_warned;

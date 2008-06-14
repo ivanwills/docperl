@@ -14,7 +14,7 @@ use Data::Dumper qw/Dumper/;
 use CGI;
 use Config::Std;
 use Readonly;
-use lib qw/./;
+use lib qw/lib/;
 use DocPerl::Search::Grep;
 use DocPerl::Search::Perl;
 
