@@ -39,7 +39,7 @@ sub process {
 
 	return ( pod => "File contains dodgy characters ($file)" ) if !$file;
 
-	my $parser = $self->parser;
+	my $parser = $self->pom;
 	my $pom = $parser->parse($file);
 	my $out;
 	{
@@ -55,15 +55,6 @@ sub process {
 	}
 
 	return ( pod => $out );
-}
-
-sub parser {
-
-	my $self = shift;
-
-	return $self->{parser} if $self->{parser};
-
-	return $self->{parser} = Pod::POM->new( { warn => 0, } );
 }
 
 1;
@@ -98,12 +89,6 @@ contains the html generated from the moudules POD.
 Description: Process a file to extract its POD documentation. The
 file/module whoes POD is to be processed is found from the DocPerl::View::POD
 object itself.
-
-=head2 C<parser ()>
-
-Return: Pod::POM - a new or cached Pod::POM object
-
-Description: Caches the internal Pod::POM object
 
 =head1 DIAGNOSTICS
 

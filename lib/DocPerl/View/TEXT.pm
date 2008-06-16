@@ -1,7 +1,7 @@
 package DocPerl::View::TEXT;
 
 # Created on: 2007-02-13 19:14:27
-# Create by:  ivan
+# Create by:  Ivan  Wills
 # $Id$
 # $Revision$, $HeadURL$, $Date$
 # $Revision$, $Source$, $Date$
@@ -39,7 +39,7 @@ sub process {
 
 	return ( pod => "File contains dodgy characters ($file)" ) if !$file;
 
-	my $parser = Pod::POM->new( { warn => 0, } );
+	my $parser = $self->pod;
 	my $pom = $parser->parse($file);
 	my $out;
 	$out = eval { Pod::POM::View::Text->print($pom) };
@@ -54,7 +54,7 @@ __END__
 
 =head1 NAME
 
-DocPerl::View::TEXT - <One-line description of module's purpose>
+DocPerl::View::TEXT - Produces text version of POD
 
 =head1 VERSION
 
@@ -68,63 +68,24 @@ This documentation refers to DocPerl::View::TEXT version 1.0.0.
    # This section will be as far as many users bother reading, so make it as
    # educational and exemplary as possible.
 
-
 =head1 DESCRIPTION
-
-A full description of the module and its features.
-
-May include numerous subsections (i.e., =head2, =head3, etc.).
-
 
 =head1 SUBROUTINES/METHODS
 
-A separate section listing the public components of the module's interface.
+=head3 C<process ()>
 
-These normally consist of either subroutines that may be exported, or methods
-that may be called on objects belonging to the classes that the module
-provides.
+Return: HASH - the key pod contains the the text form of the modules POD
 
-Name the section accordingly.
-
-In an object-oriented module, this section should begin with a sentence (of the
-form "An object of this class represents ...") to give the reader a high-level
-context to help them understand the methods that are subsequently described.
-
-
-=head3 C<sub ( $search, )>
-
-Param: C<$search> - type (detail) - description
-
-Return: DocPerl::View::TEXT -
-
-Description:
+Description: Processes a perl script or module to extract the text form of
+POD that that file contains.
 
 =head1 DIAGNOSTICS
 
-A list of every error and warning message that the module can generate (even
-the ones that will "never happen"), with a full explanation of each problem,
-one or more likely causes, and any suggested remedies.
-
 =head1 CONFIGURATION AND ENVIRONMENT
-
-A full explanation of any configuration system(s) used by the module, including
-the names and locations of any configuration files, and the meaning of any
-environment variables or properties that can be set. These descriptions must
-also include details of any configuration language used.
 
 =head1 DEPENDENCIES
 
-A list of all of the other modules that this module relies upon, including any
-restrictions on versions, and an indication of whether these required modules
-are part of the standard Perl distribution, part of the module's distribution,
-or must be installed separately.
-
 =head1 INCOMPATIBILITIES
-
-A list of any modules that this module cannot be used in conjunction with.
-This may be due to name conflicts in the interface, or competition for system
-or program resources, or due to internal limitations of Perl (for example, many
-modules that use source code filters are mutually incompatible).
 
 =head1 BUGS AND LIMITATIONS
 

@@ -15,8 +15,6 @@ use version;
 use Carp;
 use Data::Dumper qw/Dumper/;
 use English qw/ -no_match_vars /;
-use Pod::POM;
-use Pod::POM::View::Text;
 use base qw/DocPerl::View/;
 
 our $VERSION     = version->new('1.0.0');

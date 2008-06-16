@@ -170,6 +170,17 @@ sub clear_cache {
 	return;
 }
 
+sub pom {
+
+	my $self = shift;
+
+	# return the cached object if it exists
+	return $self->{pom} if $self->{pom};
+
+	# create and cache a new Pod::POM object
+	return $self->{pom} = Pod::POM->new( { warn => 0, } );
+}
+
 sub DESTROY {
 
 	return;
@@ -245,32 +256,19 @@ Param: C<$dir> - string (detail) - The cache directory to clear
 
 Description: Clears all the cache files.
 
-=head1 DIAGNOSTICS
+=head2 C<pom ()>
 
-A list of every error and warning message that the module can generate (even
-the ones that will "never happen"), with a full explanation of each problem,
-one or more likely causes, and any suggested remedies.
+Return: Pod::POM - a new or cached Pod::POM object
+
+Description: Caches the internal Pod::POM object
+
+=head1 DIAGNOSTICS
 
 =head1 CONFIGURATION AND ENVIRONMENT
 
-A full explanation of any configuration system(s) used by the module, including
-the names and locations of any configuration files, and the meaning of any
-environment variables or properties that can be set. These descriptions must
-also include details of any configuration language used.
-
 =head1 DEPENDENCIES
 
-A list of all of the other modules that this module relies upon, including any
-restrictions on versions, and an indication of whether these required modules
-are part of the standard Perl distribution, part of the module's distribution,
-or must be installed separately.
-
 =head1 INCOMPATIBILITIES
-
-A list of any modules that this module cannot be used in conjunction with.
-This may be due to name conflicts in the interface, or competition for system
-or program resources, or due to internal limitations of Perl (for example, many
-modules that use source code filters are mutually incompatible).
 
 =head1 BUGS AND LIMITATIONS
 
