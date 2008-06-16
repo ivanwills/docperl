@@ -130,19 +130,19 @@ LINE:
 	if ( $api{package} ) {
 		$api{version} = load_package( $api{package}, $file );
 		carp $EVAL_ERROR if $EVAL_ERROR;
-		eval { $api{hirachy} = [ get_hirachy( $api{package} ) ]; };
+		eval { $api{hierarchy} = [ get_hierarchy( $api{package} ) ]; };
 		if ($EVAL_ERROR) {
 			carp $EVAL_ERROR;
-			$api{hirachy} = $api{parents};
+			$api{hierarchy} = $api{parents};
 		}
-		elsif ( !@{ $api{hirachy}[0]{hirachy} } && $api{parents} ) {
+		elsif ( !@{ $api{hierarchy}[0]{hierarchy} } && $api{parents} ) {
 
 			if ( $location ne 'local' ) {
 				# only warn if not in local as these modules are likely not to have the @INC path set correctly
-				warn "Found parents of $api{package} (" . ( join q{,}, @{ $api{parents} } ) . ') but not hirachy!'; ## no critic
+				warn "Found parents of $api{package} (" . ( join q{,}, @{ $api{parents} } ) . ') but not hierarchy!'; ## no critic
 			}
 
-			$api{hirachy}[0]{hirachy} = [ map { { class => $_ } } @{ $api{parents} } ];
+			$api{hierarchy}[0]{hierarchy} = [ map { { class => $_ } } @{ $api{parents} } ];
 		}
 
 		# clean up if we did not already have the symbol table
@@ -257,9 +257,9 @@ sub check_package_vars {
 	return 0;
 }
 
-sub get_hirachy {
+sub get_hierarchy {
 	my ($object) = @_;
-	my @hirachy;
+	my @hierarchy;
 	my @parents;
 	{
 		no strict qw/refs/;    ## no critic
@@ -270,14 +270,14 @@ sub get_hirachy {
 	foreach my $parent (@parents) {
 		load_package($parent);
 		if ( !$EVAL_ERROR ) {
-			push @hirachy, get_hirachy($parent);
+			push @hierarchy, get_hierarchy($parent);
 		}
 		else {
-			push @hirachy, { class => $parent };
+			push @hierarchy, { class => $parent };
 		}
 	}
 
-	return { class => $object, hirachy => \@hirachy };
+	return { class => $object, hierarchy => \@hierarchy };
 }
 
 {
@@ -385,7 +385,7 @@ This documentation refers to DocPerl::View::API version 1.0.0.
   #      func      => [
   #          { name => 'function', line => 'line no defined' }, ...
   #      ],
-  #      hirachy   => [ inverted definition of class hirachy ],
+  #      hierarchy   => [ inverted definition of class hierarchy ],
   #   }
   # };
 
@@ -405,13 +405,13 @@ Description: Processes a file to find out what modules it uses, what subs it
 declares (and weather they are class or object methods or plain subs) and the
 inheritance tree if any of the module.
 
-=head3 C<get_hirachy ( $object )>
+=head3 C<get_hierarchy ( $object )>
 
-Param: C<$object> - The name of the module who's hirachy is desired
+Param: C<$object> - The name of the module who's hierarchy is desired
 
-Return: HASHREF - That describes the object hirachy of $object
+Return: HASHREF - That describes the object hierarchy of $object
 
-Description: This function finds out the object hirachy of the passed object
+Description: This function finds out the object hierarchy of the passed object
 $object by using the object (use $object) and looking at it's ISA array. (it
 then cascades down to the next level etc).
 

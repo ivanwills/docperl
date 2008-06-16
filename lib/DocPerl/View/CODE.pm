@@ -199,7 +199,7 @@ __END__
 
 =head1 NAME
 
-DocPerl::View::CODE - Displays the code of a specified file in syntax highlited HTML
+DocPerl::View::CODE - Displays the code of a specified file in syntax highlighted HTML
 
 =head1 VERSION
 
@@ -225,7 +225,7 @@ some syntax high lighting.
 
 Return: HASH - The processed code lines as HTML
 
-Description: Convers the source file to HTML for display
+Description: Converts the source file to HTML for display
 
 =head2 C<to_spaces ( $line, $tab_size )>
 

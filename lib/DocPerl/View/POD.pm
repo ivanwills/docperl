@@ -83,11 +83,11 @@ This documentation refers to DocPerl::View::POD version 1.0.0.
 
 =head2 C<process ()>
 
-Return: HASH - parameters for parsing to a template inparticular the pod key
-contains the html generated from the moudules POD.
+Return: HASH - parameters for parsing to a template in particular the pod key
+contains the html generated from the modules POD.
 
 Description: Process a file to extract its POD documentation. The
-file/module whoes POD is to be processed is found from the DocPerl::View::POD
+file/module who's POD is to be processed is found from the DocPerl::View::POD
 object itself.
 
 =head1 DIAGNOSTICS

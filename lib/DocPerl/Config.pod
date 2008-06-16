@@ -22,11 +22,11 @@ path usually setup to be your local working POD files.
 
 =item Path
 
-A colon seperated list of directories to search for files
+A colon separated list of directories to search for files
 
 =item Exclude
 
-A colon seperated list of directories to exclude from the search path.
+A colon separated list of directories to exclude from the search path.
 
 =item Match
 
@@ -36,7 +36,7 @@ specified it will be created from the suffixes option.
 =item suffixes
 
 Specifies file suffixes that can be to search for specific files. To
-specify more that one suffix repeat the suffixes option multiple tiems e.g.
+specify more that one suffix repeat the suffixes option multiple items e.g.
 
  suffixes: pm
  suffixes: pod
@@ -47,7 +47,7 @@ specify more that one suffix repeat the suffixes option multiple tiems e.g.
 =head3 IncFolders
 
 The system wide perl modules section. IncFilders is similar to the
-LocalFolders execpt Path is added to the global @INC path. Also any
+LocalFolders except Path is added to the global @INC path. Also any
 module/file starting with pod:: is put into the Perl section on the list
 page.
 
@@ -84,11 +84,11 @@ stored.
 
 =item Perl
 
-The location of ther perl executable (used when creating POD files).
+The location of their perl executable (used when creating POD files).
 
 =item Cache
 
-Allows you to turn off caching, which can be usefull you do not have
+Allows you to turn off caching, which can be useful you do not have
 permissions to write to the disk.
 
  'on' or not set Turns on the cache
@@ -96,7 +96,7 @@ permissions to write to the disk.
 
 =item ClearCache
 
-Allows a user of the web interface to clear the cache (which is usefull when
+Allows a user of the web interface to clear the cache (which is useful when
 new modules are installed and the list page is cached and becomes out of
 date).
 
@@ -116,7 +116,7 @@ Here is a summary of the url parameters.
 
 =item page
 
-This effectivly sets which template is to be used as well as what processing
+This effectively sets which template is to be used as well as what processing
 needs to be done. Some more important values are:
 
 =over 4
@@ -131,7 +131,7 @@ Shows the Plain Old Documentation for the module.
 
 =item api
 
-Shows the API of the module (includes sub, modules used, module hirachy etc).
+Shows the API of the module (includes sub, modules used, module hierarchy etc).
 
 =item code
 
@@ -141,7 +141,7 @@ Syntax highlighted version of the module.
 
 =item module
 
-Sets the perl module to be displaied. This can be represented in one of two
+Sets the perl module to be displayed. This can be represented in one of two
 forms: either standard perl form (Config::Std) or as a path from the list
 page (inc__c__Config__Std). In path from location does not need to be specified.
 
@@ -163,7 +163,7 @@ Instructs DocPerl to clear it's cache (if allowed).
 
 =item sidebar
 
-Alters the link taget on the list page so that when the list page is used for
+Alters the link target on the list page so that when the list page is used for
 a firefox sidebar it displays the pages in the correct place.
 
 =back

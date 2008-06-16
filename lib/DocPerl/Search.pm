@@ -85,7 +85,7 @@ Description: Initialisation method to be overridden by modules that derive from 
 
 Arg C<terms> - string - The terms to search for in the pod
 
-Return: array - An array of the modules that had the most occurances of the terms
+Return: array - An array of the modules that had the most occurrences of the terms
 
 Description: Performs the actual searching. Should be overridden by derived modules.
 

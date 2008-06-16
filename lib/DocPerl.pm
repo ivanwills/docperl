@@ -354,7 +354,7 @@ sub list {
 	# create the path info for the list page
 	$vars{local_path} = join '<br/>', @local_folders;
 
-	# remove all unnessesery data
+	# remove all unnecessary data
 	if ( !$self->{save_data} ) {
 		delete $vars{INC};
 		delete $vars{PERL};
@@ -558,7 +558,7 @@ This documentation refers to DocPerl version 1.0.0.
 
 =head1 DESCRIPTION
 
-This module provides the basic controll of DocPerl.
+This module provides the basic control of DocPerl.
 
 =head1 SUBROUTINES/METHODS
 
@@ -570,7 +570,9 @@ C<cgi> - CGI - the cgi object.
 
 C<conf> - Config::Std - The configuration object
 
-C<save_data> - bool - Flags that the data built up in the list function should be kept because this object will be reused other wise it will be removed to save on the passing arround unnessesary data.
+C<save_data> - bool - Flags that the data built up in the list function
+should be kept because this object will be reused other wise it will be
+removed to save on the passing around unnecessary data.
 
 Return: DocPerl - A new DocPerl object.
 
@@ -588,7 +590,7 @@ cgi parameters.
 
 Return: HASH - Parameters for use in the templates
 
-Description: Processes the page that is to be displaied and returns the
+Description: Processes the page that is to be displayed and returns the
 parameters that contain the information to be used by the template system.
 
 =head3 C<template ( )>

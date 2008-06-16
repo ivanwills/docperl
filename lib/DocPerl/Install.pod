@@ -1,6 +1,6 @@
 =head1 DocPerl Installation
 
-DocPerl is straightforward to install.  It consists of wholely of Perl scripts
+DocPerl is straightforward to install.  It consists of wholly of Perl scripts
 in text files and is therefore quite transparent to anyone wishing to delve
 into the internals or to troubleshoot particular errors.  Installation on a
 standard Unix/Linux system is performed with no requirement to have more than
@@ -20,7 +20,7 @@ Perl version 5.6 or greater
 
 =item *
 
-A webserver (eg. Apache, IIS, LightHTTPD etc...)
+A web server (eg. Apache, IIS, LightHTTPD etc...)
 
 =back
 
@@ -137,12 +137,12 @@ in the DocPerl directory) for more security settings.
 
 =head1 Windows
 
-Installation on Windows has improved since the initial realeses. The
+Installation on Windows has improved since the initial releases. The
 dependencies on command line programs have been removed.
 
 The major problems you may now encounter are setting setting the Perl scripts
 bang line to you Perl location (if you do not download the windows zip file
-or your Perl is not installed into F<C:/Perl>). Work-arounds are to change the
+or your Perl is not installed into F<C:/Perl>). Workarounds are to change the
 bang line from:
 
  #!/usr/bin/perl

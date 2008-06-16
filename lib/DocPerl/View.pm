@@ -211,7 +211,7 @@ This documentation refers to DocPerl::View version 1.0.0.
 
 =head1 DESCRIPTION
 
-DocPerl::View provides a base for DocPerl classses that produce complex html
+DocPerl::View provides a base for DocPerl classes that produce complex html
 pages that need to be cached for performance.
 
 =head1 SUBROUTINES/METHODS
@@ -226,17 +226,17 @@ Description: Creates and initialises a new DocPerl::View or inherited object
 
 =head3 C<init (  )>
 
-Description: Does nothing in its self but shold be overridden by inheriting
+Description: Does nothing in its self but should be overridden by inheriting
 packages for any initialisation that they need.
 
 =head3 C<_check_cache ( %args )>
 
-Arg: C<source> - string - The file name that a cached file is baised on
+Arg: C<source> - string - The file name that a cached file is based on
 
 Arg: C<cache> - string - The relative file name for a cached version of a file
 
 Return: string - The cached file's contents if the source and cache file's
-modiffied times match or an empty string if there is no cache file or the files
+modified times match or an empty string if there is no cache file or the files
 modification time is different to that of the source file.
 
 Description: Checks a source file against the cached version to see if their
@@ -244,7 +244,7 @@ modified times are different. Returning the cache contents if they match.
 
 =head3 C<_save_cache ( %arg )>
 
-Arg: C<source> - string - The file name that a cached file is baised on
+Arg: C<source> - string - The file name that a cached file is based on
 
 Arg: C<cache> - string - The relative file name for a cached version of a file
 
