@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 # Created on: 2006-03-24 05:48:19
-# Create by:  ivan
+# Create by:  Ivan Wills
 # $Id$
 # $Revision$, $HeadURL$, $Date$
 # $Revision$, $Source$, $Date$

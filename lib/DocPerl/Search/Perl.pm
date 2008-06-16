@@ -1,7 +1,7 @@
 package DocPerl::Search::Perl;
 
 # Created on: 2007-02-16 20:28:48
-# Create by:  ivan
+# Create by:  Ivan Wills
 # $Id$
 # $Revision$, $HeadURL$, $Date$
 # $Revision$, $Source$, $Date$

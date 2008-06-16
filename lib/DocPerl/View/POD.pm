@@ -1,7 +1,7 @@
 package DocPerl::View::POD;
 
 # Created on: 2007-02-13 19:14:27
-# Create by:  ivan
+# Create by:  Ivan Wills
 # $Id$
 # $Revision$, $HeadURL$, $Date$
 # $Revision$, $Source$, $Date$

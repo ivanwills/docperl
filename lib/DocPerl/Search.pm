@@ -1,13 +1,10 @@
 package DocPerl::Search;
 
 # Created on: 2007-02-10 20:22:55
-# Create by:  ivan
+# Create by:  Ivan  Wills
 # $Id$
 # $Revision$, $HeadURL$, $Date$
 # $Revision$, $Source$, $Date$
-
-# Created on: 2007-02-10 20:22:55
-# Create by:  ivan
 
 use strict;
 use warnings;

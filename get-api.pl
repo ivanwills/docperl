@@ -1,10 +1,10 @@
 #!/usr/bin/perl
 
 # Created on: 2006-05-24 20:25:32
-# Create by:  ivan
+# Create by:  Ivan Wills
 # $Id$
-# # $Revision$, $HeadURL$, $Date$
-# # $Revision$, $Source$, $Date$
+# $Revision$, $HeadURL$, $Date$
+# $Revision$, $Source$, $Date$
 
 use strict;
 use warnings;

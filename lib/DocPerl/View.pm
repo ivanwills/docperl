@@ -1,7 +1,7 @@
 package DocPerl::View;
 
 # Created on: 2006-03-19 20:28:44
-# Create by:  ivan
+# Create by:  Ivan  Wills
 # $Id$
 # $Revision$, $HeadURL$, $Date$
 # $Revision$, $Source$, $Date$
