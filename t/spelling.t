@@ -18,6 +18,7 @@ add_stopwords(qw/
 	DocPerl
 	docperl
 	pl
+	pm
 	ppm
 	IIS
 	tmpl

@@ -415,32 +415,93 @@ Description: This function finds out the object hierarchy of the passed object
 $object by using the object (use $object) and looking at it's ISA array. (it
 then cascades down to the next level etc).
 
-=head1 DIAGNOSTICS
+=head2 C<check_base_parents ( $line, $api )>
 
-A list of every error and warning message that the module can generate (even
-the ones that will "never happen"), with a full explanation of each problem,
-one or more likely causes, and any suggested remedies.
+Param: C<$line> - string - The line of code
+
+Param: C<$api> - hashref - Where the info is to be stored
+
+Return: bool - True if a base parent is defined false other wise
+
+Description: Determines parent modules declared via a use base statement.
+
+=head2 C<check_isa_parents (  )>
+
+Param: C<$line> - string - The line of code
+
+Param: C<$api> - hashref - Where the info is to be stored
+
+Return: bool - True if a @ISA parent is defined false other wise
+
+Description: Determines parent modules declared via setting @ISA
+
+=head2 C<check_package (  )>
+
+Param: C<$line> - string - The line of code
+
+Param: C<$api> - hashref - Where the info is to be stored
+
+Return: bool - True if a package declaration is found false other wise
+
+Description: Checks if a line declares a new package
+
+=head2 C<check_package_vars (  )>
+
+Param: C<$line> - string - The line of code
+
+Param: C<$api> - hashref - Where the info is to be stored
+
+Return: bool - True if a package variable declaration is found false other wise
+
+Description: Checks if any variables are declared via our
+
+=head2 C<check_require (  )>
+
+Param: C<$line> - string - The line of code
+
+Param: C<$api> - hashref - Where the info is to be stored
+
+Return: bool - True if a module is required false other wise
+
+Description: Determines if any modules are required on that line.
+
+=head2 C<check_use (  )>
+
+Param: C<$line> - string - The line of code
+
+Param: C<$api> - hashref - Where the info is to be stored
+
+Return: bool - True if a module is used false other wise
+
+Description: Determines if any modules are used on the line.
+
+=head2 C<load_package (  )>
+
+Param: C<$file> - string - The module to load
+
+Return: version - The version of the loaded module
+
+Description: Requires a module and returns it's version
+
+=head2 C<process (  )>
+
+Return: HASH - The data for the API template
+
+Description: Processes a perl file to extract it's API
+
+=head2 C<unload_package ( $package )>
+
+Param: C<$package> - string - The package to unload
+
+Description: Unloads a package from the current name space
+
+=head1 DIAGNOSTICS
 
 =head1 CONFIGURATION AND ENVIRONMENT
 
-A full explanation of any configuration system(s) used by the module, including
-the names and locations of any configuration files, and the meaning of any
-environment variables or properties that can be set. These descriptions must
-also include details of any configuration language used.
-
 =head1 DEPENDENCIES
 
-A list of all of the other modules that this module relies upon, including any
-restrictions on versions, and an indication of whether these required modules
-are part of the standard Perl distribution, part of the module's distribution,
-or must be installed separately.
-
 =head1 INCOMPATIBILITIES
-
-A list of any modules that this module cannot be used in conjunction with.
-This may be due to name conflicts in the interface, or competition for system
-or program resources, or due to internal limitations of Perl (for example, many
-modules that use source code filters are mutually incompatible).
 
 =head1 BUGS AND LIMITATIONS
 

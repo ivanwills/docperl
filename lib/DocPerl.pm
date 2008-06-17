@@ -586,12 +586,41 @@ Return: void
 Description: Initialises the DocPerl object processing the requested
 cgi parameters.
 
+=head3 C<init_module ( )>
+
+Description: Initialises the parameters based on the supplied parameters
+
+=head3 C<find_matches ( )>
+
+Description: Finds all files that match the module's name (eg .pm & .pod
+files)
+
 =head3 C<process ( )>
 
 Return: HASH - Parameters for use in the templates
 
 Description: Processes the page that is to be displayed and returns the
 parameters that contain the information to be used by the template system.
+
+=head3 C<cache ( $page, $cache, $path, $out )>
+
+Param: C<$page> - string - The page being displayed
+
+Param: C<$cache> - string - The cache object
+
+Param: C<$path> - string - The path of object to be cached
+
+Param: C<$out> - string - The data to be cached
+
+Description: saves data to the cache directory
+
+=head3 C<error ( $message )>
+
+Param: C<$message> - string - The error message
+
+Return:string - The error page
+
+Description: This is used to output error pages
 
 =head3 C<template ( )>
 
@@ -618,6 +647,10 @@ Return: HASH - The parameters for displaying the module/file list page.
 Description: Finds all modules in the three specified locations (perl,local
 and inc) and returns the parameters for the list page to display that
 information.
+
+=head3 C<find ( )>
+
+Description: This should be removed in favor of File::Find
 
 =head1 DIAGNOSTICS
 

@@ -229,6 +229,13 @@ Description: Creates and initialises a new DocPerl::View or inherited object
 Description: Does nothing in its self but should be overridden by inheriting
 packages for any initialisation that they need.
 
+=head2 C<process ()>
+
+Return: HASH - The parameters to be passed on to the template
+
+Description: This method should be overwritten by an actual view. Its results
+are passed on to the template used to display the view.
+
 =head3 C<_check_cache ( %args )>
 
 Arg: C<source> - string - The file name that a cached file is based on

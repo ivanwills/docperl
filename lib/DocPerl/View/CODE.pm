@@ -213,7 +213,6 @@ This documentation refers to DocPerl::View::CODE version 1.0.0.
    # This section will be as far as many users bother reading, so make it as
    # educational and exemplary as possible.
 
-
 =head1 DESCRIPTION
 
 This module displays the code of a specified file in HTML with line numbers and
@@ -221,11 +220,19 @@ some syntax high lighting.
 
 =head1 SUBROUTINES/METHODS
 
-=head3 C<process ( )>
+=head2 C<process ( )>
 
 Return: HASH - The processed code lines as HTML
 
 Description: Converts the source file to HTML for display
+
+=head2 C<tag_code ( $code )>
+
+Param: $code - string - The line of code that is to have HTML tags applied
+
+Return: string - The code with HTML tags applied
+
+Description: Applies HTML tags to sections of the code
 
 =head2 C<to_spaces ( $line, $tab_size )>
 
@@ -239,30 +246,11 @@ Converts one line of text from using tabs of size $tab_size to using spaces
 
 =head1 DIAGNOSTICS
 
-A list of every error and warning message that the module can generate (even
-the ones that will "never happen"), with a full explanation of each problem,
-one or more likely causes, and any suggested remedies.
-
 =head1 CONFIGURATION AND ENVIRONMENT
-
-A full explanation of any configuration system(s) used by the module, including
-the names and locations of any configuration files, and the meaning of any
-environment variables or properties that can be set. These descriptions must
-also include details of any configuration language used.
 
 =head1 DEPENDENCIES
 
-A list of all of the other modules that this module relies upon, including any
-restrictions on versions, and an indication of whether these required modules
-are part of the standard Perl distribution, part of the module's distribution,
-or must be installed separately.
-
 =head1 INCOMPATIBILITIES
-
-A list of any modules that this module cannot be used in conjunction with.
-This may be due to name conflicts in the interface, or competition for system
-or program resources, or due to internal limitations of Perl (for example, many
-modules that use source code filters are mutually incompatible).
 
 =head1 BUGS AND LIMITATIONS
 
