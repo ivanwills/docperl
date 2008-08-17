@@ -207,6 +207,14 @@ sub view_item {
 			my $anchor = $title;
 			$anchor =~ s/^\s*|\s*$//gxms;    # strip leading and closing spaces
 			$anchor =~ s/\W/_/gxms;
+
+			# fix for perlfunc functions which require at least one param
+			if ($MODULE eq 'pod::perlfunc' && $title =~ /\s/) {
+				my $short_anchor = $title;
+				$short_anchor =~ s/^ ( \S+ ) \s (?: .* ) $/$1/xms;
+				$title = qq{<a name="item_$short_anchor">$title</a>};
+			}
+
 			$title = qq{<a name="item_$anchor"></a><b>$title</b>};
 		}
 	}
@@ -243,53 +251,53 @@ sub view_seq_link {
 		return $link;
 	}
 
-	# full-blown URL's are emitted as-is
-	if ( $link =~ m{^\w+://}xms ) {
-		return make_href($link);
-	}
+	# try to extract the link title
+	my ($link_title, $link_end) = $link =~ /^ (?: ( [^|]* ) [|] )? ( .* ) $/xms;
 
-	$link =~ s/\n/ /gxms;    # undo line-wrapped tags
+	# determine the link type
+	my $link_type =
+		  $link_end =~ m{\A \w+ : [^:\s] \S* \z} ? 'url'
+		: $link_end =~ m{\( \d+ \) (?: \Z | / )} ? 'man'
+		:                                          'pod';
 
-	my $orig_link = $link;
-	my $linktext;
+	my ($link_name, $link_section);
 
-	# strip the sub-title and the following '|' char
-	if ( $link =~ s/^ ([^|]+) \| //xms ) {
-		$linktext = $1;
-	}
-
-	# make sure sections start with a /
-	$link =~ s{^"}{/"}xms;
-
-	my $page;
-	my $section;
-	if ( $link =~ m{^ (.*?) / "? (.*?) "? $}xms ) {    # [name]/"section"
-		( $page, $section ) = ( $1, $2 );
-	}
-	elsif ( $link =~ /\s/xms ) {                       # this must be a section with missing quotes
-		( $page, $section ) = ( q{}, $link );
+	if ($link_type ne 'url') {
+		# for non url links get the link section and name
+		($link_section) = $link_end =~ m{ / ['"]? ( .* ) ['"]? $}xms;
+		($link_name )   = $link_end =~ m{^ ( [^/]* ) }xms;
 	}
 	else {
-		( $page, $section ) = ( $link, q{} );
+		$link_name = $link_end;
 	}
 
-	# warning; show some text.
-	if ( !defined $linktext ) {
-		$linktext = $orig_link;
-		$linktext =~ s{^/}{}xms;
+	# set the link title if not given
+	$link_title =
+		   !$link_title && $link_name && $link_section ? qq{"$link_section" in $link_name}
+		 : !$link_title && $link_name                  ? $link_name
+		 : !$link_title && $link_section               ? qq{"$link_section"}
+		 :                                               $link_title;
+
+	# add the pod prefix to any names starting with perl
+	if ($link_name =~ /^perl/) {
+		$link_name = "pod::$link_name";
 	}
 
-	my $url = q{};
-	if ( defined $page && length $page ) {
-		$url = $self->view_seq_link_transform_path($page);
+	my $url =
+		  $link_type eq 'pod' ? "?page=pod&module=$link_name&location=$LOCATION"
+		:                       $link_name || '';
+
+	# append the section to the url if one exists
+	if ($link_section) {
+		# transform the section to something html safe
+		$link_section =~ s/[A-Z] < ( [^>]* ) >/$1/gxms;
+		$link_section =~ s/\W/_/gxms;
+
+		# add it to the url
+		$url .= "#$link_section";
 	}
 
-	# append the #section if exists
-	if ( defined $url && defined $section && length $section ) {
-		$url .= "#$section";
-	}
-
-	return make_href( $url, $linktext );
+	return make_href( $url, $link_title );
 }
 
 sub make_href {
