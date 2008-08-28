@@ -105,7 +105,11 @@ function animate_headding () {
 		state = 'perl';
 		head.replaceChild( document.createTextNode('Perl\240Documentation'), head.firstChild );
 	}
+
 	setTimeout( fade_headding, [% animation %] );
+
+	var iframe = document.getElementById('main');
+	iframe.style.height = iframe.contentWindow.document.body.scrollHeight + 'px';
 }
 
 /**
