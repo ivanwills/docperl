@@ -20,7 +20,7 @@
 			@import url("[% ENV.SCRIPT_NAME %]?page=css.css");
 		/* ]]> */-->
 		</style>
-		<script type="text/javascript" src="[% static %]js/jquery-1.2.3.pack.js"></script>
+		<script type="text/javascript" src="[% static %]js/jquery-1.2.6.min.js"></script>
 		<script type="text/javascript" src="?page=list.js&amp;sidebar=[% IF sidebar %]1[% ELSE %]0[% END %]"></script>
 		<script type="text/javascript">
 		<!--/* <![CDATA[ */
@@ -98,7 +98,7 @@
 		</div>
 		[% UNLESS LocalOnly %]
 		<div id="perl_doc">
-			<h2 id="perl_head"><span class="info"><img src="info.png" alt="info" border="0"/><span>[% perl_path %]</span></span>
+			<h2 id="perl_head"><span class="info"><img src="[% static %]info.png" alt="info" border="0"/><span>[% perl_path %]</span></span>
 			<a id="plus__perl" href="javascript: section_toggle('perl');" class="mod_expand" title="[% str_section_hide %]">-</a>
 			[% PerlLabel || str_list_perl %] (<span id="perl_count">0</span>)</h2>
 			<div id="perl">
@@ -106,7 +106,7 @@
 		</div>
 		[%- END %]
 		<div id="local_doc">
-			<h2 id="local_head"><span class="info"><img src="info.png" alt="info" border="0"/><span>[% local_path %]</span></span>
+			<h2 id="local_head"><span class="info"><img src="[% static %]info.png" alt="info" border="0"/><span>[% local_path %]</span></span>
 			<a id="plus__local" href="javascript: section_toggle('local');" class="mod_expand" title="[% str_section_hide %]">-</a>
 			[% LocalLabel || str_list_local %] (<span id="local_count">0</span>)</h2>
 			<div id="local">
@@ -114,7 +114,7 @@
 		</div>
 		[% UNLESS LocalOnly %]
 		<div id="inc_doc">
-			<h2 id="inc_head"><span class="info"><img src="info.png" alt="info" border="0"/><span>[% inc_path %]</span></span>
+			<h2 id="inc_head"><span class="info"><img src="[% static %]info.png" alt="info" border="0"/><span>[% inc_path %]</span></span>
 			<a id="plus__inc" href="javascript: section_toggle('inc');" class="mod_expand" title="[% str_section_hide %]">-</a>
 			[% IncLabel || str_list_inc %] (<span id="inc_count">0</span>)</h2>
 			<div id="inc">
@@ -139,7 +139,7 @@
 		<hr />
 	</td>
 	<td>
-		<iframe name="main" src="?page=pod&amp;module=[% module %][% IF location %]&location=[% location %][% END %][% IF file %]&file=[% file %][% END %][% IF source %]&source=[% source %][% END %]" width="100%" height="100%"/>
+		<iframe name="main" id="main" src="?page=pod&amp;module=[% module %][% IF location %]&location=[% location %][% END %][% IF file %]&file=[% file %][% END %][% IF source %]&source=[% source %][% END %]" width="100%" height="100%"/>
 	</td></tr></table>
 	</body>
 </html>
