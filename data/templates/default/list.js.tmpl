@@ -71,6 +71,7 @@ function setup_modules() {
 		setup_modules.group++;
 		setTimeout( setup_modules, 10 );
 		setTimeout( fade_headding, [% animation %] );
+		setTimeout(set_iframe_height, 1000);
 	}
 	else if ( setup_modules.group == 5 ) {
 		level = 0;
@@ -83,6 +84,19 @@ function setup_modules() {
 			list_toggle(open_list[i]);
 		}
 	}
+}
+
+/**
+ *  @todo
+ *  @bug
+ *
+ *  Sets the iframe height to match the iframe contents
+ */
+function set_iframe_height () {
+	var iframe = document.getElementById('main');
+	iframe.style.height = iframe.contentWindow.document.body.scrollHeight + 'px';
+
+	setTimeout(set_iframe_height, 1000);
 }
 
 /**
@@ -107,9 +121,6 @@ function animate_headding () {
 	}
 
 	setTimeout( fade_headding, [% animation %] );
-
-	var iframe = document.getElementById('main');
-	iframe.style.height = iframe.contentWindow.document.body.scrollHeight + 'px';
 }
 
 /**
