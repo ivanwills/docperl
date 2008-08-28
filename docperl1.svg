@@ -15,7 +15,10 @@
    inkscape:version="0.46"
    version="1.0"
    sodipodi:docname="docperl1.svg"
-   inkscape:output_extension="org.inkscape.output.svg.inkscape">
+   inkscape:output_extension="org.inkscape.output.svg.inkscape"
+   inkscape:export-filename="/www/sites/docperl/docperl1.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
   <defs
      id="defs4">
     <inkscape:perspective
@@ -74,14 +77,14 @@
          y="34.880978">D</tspan></text>
     <text
        xml:space="preserve"
-       style="font-size:35.94792557px;font-style:normal;font-weight:normal;fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
-       x="2.961195"
-       y="31.066278"
+       style="font-size:34.39500809px;font-style:normal;font-weight:normal;fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
+       x="4.6306138"
+       y="32.46891"
        id="text2387"
-       transform="scale(0.974667,1.0259914)"><tspan
+       transform="scale(1.0186729,0.9816694)"><tspan
          sodipodi:role="line"
          id="tspan2389"
-         x="2.961195"
-         y="31.066278">P</tspan></text>
+         x="4.6306138"
+         y="32.46891">P</tspan></text>
   </g>
 </svg>
