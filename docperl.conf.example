@@ -100,6 +100,9 @@ HideDefaultModule: on
 # show/hide option of viewing the cpan test status of the module
 #ShowTestStatus:    on
 
+# Set the location of static files (if you can't serve static files (js & images)
+# from the same directory as the executables
+#static:            /
 
 ## General
 # General configuration
