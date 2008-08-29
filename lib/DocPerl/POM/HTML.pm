@@ -209,7 +209,7 @@ sub view_item {
 			$anchor =~ s/\W/_/gxms;
 
 			# fix for perlfunc functions which require at least one param
-			if ($MODULE eq 'pod::perlfunc' && $title =~ /\s/) {
+			if (($MODULE eq 'pod::perlfunc' || $MODULE eq 'perlfunc') && $title =~ /\s/) {
 				my $short_anchor = $title;
 				$short_anchor =~ s/^ ( \S+ ) \s (?: .* ) $/$1/xms;
 				$title = qq{<a name="item_$short_anchor">$title</a>};
