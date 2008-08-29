@@ -17,7 +17,7 @@ use Data::Dumper qw/Dumper/;
 use English qw/ -no_match_vars /;
 use base qw/DocPerl::View/;
 
-our $VERSION     = version->new('1.0.0');
+our $VERSION     = version->new('1.1.0');
 our @EXPORT_OK   = qw//;
 our %EXPORT_TAGS = ();
 
@@ -61,7 +61,7 @@ DocPerl::View::FUNCTION - Generates a list of functions defined in a perl script
 
 =head1 VERSION
 
-This documentation refers to DocPerl::View::FUNCTION version 1.0.0.
+This documentation refers to DocPerl::View::FUNCTION version 1.1.0.
 
 
 =head1 SYNOPSIS

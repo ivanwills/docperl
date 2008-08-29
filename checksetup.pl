@@ -16,7 +16,7 @@ use Pod::Usage;
 use Data::Dumper qw/Dumper/;
 use English qw/ -no_match_vars /;
 
-our $VERSION = 0.9;
+our $VERSION = 1.1;
 
 use lib ("$Bin/lib");
 my $CONFIG = "$Bin/docperl.conf";
@@ -434,7 +434,7 @@ checksetup.pl - Program to check the setup of a DocPerl installation
 
 =head1 VERSION
 
-This documentation refers to checksetup.pl version 1.0.0.
+This documentation refers to checksetup.pl version 1.1.0.
 
 =head1 SYNOPSIS
 

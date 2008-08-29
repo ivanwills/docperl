@@ -17,7 +17,7 @@ use File::Path;
 use English qw/ -no_match_vars /;
 use base qw/Exporter/;
 
-our $VERSION   = version->new('1.0.0');
+our $VERSION   = version->new('1.1.0');
 our @EXPORT_OK = qw//;
 
 sub new {
@@ -196,7 +196,7 @@ DocPerl::View - Parent object for pages that cache their results.
 
 =head1 VERSION
 
-This documentation refers to DocPerl::View version 1.0.0.
+This documentation refers to DocPerl::View version 1.1.0.
 
 
 =head1 SYNOPSIS

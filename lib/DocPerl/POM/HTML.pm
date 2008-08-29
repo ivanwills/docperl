@@ -17,7 +17,7 @@ use Data::Dumper qw/Dumper/;
 use English qw/ -no_match_vars /;
 use base qw/Pod::POM::View::HTML/;
 
-our $VERSION     = version->new('1.0.0');
+our $VERSION     = version->new('1.1.0');
 our @EXPORT_OK   = qw//;
 our %EXPORT_TAGS = ();
 our $LOCATION    = 'inc';
@@ -335,7 +335,7 @@ DocPerl::POM::HTML - <One-line description of module's purpose>
 
 =head1 VERSION
 
-This documentation refers to DocPerl::POM::HTML version 1.0.0.
+This documentation refers to DocPerl::POM::HTML version 1.1.0.
 
 
 =head1 SYNOPSIS
