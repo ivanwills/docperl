@@ -93,8 +93,23 @@ function setup_modules() {
  *  Sets the iframe height to match the iframe contents
  */
 function set_iframe_height () {
-	var iframe = document.getElementById('main');
-	iframe.style.height = iframe.contentWindow.document.body.scrollHeight + 'px';
+	var iframe = $('#main');
+
+	if (iframe) {
+		var list   = $('#list_td');
+		var height = 800;
+
+		if ( !iframe.contentWindow
+			|| !iframe.contentWindow.document
+			|| !iframe.contentWindow.document.body
+			|| iframe.contentWindow.document.body.scrollHeight < list.height()
+		)
+			height = list.height();
+		else
+			height = iframe.contentWindow.document.body.scrollHeight;
+
+		iframe.height(height);
+	}
 
 	setTimeout(set_iframe_height, 1000);
 }
