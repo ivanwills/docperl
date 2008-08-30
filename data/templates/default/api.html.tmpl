@@ -4,13 +4,13 @@
 	view = 'API' %]
 	<div id="api">
 		<h1>[% module %]</h1>
-		<div class="hirachy">
+		<div class="hierarchy">
 			<div>Class Inheritance</div>
-			[% INCLUDE class_hirachy
-				list  = api.hirachy,
+			[% INCLUDE class_hierarchy
+				list  = api.hierarchy,
 				first = 1
 			%]
-			[% BLOCK class_hirachy %]
+			[% BLOCK class_hierarchy %]
 				[% IF list.size %]
 				<ul>
 					[% FOR item = list %]
@@ -18,9 +18,9 @@
 						[% UNLESS first %]<a href="?page=module&module=[% item.class %]&location=[% location %]" target="main">[% END %]
 							[% item.class %]
 						[% UNLESS first %]</a>[% END %]
-						[%- IF item.hirachy %]
-							[% INCLUDE class_hirachy
-								list  = item.hirachy,
+						[%- IF item.hierarchy %]
+							[% INCLUDE class_hierarchy
+								list  = item.hierarchy,
 								first = 0
 							%]
 						[% END %]

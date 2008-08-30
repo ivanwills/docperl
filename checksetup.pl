@@ -519,7 +519,7 @@ in Fedora).
 =item API Cache
 
 The generation of the API cache files will load those modules (with require Module)
-to get the version number and the object hirachy. This is usually OK when
+to get the version number and the object hierarchy. This is usually OK when
 performed once if run from the through the web interface (or with get-api.pl)
 but when run with this script more than one module with the same name may be
 run. This may be due to being included both @INC and paths defined in

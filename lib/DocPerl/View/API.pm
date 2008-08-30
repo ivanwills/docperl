@@ -125,17 +125,15 @@ LINE:
 	}
 	my @paths = split /:/xms, $location eq 'local' ? $conf->{LocalFolders}{Path} : $conf->{IncFolders}{Path};
 	my $inc_path_size = @INC - 1;
+	local @INC;
 	push @INC, @paths;
 
 	if ( $api{package} ) {
 		$api{version} = load_package( $api{package}, $file );
 		carp $EVAL_ERROR if $EVAL_ERROR;
-		eval { $api{hierarchy} = [ get_hierarchy( $api{package} ) ]; };
-		if ($EVAL_ERROR) {
-			carp $EVAL_ERROR;
-			$api{hierarchy} = $api{parents};
-		}
-		elsif ( !@{ $api{hierarchy}[0]{hierarchy} } && $api{parents} ) {
+		$api{hierarchy} = [ get_hierarchy( $api{package} ) ];
+
+		if ( !@{ $api{hierarchy} } || !@{ $api{hierarchy}[0]{hierarchy} } && $api{parents} ) {
 
 			if ( $location ne 'local' ) {
 				# only warn if not in local as these modules are likely not to have the @INC path set correctly
@@ -157,7 +155,6 @@ LINE:
 			$api{$type} = [ map { { name => $_, line => $api{$type}{$_} } } sort keys %{ $api{$type} } ];
 		}
 	}
-	@INC = @INC[ 0 .. $inc_path_size ];
 
 	$api{lines} = $i;
 	$api{size}  = int -s $file;
@@ -261,13 +258,13 @@ sub get_hierarchy {
 	my ($object) = @_;
 	my @hierarchy;
 	my @parents;
+
 	{
 		no strict qw/refs/;    ## no critic
 		@parents = @{"$object\:\:ISA"};
 	}
-	carp $EVAL_ERROR if $EVAL_ERROR;
 
-	foreach my $parent (@parents) {
+	for my $parent (@parents) {
 		load_package($parent);
 		if ( !$EVAL_ERROR ) {
 			push @hierarchy, get_hierarchy($parent);
@@ -311,7 +308,7 @@ sub get_hierarchy {
 			if ( ( $sub_sym && !exists ${$sym}{$sub_sym} ) || ( !$sub_sym && !%{$sym} ) ) {
 				my $warn = $SIG{__WARN__};
 				$SIG{__WARN__} = sub { };
-				eval { require $file };
+				eval { require $file }; ## no critic
 				$SIG{__WARN__} = $warn;
 			}
 			else {
