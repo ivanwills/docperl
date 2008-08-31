@@ -34,7 +34,7 @@
 		</script>
 	</head>
 	<body id="list_page" onload="setup_modules();">
-	<table id="frames"><tr><td id="list_td">
+	<table id="frames"><tr><td id="list_td"><div id="list_div">
 		<h1 id="headding" style="overflow: hidden">Perl&nbsp;Documentation</h1>
 		<!--h2>Search</h2-->
 		<center style="padding-bottom: 1em;">
@@ -137,6 +137,7 @@
 			[% str_docperl_version %] [% VERSION %]
 		</div>
 		<hr />
+		</div>
 	</td>
 	<td>
 		<iframe name="main" id="main" src="?page=pod&amp;module=[% module %][% IF location %]&location=[% location %][% END %][% IF file %]&file=[% file %][% END %][% IF source %]&source=[% source %][% END %]"/>
