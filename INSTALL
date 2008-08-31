@@ -60,9 +60,12 @@ or where ever your perl is installed. You can set Apache to use file
 extensions instead (see your Apache documentation for details)
 
 
-* If you are using active Perl's ppm to get the Template Toolkit modules
+* If you are using Active Perl's ppm to get the Template Toolkit modules
 you may encounter some difficulty as ppm install Template does not appear to
 install the Template Toolkit, you will probably need to use CPAN.
+
+* DocPerl does not appear to work with Active Perl 5.6 due to not being able
+to install all dependent modules.
 
 *Upgrading*
 
