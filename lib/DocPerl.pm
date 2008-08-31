@@ -563,7 +563,7 @@ This module provides the basic control of DocPerl.
 
 =head1 SUBROUTINES/METHODS
 
-=head3 C<new ( %param )>
+=head2 C<new ( %param )>
 
 Param: C<%param> - The for use of docperl
 
@@ -580,30 +580,30 @@ Return: DocPerl - A new DocPerl object.
 Description: Creates a new DocPerl object with the template file name and mime
 type defined.
 
-=head3 C<init ( )>
+=head2 C<init ( )>
 
 Return: void
 
 Description: Initialises the DocPerl object processing the requested
 cgi parameters.
 
-=head3 C<init_module ( )>
+=head2 C<init_module ( )>
 
 Description: Initialises the parameters based on the supplied parameters
 
-=head3 C<find_matches ( )>
+=head2 C<find_matches ( )>
 
 Description: Finds all files that match the module's name (eg .pm & .pod
 files)
 
-=head3 C<process ( )>
+=head2 C<process ( )>
 
 Return: HASH - Parameters for use in the templates
 
 Description: Processes the page that is to be displayed and returns the
 parameters that contain the information to be used by the template system.
 
-=head3 C<cache ( $page, $cache, $path, $out )>
+=head2 C<cache ( $page, $cache, $path, $out )>
 
 Param: C<$page> - string - The page being displayed
 
@@ -615,7 +615,7 @@ Param: C<$out> - string - The data to be cached
 
 Description: saves data to the cache directory
 
-=head3 C<error ( $message )>
+=head2 C<error ( $message )>
 
 Param: C<$message> - string - The error message
 
@@ -623,25 +623,25 @@ Return:string - The error page
 
 Description: This is used to output error pages
 
-=head3 C<template ( )>
+=head2 C<template ( )>
 
 Return: string - The file name of the current template.
 
 Description: Gets the template file for the current page
 
-=head3 C<get_templ_object ( )>
+=head2 C<get_templ_object ( )>
 
 Return: Template - Returns the stored template object
 
 Description: Gets (or creates then gets) the template toolkit object.
 
-=head3 C<mime ( )>
+=head2 C<mime ( )>
 
 Return: string - A HTTP MIME type string
 
 Description: Gets the mime type of the current template file
 
-=head3 C<list ( )>
+=head2 C<list ( )>
 
 Return: HASH - The parameters for displaying the module/file list page.
 
@@ -649,7 +649,7 @@ Description: Finds all modules in the three specified locations (perl,local
 and inc) and returns the parameters for the list page to display that
 information.
 
-=head3 C<find ( )>
+=head2 C<find ( )>
 
 Description: This should be removed in favor of File::Find
 

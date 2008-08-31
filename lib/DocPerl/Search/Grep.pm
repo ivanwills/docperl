@@ -87,7 +87,7 @@ This documentation refers to DocPerl::Search::Grep version 1.1.0.
 
 =head1 SUBROUTINES/METHODS
 
-=head3 C<search ( %args )>
+=head2 C<search ( %args )>
 
 Arg: C<area> - string - the area of the cache to search
 

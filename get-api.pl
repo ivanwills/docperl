@@ -219,7 +219,7 @@ This documentation refers to get-api version 1.1.0.
 
 =head1 SUBROUTINES/METHODS
 
-=head3 C<display ( $list )>
+=head2 C<display ( $list )>
 
 Param: C<$list> - type (detail) - description
 
@@ -227,7 +227,7 @@ Return:  -
 
 Description:
 
-=head3 C<colour_line ( $type, @line )>
+=head2 C<colour_line ( $type, @line )>
 
 Param: C<$type> - string (detail) - The type of line to print
 

@@ -72,7 +72,7 @@ This documentation refers to DocPerl::View::TEXT version 1.1.0.
 
 =head1 SUBROUTINES/METHODS
 
-=head3 C<process ()>
+=head2 C<process ()>
 
 Return: HASH - the key pod contains the the text form of the modules POD
 

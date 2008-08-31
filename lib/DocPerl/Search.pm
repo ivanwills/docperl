@@ -67,7 +67,7 @@ May include numerous subsections (i.e., =head2, =head3, etc.).
 
 =head1 SUBROUTINES/METHODS
 
-=head3 C<new ( %args )>
+=head2 C<new ( %args )>
 
 Arg C<conf> - Config::Std - A DocPerl configuration hash ref
 
@@ -75,13 +75,13 @@ Return: DocPerl::Search - new search object
 
 Description: Creates a new search object
 
-=head3 C<init ( )>
+=head2 C<init ( )>
 
 Return: none
 
 Description: Initialisation method to be overridden by modules that derive from this module
 
-=head3 C<search ( %args )>
+=head2 C<search ( %args )>
 
 Arg C<terms> - string - The terms to search for in the pod
 

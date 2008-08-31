@@ -76,7 +76,7 @@ This documentation refers to DocPerl::View::FUNCTION version 1.1.0.
 
 =head1 SUBROUTINES/METHODS
 
-=head3 C<process ( %args )>
+=head2 C<process ( %args )>
 
 Param: see L<DocPerl::View>
 
