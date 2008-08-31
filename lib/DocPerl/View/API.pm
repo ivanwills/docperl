@@ -163,8 +163,9 @@ LINE:
 		}
 	}
 
-	$api{lines} = $i;
-	$api{size}  = int -s $file;
+	$api{pod}   = $self->human_number($api{pod});
+	$api{lines} = $self->human_number($i);
+	$api{size}  = $self->human_number(int -s $file);
 
 	return ( api => \%api );
 }

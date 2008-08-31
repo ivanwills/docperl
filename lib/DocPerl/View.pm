@@ -208,6 +208,22 @@ sub pom {
 	return $self->{pom} = Pod::POM->new( { warn => 0, } );
 }
 
+sub human_number {
+	my ($self, $number) = @_;
+
+	my ($int, $decimal) = split /[.]/xms, $number;
+
+	$int = reverse $int;
+
+	$int =~ s/(\d\d\d)/$1,/gxms;
+
+	$int =~ s/,$//xms;
+
+	$int = reverse $int;
+
+	return $decimal ? "$int.$decimal" : $int;
+}
+
 sub DESTROY {
 
 	return;
