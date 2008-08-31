@@ -41,6 +41,7 @@ my %required_modules = (
 	version       => {},
 	'File::stat'  => {},
 	'File::Path'  => {},
+	GraphViz      => { optional => 1 },
 );
 
 main();
@@ -81,8 +82,11 @@ sub main {
 		eval { require $file };
 		if ($EVAL_ERROR) {
 			print "Missing\n";
-			push @missing, $module;
-			$required_modules{$module}{missing} = 1;
+
+			if (!$required_modules{$module}{optional}) {
+				push @missing, $module;
+				$required_modules{$module}{missing} = 1;
+			}
 		}
 		else {
 			no strict 'refs';    ## no critic
