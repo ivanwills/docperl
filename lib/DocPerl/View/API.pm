@@ -458,7 +458,7 @@ the module use()ed, require()d and inherited from.
 
 =head1 SUBROUTINES/METHODS
 
-=head3 C<display ( )>
+=head2 C<display ( )>
 
 Return: HASHREF - The files API
 
@@ -466,7 +466,7 @@ Description: Processes a file to find out what modules it uses, what subs it
 declares (and weather they are class or object methods or plain subs) and the
 inheritance tree if any of the module.
 
-=head3 C<get_hierarchy ( $object )>
+=head2 C<get_hierarchy ( $object )>
 
 Param: C<$object> - The name of the module who's hierarchy is desired
 
@@ -486,7 +486,7 @@ Return: bool - True if a base parent is defined false other wise
 
 Description: Determines parent modules declared via a use base statement.
 
-=head2 C<check_isa_parents (  )>
+=head2 C<check_isa_parents ( $line, $api )>
 
 Param: C<$line> - string - The line of code
 
@@ -496,7 +496,7 @@ Return: bool - True if a @ISA parent is defined false other wise
 
 Description: Determines parent modules declared via setting @ISA
 
-=head2 C<check_package (  )>
+=head2 C<check_package ( $line, $api )>
 
 Param: C<$line> - string - The line of code
 
@@ -506,7 +506,7 @@ Return: bool - True if a package declaration is found false other wise
 
 Description: Checks if a line declares a new package
 
-=head2 C<check_package_vars (  )>
+=head2 C<check_package_vars ( $line, $api )>
 
 Param: C<$line> - string - The line of code
 
@@ -516,7 +516,7 @@ Return: bool - True if a package variable declaration is found false other wise
 
 Description: Checks if any variables are declared via our
 
-=head2 C<check_require (  )>
+=head2 C<check_require ( $line, $api )>
 
 Param: C<$line> - string - The line of code
 
@@ -526,7 +526,7 @@ Return: bool - True if a module is required false other wise
 
 Description: Determines if any modules are required on that line.
 
-=head2 C<check_use (  )>
+=head2 C<check_use ( $line, $api )>
 
 Param: C<$line> - string - The line of code
 
@@ -536,7 +536,23 @@ Return: bool - True if a module is used false other wise
 
 Description: Determines if any modules are used on the line.
 
-=head2 C<load_package (  )>
+=head2 C<graph ( $api )>
+
+Param: C<$api> - hashref - The modules details
+
+Description: Determines if any modules are used on the line.
+
+=head2 C<graph_hierarchy ( $gv, $hierarchy, $package )>
+
+Param: C<$gv> - GraphViz object - The object used to construct the graph hierarchy
+
+Param: C<$hierarchy> - hashref - The details of the object's hierarchy
+
+Param: C<$package> - string - The name of the module in the hierarchy
+
+Description: Recursively adds modules to the the graph
+
+=head2 C<load_package ( $file )>
 
 Param: C<$file> - string - The module to load
 
@@ -544,7 +560,7 @@ Return: version - The version of the loaded module
 
 Description: Requires a module and returns it's version
 
-=head2 C<process (  )>
+=head2 C<process ()>
 
 Return: HASH - The data for the API template
 

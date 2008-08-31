@@ -259,7 +259,7 @@ pages that need to be cached for performance.
 
 =head1 SUBROUTINES/METHODS
 
-=head3 C<new ( %args )>
+=head2 C<new ( %args )>
 
 Arg: C<$search> - type (detail) - description
 
@@ -267,7 +267,7 @@ Return: DocPerl::View - A new DocPerl::View object
 
 Description: Creates and initialises a new DocPerl::View or inherited object
 
-=head3 C<init (  )>
+=head2 C<init ()>
 
 Description: Does nothing in its self but should be overridden by inheriting
 packages for any initialisation that they need.
@@ -279,7 +279,7 @@ Return: HASH - The parameters to be passed on to the template
 Description: This method should be overwritten by an actual view. Its results
 are passed on to the template used to display the view.
 
-=head3 C<_check_cache ( %args )>
+=head2 C<_check_cache ( %args )>
 
 Arg: C<source> - string - The file name that a cached file is based on
 
@@ -292,7 +292,7 @@ modification time is different to that of the source file.
 Description: Checks a source file against the cached version to see if their
 modified times are different. Returning the cache contents if they match.
 
-=head3 C<_save_cache ( %arg )>
+=head2 C<_save_cache ( %arg )>
 
 Arg: C<source> - string - The file name that a cached file is based on
 
@@ -300,7 +300,7 @@ Arg: C<cache> - string - The relative file name for a cached version of a file
 
 Description: Saves some calculated data to a cache file
 
-=head3 C<clear_cache ( [$dir] )>
+=head2 C<clear_cache ( [$dir] )>
 
 Param: C<$dir> - string (detail) - The cache directory to clear
 
@@ -311,6 +311,33 @@ Description: Clears all the cache files.
 Return: Pod::POM - a new or cached Pod::POM object
 
 Description: Caches the internal Pod::POM object
+
+=head2 C<make_path ( $file )>
+
+Param: C<$file> - string - File who's path is to be made
+
+Return: An untainted version of the file name
+
+Description: Makes all directories missing from the file path
+
+=head2 C< touch( $source, $dest )>
+
+Param: C<$source> - string - The file name whose atime and mtime are to be
+applied to the $dest file
+
+Param: C<$dest> - string - The file whose atime and mtime are to be set
+
+Description: Applies the atime and mtime of the source file ($source) to the
+destination file ($dest). The is used for checking that the cached file is
+up to date with the source file.
+
+=head2 C<human_number ( $number )>
+
+Param: C<$number> - number - The number that is to be made human readable
+
+Return: string - The human readable version of the number
+
+Description: Takes a number and comma separates every three 0's
 
 =head1 DIAGNOSTICS
 
