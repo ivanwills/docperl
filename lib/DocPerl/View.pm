@@ -15,10 +15,13 @@ use Scalar::Util qw/tainted/;
 use File::stat;
 use File::Path;
 use English qw/ -no_match_vars /;
+use Readonly;
 use base qw/Exporter/;
 
 our $VERSION   = version->new('1.1.0');
 our @EXPORT_OK = qw//;
+
+Readonly my $SAFE_FILE => qr{\A ( [\w\-./]+ ) \Z}xms;
 
 sub new {
 	my $caller = shift;
@@ -47,9 +50,9 @@ sub process {
 }
 
 sub _check_cache {
-	my $self   = shift;
-	my %arg    = @_;
+	my ($self, %arg) = @_;
 	my $conf   = $self->{conf};
+	my $suffix = $self->{suffix};
 	my $source = $arg{source};
 	my $cache  = $arg{cache};
 
@@ -122,28 +125,17 @@ sub _save_cache {
 		$cache .= $suffix;
 	}
 
-	# split up the directory parts of the cache
-	my @parts = split m{/}xms, $cache;
-	my $file  = pop @parts;
-	my $dir   = $self->{cache_dir};
+	# set up the full cache file name
+	$cache = "$conf->{General}{Data}/cache/$cache";
 
-	if ( $file !~ /\./xms && !$self->{quiet} ) {
-		carp "The cache file '$dir/$file' does not have a suffix";
-	}
-
-	# make sure that we have all the directories up to the cached file
-	$dir .= q{/} . join q{/}, @parts;
-	my ($path) = $dir =~ m{^ ( [\w\-\./]+ ) $}xms;
-	return if !$path;
-
-	eval { mkpath $path };
-	if ($EVAL_ERROR) {
-		carp "Could not create the path $dir: $EVAL_ERROR";
+	# create the path up to the cache file (if missing)
+	my $full = eval { $self->make_path($cache) };
+	if ($EVAL_ERROR || !$full) {
+		carp "Could not create the path $cache: $EVAL_ERROR";
 		return;
 	}
 
 	# open the cache file and write the contents
-	my ($full) = "$dir/$file" =~ m{\A ([\w\-\./]+) \Z}xms;
 	open my $cache_fh, '>', $full or carp "Unable to create the cache file '$full': $!" and return;
 	print {$cache_fh} $arg{content} or carp "No content was able to be added to '$full': $!" and return;
 	if ( !close $cache_fh ) {
@@ -151,12 +143,47 @@ sub _save_cache {
 	}
 
 	# touch the file using the source file's time stamps
-	if ( $source ne '1' && $source =~ m{\A ( [\w\-\./]+ ) \Z}xms ) {
-		my $stat = stat $1;
-		my ($atime) = $stat->atime =~ m{\A (\d+) \Z}xms;
-		my ($mtime) = $stat->mtime =~ m{\A (\d+) \Z}xms;
-		utime $atime, $mtime, $full;
+	if ( $source ne '1' ) {
+		$self->touch($source, $full);
 	}
+
+	return;
+}
+
+sub make_path {
+	my ($self, $file) = @_;
+
+	# do taint checking of file name
+	my ($safe) = $file =~ m{$SAFE_FILE}xms;
+	warn "Unsafe file $file" if !$safe;
+
+	# split the file name into its directory parts
+	my @dir = split m{/}, $safe;
+
+	# remove the actual file name
+	pop @dir;
+
+	# reconstruct the directory
+	my $dir = join '/', @dir;
+
+	# try to make the full path
+	eval{ mkpath $dir };
+
+	die "Could not make path '$dir': $EVAL_ERROR" if $EVAL_ERROR;
+
+	return $safe;
+}
+
+sub touch {
+	my ($self, $source, $dest) = @_;
+
+	my ($safe) = $source =~ m{$SAFE_FILE}xms;
+	my $stat   = stat $safe;
+
+	my ($atime) = $stat->atime =~ m{\A (\d+) \Z}xms;
+	my ($mtime) = $stat->mtime =~ m{\A (\d+) \Z}xms;
+
+	utime $atime, $mtime, $dest;
 
 	return;
 }

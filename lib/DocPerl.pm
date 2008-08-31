@@ -34,8 +34,8 @@ sub new {
 	$self->{conf}{IncFolders}{suffixes}   ||= [qw/pm pod/];
 	$self->{conf}{LocalFolders}{Match} ||= '[.](:?' . ( join '|', @{ $self->{conf}{LocalFolders}{suffixes} } ) . ')$';
 	$self->{conf}{IncFolders}{Match}   ||= '[.](:?' . ( join '|', @{ $self->{conf}{IncFolders}{suffixes} } ) . ')$';
-	$self->{conf}{General}{data}       ||= './data';
-	$self->{conf}{General}{db_source}  ||= "dbi:SQLite:dbname=$self->{conf}{General}{data}/docperl.db";
+	$self->{conf}{General}{Data}       ||= './data';
+	$self->{conf}{General}{db_source}  ||= "dbi:SQLite:dbname=$self->{conf}{General}{Data}/docperl.db";
 
 	# initialise the object
 	$self->init();
@@ -54,14 +54,15 @@ sub init {
 	}
 
 	# initialise the template name and mime type
-	my $template = $page;
-	if ( $template =~ /\.(\w+)$/xms ) {
-		$self->{template} = $template;
-		my $type =
-			  $1 eq 'css' ? 'css'
-			: $1 eq 'js'  ? 'javascript'
-			:               $1;
-		$self->{mime} = "text/$type";
+	my ($template, $suffix) = split /[.]/,$page;
+	if ( $suffix ) {
+		$self->{template} = "$template.$suffix";
+		$self->{suffix}   = $suffix;
+		$self->{mime} =
+			  $suffix eq 'css' ? 'text/css'
+			: $suffix eq 'js'  ? 'text/javascript'
+			: $suffix eq 'png' ? 'image/png'
+			:                    "text/$suffix";
 	}
 	else {
 		$self->{template} = "$template.html";

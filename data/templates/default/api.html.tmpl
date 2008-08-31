@@ -6,6 +6,10 @@
 		<h1>[% module %]</h1>
 		<div class="hierarchy">
 			<div>Class Inheritance</div>
+		[% IF api.hierarchy_graph %]
+			<img src="?page=hierarchy.png&module=[% module %]&location=[% location %]" usemap="#hierarchy" style="border: 0px;"/>
+			[% api.hierarchy_graph %]
+		[% ELSE %]
 			[% INCLUDE class_hierarchy
 				list  = api.hierarchy,
 				first = 1
@@ -29,6 +33,7 @@
 				</ul>
 				[% END %]
 			[% END %]
+		[% END %]
 		</div>
 		[% UNLESS api %]
 		API Missing

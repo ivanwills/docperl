@@ -16,6 +16,7 @@ use Data::Dumper qw/Dumper/;
 use Scalar::Util;
 use English '-no_match_vars';
 use base qw/DocPerl::View/;
+use File::Path;
 
 our $VERSION   = version->new('1.1.0');
 our @EXPORT_OK = qw//;
@@ -125,13 +126,18 @@ LINE:
 	}
 	my @paths = split /:/xms, $location eq 'local' ? $conf->{LocalFolders}{Path} : $conf->{IncFolders}{Path};
 	my $inc_path_size = @INC - 1;
-	local @INC;
 	push @INC, @paths;
 
 	if ( $api{package} ) {
 		$api{version} = load_package( $api{package}, $file );
 		carp $EVAL_ERROR if $EVAL_ERROR;
 		$api{hierarchy} = [ get_hierarchy( $api{package} ) ];
+
+		my @files = grep {-f "$_/GraphViz.pm"} @INC;
+		if (@files && $conf->{General}{Cache} ne 'off') {
+			require "$files[0]/GraphViz.pm";
+			$self->graph(\%api);
+		}
 
 		if ( !@{ $api{hierarchy} } || !@{ $api{hierarchy}[0]{hierarchy} } && $api{parents} ) {
 
@@ -146,6 +152,7 @@ LINE:
 		# clean up if we did not already have the symbol table
 		unload_package( $api{package} );
 	}
+	@INC = @INC[ 0 .. $inc_path_size ];
 
 	if ( ref $api{modules} ) {
 		$api{modules} = [ sort keys %{ $api{modules} } ];
@@ -252,6 +259,62 @@ sub check_package_vars {
 	}
 
 	return 0;
+}
+
+sub graph {
+	my ( $self, $api ) = @_;
+	my $conf     = $self->{conf};
+	my $location = $self->{current_location};
+	my $source   = $self->{source};
+	my $gv       = GraphViz->new();
+
+	my ($type) = $source =~ /[.] (.*) $/xms;
+
+	$self->graph_hierarchy($gv, $api->{hierarchy}, $api->{package});
+
+	$ENV{PATH} = '/usr/bin';
+
+	# set up the file and directory
+	my $file = "$conf->{General}{Data}/cache/hierarchy.png/$location/$api->{package}.$type";
+	$file =~ s{::}{/}gxms;
+
+	$file = eval{ $self->make_path($file) };
+	if ($EVAL_ERROR) {
+		warn $EVAL_ERROR;
+		return;
+	}
+
+	open my $img, '>', $file or die "Could not write image '$file': $OS_ERROR\n";
+	print {$img} $gv->as_png;
+	close $img;
+	$self->touch($source, $file);
+
+	$api->{hierarchy_graph} = $gv->as_cmapx;
+	$api->{hierarchy_graph} =~ s/"test"/"hierarchy"/gxms;
+
+	return;
+}
+
+sub graph_hierarchy {
+	my ( $self, $gv, $hierarchy, $package ) = @_;
+	my $location = $self->{current_location};
+
+	$gv->add_node(
+		$package,
+		shape    => 'box',
+		URL      => "?page=pod&module=$package&location=$location",
+		fontsize => 8,
+		fontname => 'sanserif',
+	);
+
+	for my $parent (@{$hierarchy}) {
+		if ($parent->{class} ne $package) {
+			$gv->add_edge($parent->{class} => $package);
+		}
+		$self->graph_hierarchy($gv, $parent->{hierarchy}, $parent->{class});
+	}
+
+	return;
 }
 
 sub get_hierarchy {
