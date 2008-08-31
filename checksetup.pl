@@ -41,7 +41,18 @@ my %required_modules = (
 	version       => {},
 	'File::stat'  => {},
 	'File::Path'  => {},
-	GraphViz      => { optional => 1 },
+	'File::Copy'  => {},
+	'File::Find'  => {},
+	Symbol        => {},
+	CGI           => {},
+	'CGI::Fast'   => {
+		optional => 1,
+		reason   => 'This module is only reqired if you want to use DocPerl with FastCGI',
+	},
+	GraphViz      => {
+		optional => 1,
+		reason   => 'Used to create a pretier class hierarchy on the API page',
+	},
 );
 
 main();
@@ -73,20 +84,28 @@ sub main {
 		pod2usage( -verbose => 1 );
 	}
 
-	# Check module existence
 	my @missing;
+	my @optional;
+
+	# Check module existence
 	for my $module ( sort keys %required_modules ) {
 		print $module, ( q/ / x ( 24 - length $module ) );
 		my $file = $module . '.pm';
 		$file =~ s{::}{/}xms;
 		eval { require $file };
 		if ($EVAL_ERROR) {
-			print "Missing\n";
+			print "Missing";
 
 			if (!$required_modules{$module}{optional}) {
 				push @missing, $module;
 				$required_modules{$module}{missing} = 1;
 			}
+			else {
+				push @optional, { module => $module, %{$required_modules{$module}} };
+				print ' (' . (scalar @optional) . '.)';
+			}
+
+			print "\n";
 		}
 		else {
 			no strict 'refs';    ## no critic
@@ -99,6 +118,15 @@ sub main {
 		print '$ cpan ' . ( join q/ /, @missing ) . "\nor\n";
 		print "\$ perl -MCPAN -e 'install ", ( join "'\n\$ perl -MCPAN -e 'install ", @missing ), "'\n\n";  ## no critic
 		print "Windows/ActivePerl users try useing ppm\n";
+	}
+
+	if (@optional) {
+		print "\nOptional Modules:\n";
+
+		for my $i (0 .. @optional - 1) {
+			print $i + 1, ".)\t";
+			print "$optional[$i]{reason}\n";
+		}
 	}
 
 	print "\n";

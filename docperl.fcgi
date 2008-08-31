@@ -25,7 +25,6 @@ Readonly my $CONFIG => "$BASE/docperl.conf";
 
 # for taint safety remove the environment's PATH;
 delete $ENV{PATH};
-my $count = 0;
 
 while ( my $cgi = CGI::Fast->new() ) {
 	main($cgi);
