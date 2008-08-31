@@ -43,5 +43,6 @@ add_stopwords(qw/
 	LocalFolders
 	url
 	api
+	GraphViz
 /);
 all_pod_files_spelling_ok();
