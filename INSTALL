@@ -23,15 +23,21 @@ or see
 
 for more details on ./checksetup.pl usage
 
-DocPerl needs some Perl modules that may not be already installed these
-include:
-Template Toolkit
+DocPerl requires some Perl modules that may not be already installed on your
+system these include:
 Readonly
+Template
 Config::Std
-version
 Pod::POM
+version
+File::stat
+File::Path
+File::Copy
+File::Find
+Symbol
+CGI
 
-to install one of the following commands should work
+To install missing modules try one of the following commands:
   $ cpan Template Readonly
 or
   $ perl -MCPAN -e 'install Template; install Readonly'
@@ -41,6 +47,20 @@ or for active Perl users
 
 If you have any problems try going to the help forums at
 https://sourceforge.net/forum/forum.php?forum_id=553595
+
+Optional Perl Modules
+
+The following Perl modules are optional:
+CGI::Fast
+GraphViz
+
+CGI::Fast is required if you wish to use DocPerl in a FastCGI environment
+(where you use the docperl.fcgi executable instead of the default
+docuperl.cgi). Note this will require some extra configuration in your web
+server to use.
+
+GraphViz is used to show a pretty object hierarchy on the API page instead of
+the simple HTML indented default version.
 
 *Windows*
 
