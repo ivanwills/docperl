@@ -67,17 +67,6 @@ history_size:   10
 # this sets the time between title changes (in milliseconds)
 animation:      60000
 
-# Set the labels for the various sections on the list page
-
-# The label for the local file section
-LocalLabel:     Local Programs
-
-# The label for the installed modules section
-IncLabel:       Installed Modules
-
-# The label for the Perl modules documentation section
-PerlLabel:      Perl
-
 # Uncomment to allow web users to clear the current cache
 # Note: Turning this on is only recommended for non public DocPerl
 #   installations as this could cause a large amount of load to the server

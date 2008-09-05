@@ -1,6 +1,10 @@
 =head1 NAME
 
-DocPerl::Config - Details on the configuration setting for the DocPerl application
+DocPerl::Config - Details on the configuration settings for the DocPerl
+application, these settings are stored in the docperl.conf file stored in the
+base directory of the DocPerl installation. The defaults for all parameters
+can be checked by looking at the docperl.conf.example file (which is used to
+create initial docperl.conf file when L<checksetup.pl> is initially run.
 
 =head1 VERSION
 
@@ -69,7 +73,56 @@ See L<Template> Toolkit documentation.
 
 =head3 Template
 
-This allows you to set general parameters that are passed to all templates.
+This allows you to set general parameters that are used by the templates.
+
+=over 4
+
+=item LocalOnly
+
+When set to a true value it hides the 'Installed Modules' and 'Perl'
+sections showing only the 'Local Modules'
+
+=item history_size
+
+Sets the number of links shown in the recent modules section of the list page
+
+=item animation
+
+=item ClearCache
+
+Set to a true value this will show the clear cache link which will allow you
+to clear the list page cache file so that you can easily see any new modules
+on your system.
+
+The down side to allowing this link is that any one can clear the cache which
+could be a performance issue for you.
+
+=item ShowText
+
+Show plain text view of the POD documentation
+
+=item StyleSheet
+
+Sets the style sheet to be used
+
+cpan - emulates search.cpan.org's style
+
+css - the original DocPerl styling
+
+=item HideDefaultModule
+
+When set to a true value hides the default module from the recent module list
+
+=item ShowTestStatus
+
+When set to a true value shows the cpan test status link for the current module
+
+=item static
+
+Set the web path prefix for static files. This is useful if you can't serve
+static files (such as js & images) from the same location as docperl.cgi.
+
+=back
 
 =head3 General
 
