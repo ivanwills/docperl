@@ -73,7 +73,9 @@ See L<Template> Toolkit documentation.
 
 =head3 Template
 
-This allows you to set general parameters that are used by the templates.
+Values set in this section are passed directly on to the templates and only
+effect display. Some template strings use to be set here but now are set in
+the template C<strings.tmpl>.
 
 =over 4
 
@@ -87,6 +89,8 @@ sections showing only the 'Local Modules'
 Sets the number of links shown in the recent modules section of the list page
 
 =item animation
+
+Sets the time between title changes (in milliseconds)
 
 =item ClearCache
 
