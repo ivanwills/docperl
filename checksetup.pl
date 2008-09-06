@@ -190,7 +190,7 @@ sub main {
 		if ( $option{compile}[0] eq 'all' ) {
 			$option{compile} = [qw/pod api code text function/];
 		}
-		$config{Templates}{ClearCache} = 'on';
+		$config{Template}{ClearCache} = 'on';
 		require DocPerl;
 		delete $config{General}{Cache};
 		my $dp = DocPerl->new( cgi => { page => 'list', }, conf => \%config, save_data => 1, quiet => 1, );

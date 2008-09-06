@@ -94,12 +94,15 @@ Sets the time between title changes (in milliseconds)
 
 =item ClearCache
 
-Set to a true value this will show the clear cache link which will allow you
-to clear the list page cache file so that you can easily see any new modules
-on your system.
+Allows a user of the web interface to clear the cache (which is useful when
+new modules are installed and the list page is cached and becomes out of
+date).
 
-The down side to allowing this link is that any one can clear the cache which
-could be a performance issue for you.
+ 'on' turns on this feature
+ anything else turns this off
+
+Note: You probably should not turn this on for publicly available sites as
+this could cause a lot of extra load on your server.
 
 =item ShowText
 
@@ -150,18 +153,6 @@ permissions to write to the disk.
 
  'on' or not set Turns on the cache
  'off' turns off caching
-
-=item ClearCache
-
-Allows a user of the web interface to clear the cache (which is useful when
-new modules are installed and the list page is cached and becomes out of
-date).
-
- 'on' turns on this feature
- anything else turns this off
-
-Note: You probably should not turn this on for publicly available sites as
-this could cause a lot of extra load on your server.
 
 =back
 

@@ -203,7 +203,7 @@ sub process {
 	my $cache = DocPerl::View->new( %{$self} );
 
 	# check if we are meant to clear the cache (and the we are allowed to)
-	if ( $conf->{Templates}{ClearCache} && $q->{clearcache} ) {
+	if ( $conf->{Template}{ClearCache} && $q->{clearcache} ) {
 		$cache->clear_cache();
 	}
 

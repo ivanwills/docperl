@@ -127,7 +127,7 @@
 				<hr />
 				<div style="padding-left: 3px">
 					<a href="http://docperl.sourceforge.net/" target="_blank">[% str_link_docperl_home %]</a>
-					[% IF ClearCache -%]
+					[% IF ClearCache == 'on' -%]
 					<br />
 					<a href="?clearcache=1" target="_top">[% str_link_clear_cache %]</a>
 					[%- END %]
