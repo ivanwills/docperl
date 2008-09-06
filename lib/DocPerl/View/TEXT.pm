@@ -39,7 +39,7 @@ sub process {
 
 	return ( pod => "File contains dodgy characters ($file)" ) if !$file;
 
-	my $parser = $self->pod;
+	my $parser = $self->pom;
 	my $pom = $parser->parse($file);
 	my $out;
 	$out = eval { Pod::POM::View::Text->print($pom) };
