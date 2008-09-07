@@ -405,7 +405,7 @@ sub cache {
 
 		# check that the module is not the numeral 1 (just an alphabetic place holder)
 		# and that there is an actual file for it (ie not just a name space prefix)
-		if ( !$arg{top} && $data->{$module}{'*'}[0] ) {
+		if ( $data->{$module}{'*'}[0] ) {
 			$dp->{cgi} = {
 				page     => 'pod',
 				module   => "$parent$module",
