@@ -34,7 +34,7 @@ sub process {
 		if !$file || $file eq $self->{module_file};
 
 	# check $file (for tainting)
-	($file)   = $file   =~ m{\A ( [\w\-./]+ ) \Z}xms;
+	($file)   = $file   =~ m{\A ( [\w\-./: ]+ ) \Z}xms;
 	($module) = $module =~ m{\A ( [\w\:.-]+ ) \Z}xms;
 
 	return ( pod => "File contains dodgy characters ($file)" ) if !$file;
