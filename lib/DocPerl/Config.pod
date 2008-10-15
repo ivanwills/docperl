@@ -127,7 +127,7 @@ When set to a true value shows the cpan test status link for the current module
 =item static
 
 Set the web path prefix for static files. This is useful if you can't serve
-static files (such as js & images) from the same location as docperl.cgi.
+static files (such as javascript & images) from the same location as docperl.cgi.
 
 =back
 

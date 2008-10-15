@@ -44,5 +44,14 @@ add_stopwords(qw/
 	url
 	api
 	GraphViz
+	StyleSheet
+	HideDefaultModule
+	LocalOnly
+	ShowTestStatus
+	ShowText
+	tyleSheet
+	cpan
+	org's
+	javascript
 /);
 all_pod_files_spelling_ok();
