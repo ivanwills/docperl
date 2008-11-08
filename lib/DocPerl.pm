@@ -492,16 +492,17 @@ sub _organise_perl {
 	my ($perl) = @_;
 	my %pod;
 	my %areas = (
+		'Changes'               => { map { 'perl'.$_ => 1 } qw/hist / },
 		'Commands'              => { map { 'perl'.$_ => 1, $_ => 1 } qw/a2p doc perl run / },
-		'OS'                    => { map { 'perl'.$_ => 1 } qw/aix amiga apollo beos bs2000 ce cygwin dgux dos ebcdic epoc freebsd hpux hurd irix machten macos macosx mint mpeix netware openbsd os2 os390 os400 plan9 qnx solaris tru64 uts vmesa vms vos win32/ },
-		'Languages'             => { map { 'perl'.$_ => 1 } qw/cn tw ko jp / },
+		'OS'                    => { map { 'perl'.$_ => 1 } qw/aix amiga apollo beos bs2000 ce cygwin dgux linux dos ebcdic epoc freebsd hpux hurd irix machten macos macosx mint mpeix netware openbsd os2 os390 os400 plan9 qnx solaris tru64 uts vmesa vms vos win32 riscos symbian/ },
+		'Languages'             => { map { 'perl'.$_ => 1 } qw/locale cn tw ko jp / },
 		'Tutorials'             => { map { 'perl'.$_ => 1 } qw/book boot bot cheat dsc tooc toot trap / },
-		'Internals'             => { map { 'perl'.$_ => 1 } qw/api apio call clib compile filter guts hack iol debguts intern / },
-		'Regular Expressions'   => { map { 'perl'.$_ => 1 } qw/re reref requick re / },
+		'Internals'             => { map { 'perl'.$_ => 1 } qw/api apio call clib compile filter guts hack iol debguts intern reguts embed / },
+		'Regular Expressions'   => { map { 'perl'.$_ => 1 } qw/re reref requick re reguts / },
 		'Debug'                 => { map { 'perl'.$_ => 1 } qw/debug diag debtut/ },
 		'Licence'               => { map { 'perl'.$_ => 1 } qw/artistic gpl / },
 		'Processes and Threads' => { map { 'perl'.$_ => 1 } qw/fork ipc thrtut / },
-		'Programming'           => { map { 'perl'.$_ => 1 } qw/data form func lol number obj op pod podspec port ref sec style sub syn tie unicode unintro var xs/ },
+		'Programming'           => { map { 'perl'.$_ => 1 } qw/data form func lol number obj op pod podspec port pragma ref sec style sub syn tie unicode unintro var xs lexwarn / },
 	);
 
 	for my $module ( keys %{$perl} ) {
