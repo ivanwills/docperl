@@ -87,6 +87,11 @@ sub main {
 	my @missing;
 	my @optional;
 
+	print <<"HEADER";
+DocPerl VERSION $VERSION
+
+HEADER
+
 	# Check module existence
 	for my $module ( sort keys %required_modules ) {
 		print $module, ( q/ / x ( 24 - length $module ) );
