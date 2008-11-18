@@ -247,7 +247,7 @@ sub view_seq_link {
 	my ( $self, $link ) = @_;
 
 	# view_seq_text has already taken care of L<http://example.com/>
-	if ( $link =~ /^<a href=/xms ) {
+	if ( $link =~ /^<a \s+ href=/xms ) {
 		return $link;
 	}
 
@@ -298,6 +298,82 @@ sub view_seq_link {
 	}
 
 	return make_href( $url, $link_title );
+}
+
+# this code has been borrowed from Pod::Html via Pod::POM::View::HTML
+my $urls = '(' . join(
+	'|',
+	qw{
+		http
+		telnet
+		mailto
+		news
+		gopher
+		file
+		wais
+		ftp
+		}
+) . ')';
+my $ltrs = '\w';
+my $gunk = '/#~:.?+=&%@!\-';
+my $punc = '.:!?\-;';
+my $any  = "${ltrs}${gunk}${punc}";
+
+{
+	my $HTML_PROTECT;
+
+	sub view_begin {
+		my ($self, $begin) = @_;
+		$HTML_PROTECT++;
+		my $out = $self->SUPER::view_begin($begin);
+		$HTML_PROTECT--;
+
+		return $out;
+	}
+
+	sub view_seq_text {
+		my ( $self, $text ) = @_;
+
+		unless ($HTML_PROTECT) {
+			for ($text) {
+				s/&/&amp;/g;
+				s/</&lt;/g;
+				s/>/&gt;/g;
+			}
+		}
+
+		# check that this is not just a label plus URL
+		if ( $text =~ / \| $urls : (?!:) [$any]+ $/xms ) {
+			# extract the label and url
+			my ($label, $url) = split /\|/, $text;
+
+			# return the anchor tag
+			return qq{<a href="$url">$label</a>};
+		}
+
+		$text =~ s{
+			\b                          # start at word boundary
+			(                           # begin $1  {
+				$urls     :             # need resource and a colon
+				(?!:)                   # Ignore File::, among others.
+				[$any] +?               # followed by one or more of any valid
+										#   character, but be conservative and
+										#   take only what you need to....
+			)                           # end   $1  }
+			(?=                         # look-ahead non-consumptive assertion
+					[$punc]*            # either 0 or more punctuation followed
+					(?:                 #   followed
+						[^$any]         #   by a non-url char
+						|               #   or
+						$               #   end of the string
+					)                   #
+				|                       # or else
+					$                   #   then end of the string
+			)
+		}{<a href="$1">$1</a>}igox;
+
+		return $text;
+	}
 }
 
 sub make_href {
