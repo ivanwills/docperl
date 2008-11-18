@@ -53,5 +53,6 @@ add_stopwords(qw/
 	cpan
 	org's
 	javascript
+	URLs
 /);
 all_pod_files_spelling_ok();

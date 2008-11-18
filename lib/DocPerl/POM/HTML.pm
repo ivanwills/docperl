@@ -459,6 +459,16 @@ The following methods are modified versions of L<Pod::POM>'s HTML view.
 
 =item view_seq_link
 
+Overridden to handle module links correctly
+
+=item view_begin
+
+Overridden because state info needed in view_seq_text
+
+=item view_seq_text
+
+Overridden to fix issue with Links containing Labels and URLs
+
 =back
 
 =head1 DIAGNOSTICS
