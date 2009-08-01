@@ -64,7 +64,7 @@ sub main {
 	GetOptions(
 		\%option,
 		'compile|c=s@',
-		'purge|p!',
+		'purge|p+',
 		'shrink|s!',
 		'force|f',
 		'verbose|v!',
@@ -178,9 +178,13 @@ HEADER
 	print "\n";
 
 	# purge the cache files (if requested)
-	if ( $option{purge} ) {
+	if ( $option{purge} > 1 ) {
 		print "Clearing old cache files\n";
 		system "rm -rf $Bin/data/cache/*";
+	}
+	elsif ( $option{purge} ) {
+		print "Clearing old module list file\n";
+		system "rm $Bin/data/cache/list";
 	}
 
 	# create shrunken versions of files
@@ -482,7 +486,8 @@ This documentation refers to checksetup.pl version 1.1.0.
   -c --compile=opt Pre compile the pod/api/code/text/function (seperate with
                    commas to compile more than one option eg -c pod,code).
                    The all option will cause all views to be compiled.
-  -p --purge       Purge the current cache files.
+  -p --purge       Purge the cache files (specify once to remove the  module
+                   list, specify twice or more to remove all cache files eg -pp).
   -s --shrink      Shrink the size of the js & css files (makes them less
                    readable but smaller)
   -f --force       Forces the compiling of the api view
