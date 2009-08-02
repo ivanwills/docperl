@@ -1,0 +1,60 @@
+---
+name: DocPerl
+version: v1.1.0
+author:
+  - 'Ivan Wills <ivan.wills@gmail.com>'
+abstract: Module for DocPerl stuff
+license: perl
+resources:
+  license: http://dev.perl.org/licenses/
+build_requires:
+  Test::More: 0
+requires:
+  Class::Date: v1.1.7
+  Clone: 0.17
+  Data::Merger: 0
+  List::MoreUtils: 0
+  Readonly: 0
+  Template: 2.14
+  Template::Provider::FromDATA: 0.08
+  perl: 5.008
+configure_requires:
+  Module::Build: 0.34
+provides:
+  DocPerl:
+    file: lib/DocPerl.pm
+    version: v1.1.0
+  DocPerl::POM::HTML:
+    file: lib/DocPerl/POM/HTML.pm
+    version: v1.1.0
+  DocPerl::Search:
+    file: lib/DocPerl/Search.pm
+    version: v1.1.0
+  DocPerl::Search::Grep:
+    file: lib/DocPerl/Search/Grep.pm
+    version: v1.1.0
+  DocPerl::Search::Perl:
+    file: lib/DocPerl/Search/Perl.pm
+    version: v1.1.0
+  DocPerl::View:
+    file: lib/DocPerl/View.pm
+    version: v1.1.0
+  DocPerl::View::API:
+    file: lib/DocPerl/View/API.pm
+    version: v1.1.0
+  DocPerl::View::CODE:
+    file: lib/DocPerl/View/CODE.pm
+    version: v1.1.0
+  DocPerl::View::FUNCTION:
+    file: lib/DocPerl/View/FUNCTION.pm
+    version: v1.1.0
+  DocPerl::View::POD:
+    file: lib/DocPerl/View/POD.pm
+    version: v1.1.0
+  DocPerl::View::TEXT:
+    file: lib/DocPerl/View/TEXT.pm
+    version: v1.1.0
+generated_by: Module::Build version 0.34
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: 1.4
