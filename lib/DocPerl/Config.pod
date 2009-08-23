@@ -209,11 +209,6 @@ The relative perl file path (relative to search paths).
 
 Instructs DocPerl to clear it's cache (if allowed).
 
-=item sidebar
-
-Alters the link target on the list page so that when the list page is used for
-a firefox sidebar it displays the pages in the correct place.
-
 =back
 
 =cut

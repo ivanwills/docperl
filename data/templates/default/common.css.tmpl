@@ -1,107 +1,107 @@
 [% PROCESS strings.tmpl -%]
-html {
+.right html {
 	padding:            0px;
 	margin:             0px;
 }
-body {
+.right body {
 	padding:            0px;
 	margin:             0px;
 }
-body > #frames > tr > td {
+.right body > #frames > tr > td {
 	width: 200px;
 	max-width: 200px;
 	overflow: hidden;
 }
-body > #frames > tr > td + td {
+.right body > #frames > tr > td + td {
 	width: auto;
 }
-#headding {
+#title {
 	position:           fixed;
 	background-color:   white;
 	width:              100%;
 }
-#headding h1 {
+#title h1 {
 	float:              left;
 	padding-top:        0px;
 	padding-bottom:     0px;
 	margin-top:         0px;
 	margin-bottom:      0px;
 }
-#headding ul {
+#title ul {
 	display:            inline;
 }
-#headding li {
+#title li {
 	display:            inline;
 }
-#headding hr {
+#title hr {
 	margin:             5px 0px 1px 0px;
 }
-#headding pre {
+#title pre {
 	 display:           none;
 }
-#headding table {
+#title table {
 	width:              100%;
 	vertical-align:     middle;
 	text-align:         center;
 	clear:              both;
 }
-#headding table th {
+#title table th {
 	text-align:         left;
 	padding-left:       5px;
 	font-stretch:       wider;
 }
-#headding table td {
+#title table td {
 	text-align:         right;
 	padding-right:      5px;
 }
-#content {
+.right #content {
 	 padding:           9px;
 }
-#api pre {
+.right #api pre {
 	padding:            3px;
 	border-radius:      5px;
 	font-family:        sans-serif;
 	font-size:          8pt;
 	-moz-border-radius: 5px;
 }
-#api table {
+.right #api table {
 	border:             1px outset;
 	width:              500px;
 	overflow:           visible;
 	border-collapse:    collapse;
 }
-#api th, #api td {
+.right #api th, #api td {
 	border:             1px inset;
 	font-size:          10pt;
 	padding:            2px;
 }
-#api td {
+.right #api td {
 	width:              [% UNLESS ApiColumns %][% ApiColumns = 2 %][% END %][% 1 / (1 + ApiColumns) * 100  %]%;
 }
-#api th {
+.right #api th {
 	text-align:         right;
 	width:              160px;
 }
-#api td.double_list {
+.right #api td.double_list {
 	padding:            0px;
 }
-#api td.double_list > table {
+.right #api td.double_list > table {
 	border-width:       0px;
 	margin:             0px;
 	width:              100%;
 }
-#api td.double_list > table td {
+.right #api td.double_list > table td {
 	border-width:       0px 1px 0px 0px;
 	padding:            2px;
 	margin:             0px;
 	width:              50%;
 }
-#api ul {
+.right #api ul {
 	margin:             0px;
 	padding:            5px;
 	list-style-type:    none;
 }
-#api div ul ul {
+.right #api div ul ul {
 	margin-left:        10px;
 }
 .hierarchy {
@@ -110,7 +110,7 @@ body > #frames > tr > td + td {
 	border-radius:      3px;
 	-moz-border-radius: 3px;
 }
-#api .hierarchy > div {
+.right #api .hierarchy > div {
 	border:             1px solid black;
 	border-left:        0px;
 	border-right:       0px;
@@ -123,19 +123,19 @@ body > #frames > tr > td + td {
 	border-radius:      3px;
 	-moz-border-radius: 3px 3px 0px 0px;
 }
-#api #note {
+.right #api #note {
 	clear:              both;
 	font-size:          0.8em;
 }
-#api #note #details {
+.right #api #note #details {
 	clear:              both;
 	display:            none;
 }
-#api #note:hover #details {
+.right #api #note:hover #details {
 	display:            block;
 }
 
-#code a.line_no {
+.right #code a.line_no {
 	background-color:   blue;
 	color:              black;
 	width:              4em;
@@ -143,30 +143,30 @@ body > #frames > tr > td + td {
 	display:            block;
 	float:              left;
 }
-#code .reserved {
+.right #code .reserved {
 	color:              red;
 }
-#code .pod {
+.right #code .pod {
 	color:              #A23;
 }
-#code .comment {
+.right #code .comment {
 	color:              #A41;
 }
-#code .builtin {
+.right #code .builtin {
 	color:              #36E;
 }
-#code .other {
+.right #code .other {
 	color:              #E33;
 }
-#code .operator {
+.right #code .operator {
 	color:              #4A4;
 }
-#code .logic {
+.right #code .logic {
 	color:              #92D;
 }
-#code .declatory {
+.right #code .declatory {
 	color:              #F66;
 }
-#code pre {
+.right #code pre {
 	padding:            0px;
 }

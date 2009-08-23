@@ -11,9 +11,9 @@ pre {
 	padding:            2px;
 }
 body {
-	font-family:        sans-serif;
+	font-family:        arial, sans-serif;
 }
-h1, h2, h3, h4, h5, h6 {
+#list_td h1, #list_td h2, #list_td h3, #list_td h4, #list_td h5, #list_td h6 {
 	background-color:   #ADA;
 	font-family:        serif;
 	-moz-border-radius: 5px;
@@ -34,7 +34,7 @@ h4 a.code {
 h1 {
 	padding-left:       4px;
 }
-h2 {
+#list_td h2 {
 	padding:            5px 2px 5px 8px;
 	background-color:   #BBC5BB;
 }
@@ -125,49 +125,52 @@ body#list_page {
 	padding:            0px;
 	margin:             0px;
 }
-#list_page h1, #list_page h2, #list_page h3 {
+#list_td h1, #list_td h2, #list_td h3 {
 	margin-top:         0px;
 	padding:            5px 2px 4px 2px;
 	font-family:        sans-serif;
 }
-#list_page h1 {
+#list_td h1 {
 	font-size:          1.4em;
 	text-align:         center;
 	-moz-border-radius: 0px;
 }
-#list_page h2 {
+#list_td h2 {
 	font-size:          1.2em;
 	-moz-border-radius: 0px;
 }
 #list_page table {
 	font-size:          0.9em;
 }
-#list_page ul {
+#list_page table .right {
+	font-size:          11pt;
+}
+#list_td ul {
 	font-size:          1em;
 	list-style-type:    none;
 	padding-left:       0px;
 	margin-left:        0px;
 }
-#list_page li {
+#list_td li {
 	clear:              left;
 }
-#list_page ul li {
+#list_td ul li {
 	padding-left:       0.3em;
 }
-#list_page ul ul {
+#list_td ul ul {
 	padding-left:       0.3em;
 	margin-left:        0.3em;
 }
-#list_page li > ul {
+#list_td li > ul {
 	display:            none;
 }
-#list_page .plus {
+#list_td .plus {
 	padding-left:       2px;
 	padding-right:      2px;
 	border-style:       solid;
 	border-width:       1px;
 }
-#list_page .mod_expand {
+#list_td .mod_expand {
 	width:              1em;
 	margin-right:       0.8em;
 	text-align:         center;
@@ -181,11 +184,11 @@ body#list_page {
 	border-radius:      4px;
 	text-decoration:    none;
 }
-#list_page .mod_expand {
+#list_td .mod_expand {
 	-moz-border-radius: 3px;
 	border-radius:      3px;
 }
-#list_page .info {
+#list_td .info {
 	width:              10px;
 	-moz-border-radius: 10px;
 	border-width:       0px;
@@ -194,7 +197,7 @@ body#list_page {
 	margin-right:       4px;
 	margin-top:         -3px;
 }
-#list_page .info span {
+#list_td .info span {
 	display:            none;
 	float:              right;
 	border:             1px solid black;
@@ -204,27 +207,27 @@ body#list_page {
 	top:                1px;
 	margin-right:       -4px;
 }
-#list_page .info:hover span {
+#list_td .info:hover span {
 	display:            block;
 }
-#list_page #adv_open,
-#list_page #adv_close {
+#list_td #adv_open,
+#list_td #adv_close {
 	border:             solid black 1px;
 	padding:            2px;
 	font-weight:        bold;
 	font-size:          1.4em;
 	cursor:             pointer;
 }
-#list_page #adv_open {
+#list_td #adv_open {
 }
-#list_page #adv_close {
+#list_td #adv_close {
 	display:           none;
 }
-#list_page #advanced {
+#list_td #advanced {
 	display:           none;
 }
-#list_page #advanced label,
-#list_page #advanced select {
+#list_td #advanced label,
+#list_td #advanced select {
 	font-size:         1.2em;
 }
 #search {

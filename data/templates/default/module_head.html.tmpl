@@ -1,4 +1,5 @@
 [% PROCESS strings.tmpl -%]
+[% IF not ajax %]
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html
 	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
@@ -61,7 +62,8 @@
 		</script>
 	</head>
 	<body>
-		<div id="headding">
+[% END %]
+		<div id="title">
 			<table>
 				<tr>
 	[%- IF !first %][% first = 1 %]
@@ -135,5 +137,7 @@
 		<div id="content">
 		[% content %]
 		</div>
+[% IF not ajax %]
 	</body>
 </html>
+[% END %]

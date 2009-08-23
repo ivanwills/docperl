@@ -349,11 +349,27 @@ function create_module(path, module) {
 	var label   = document.createElement('a');
 	label.href  = '?page=pod&module=' + path;
 	label.title = display;
-	label.setAttribute( 'onclick', 'javascript: click_module("' + path + '");' );
-	label.setAttribute( 'target', '[% IF !sidebar %]main[% ELSE %]_content[% END %]' );
+	$(label).click( function() {
+		click_module(path);
+	});
+	label.setAttribute( 'target', 'main' );
 	label.appendChild( document.createTextNode( module ) );
 
-	return label;
+	label = $(label);
+	label.click( function () {
+		// setup ajax request
+		// use return value to replace the content of td.right
+		// add the module to the recent documents list
+		// TODO check that no other js is normally executed by module files
+		// Other module links need to be moved to ajax
+		$.get( '?page=pod&ajax=true&module=' + path, null, function(data) {
+			var right = $('td.right');
+			right.html(data);
+		});
+		return false;
+	});
+
+	return label.get(0);
 }
 
 /**

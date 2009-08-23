@@ -361,7 +361,6 @@ sub list {
 		delete $vars{PERL};
 		delete $vars{LOCAL};
 	}
-	$vars{sidebar} = $q->{sidebar};
 
 	# return parameters
 	return %vars;
