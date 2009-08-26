@@ -145,12 +145,25 @@
 			</div>
 		</td>
 		<td class="right">
-			<iframe
-				name="main"
-				id="main"
-				scrolling="no"
-				src="?page=pod&amp;module=[% module %][% IF location %]&location=[% location %][% END %][% IF file %]&file=[% file %][% END %][% IF source %]&source=[% source %][% END %]"
-			/>
+			<script type="text/javascript">
+			<!--/* <![CDATA[ */
+				$(document).ready( function() {
+					var url = "?page=pod&amp;module=[% module %][% IF location %]&location=[% location %][% END %][% IF file %]&file=[% file %][% END %][% IF source %]&source=[% source %][% END %]";
+					$.get( url, null, function(data) {
+						var right = $('td.right');
+						right.html(data);
+						var links = $('td.right a');
+						links.each(function(i) {
+							if (!this.href) return true;
+
+							create_click(this, this.href);
+
+							return true;
+						});
+					});
+				});
+			/* ]]> */-->
+			</script>
 		</td>
 	</tr>
 </table>

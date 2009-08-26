@@ -71,7 +71,6 @@ function setup_modules() {
 		setup_modules.group++;
 		setTimeout( setup_modules, 10 );
 		setTimeout( fade_headding, [% animation %] );
-		setTimeout( set_iframe_height, 100 );
 	}
 	else if ( setup_modules.group == 5 ) {
 		level = 0;
@@ -355,21 +354,34 @@ function create_module(path, module) {
 	label.setAttribute( 'target', 'main' );
 	label.appendChild( document.createTextNode( module ) );
 
-	label = $(label);
+	create_click( label, '?page=pod&module=' + path );
+	return label;
+}
+
+/**
+ *  @param  anchor: The anchor tag object
+ *  @param  url:    The url that the anchor tag links to
+ *
+ *  Converts clicks to ajax requests for other pages.
+ */
+function create_click (anchor, url) {
+	url += '&ajax=true';
+	label = $(anchor);
 	label.click( function () {
-		// setup ajax request
-		// use return value to replace the content of td.right
-		// add the module to the recent documents list
-		// TODO check that no other js is normally executed by module files
-		// Other module links need to be moved to ajax
-		$.get( '?page=pod&ajax=true&module=' + path, null, function(data) {
+		$.get( url, null, function(data) {
 			var right = $('td.right');
 			right.html(data);
+			var links = $('td.right a');
+			links.each(function(i) {
+				if (!this.href) return true;
+
+				create_click(this, this.href);
+
+				return true;
+			});
 		});
 		return false;
 	});
-
-	return label.get(0);
 }
 
 /**
