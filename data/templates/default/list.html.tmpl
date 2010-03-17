@@ -19,6 +19,7 @@
 		<link rel="stylesheet" href="?page=common.css"         type="text/css"  />
 		<link rel="stylesheet" href="?page=cpan.css"           type="text/css"  />
 		<script type="text/javascript" src="[% static %]js/jquery-1.2.6.min.js"></script>
+		<script type="text/javascript" src="[% static %]js/jquery.history.js"></script>
 		<script type="text/javascript" src="?page=list.js"></script>
 		<script type="text/javascript">
 		<!--/* <![CDATA[ */
@@ -147,21 +148,7 @@
 		<td class="right">
 			<script type="text/javascript">
 			<!--/* <![CDATA[ */
-				$(document).ready( function() {
-					var url = "?page=pod&amp;module=[% module %][% IF location %]&location=[% location %][% END %][% IF file %]&file=[% file %][% END %][% IF source %]&source=[% source %][% END %]";
-					$.get( url, null, function(data) {
-						var right = $('td.right');
-						right.html(data);
-						var links = $('td.right a');
-						links.each(function(i) {
-							if (!this.href) return true;
-
-							create_click(this, this.href);
-
-							return true;
-						});
-					});
-				});
+				var default_url = "?page=pod&amp;module=[% module %][% IF location %]&location=[% location %][% END %][% IF file %]&file=[% file %][% END %][% IF source %]&source=[% source %][% END %]";
 			/* ]]> */-->
 			</script>
 		</td>

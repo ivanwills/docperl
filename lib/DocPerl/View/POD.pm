@@ -9,7 +9,7 @@ package DocPerl::View::POD;
 use strict;
 use warnings;
 use version;
-use Carp;
+use Carp qw/carp croak cluck confess/;
 use Data::Dumper qw/Dumper/;
 use English qw/ -no_match_vars /;
 use Pod::POM;

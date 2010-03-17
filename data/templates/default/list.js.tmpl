@@ -365,17 +365,33 @@ function create_module(path, module) {
  *  Converts clicks to ajax requests for other pages.
  */
 function create_click (anchor, url) {
-	url += '&ajax=true';
+	url += '&ajax=true' ;
 	label = $(anchor);
+
+	var target = url.match(/module=([^&]+)/);
+	if (target && target[1]) target = target[1];
+	else                     target = create_click.count++;
+
 	label.click( function () {
+		$.historyLoad(target);
+
 		$.get( url, null, function(data) {
 			var right = $('td.right');
 			right.html(data);
 			var links = $('td.right a');
+			var location = document.location.toString() + '';
+			location = location.replace(/#.*$/, '');
+
 			links.each(function(i) {
 				if (!this.href) return true;
 
-				create_click(this, this.href);
+				if (
+					this.href.match(new RegExp(location))
+					&&  this.href.match(/module=.*/)
+					&& !this.href.match(/#|javascript:/)
+				) {
+					create_click(this, this.href);
+				}
 
 				return true;
 			});
@@ -1067,6 +1083,29 @@ function debug(msg) {
 
 /**** JQuery code ****/
 
-$(document).ready( function() {
+				function pageload(hash) {
+					var url;
+					if (hash) {
+						var module = hash.match(/^((?:(local|inc|perl)__[A-Z]|\w+::).*)/);
+						url = "?page=pod" + "&module=" + module[1] + "&location=" + (module[2] ? module[2] : inc);
+					}
+					else {
+						url = default_url;
+					}
+					$.get( url, null, function(data) {
+						var right = $('td.right');
+						right.html(data);
+						var links = $('td.right a');
+						links.each(function(i) {
+							if (!this.href) return true;
 
-});
+							create_click(this, this.href);
+
+							return true;
+						});
+					});
+				}
+
+				$(document).ready( function() {
+					$.historyInit(pageload, default_url);
+				});

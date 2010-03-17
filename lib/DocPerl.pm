@@ -126,7 +126,7 @@ sub init_module {
 		# Convert the module_file parameter to a more file like name
 		# ie convert double colons to forward slashes (:: -> /)
 		$self->{module_file} =~ s{::}{/}gxms;
-		if ( $self->{current_location} eq 'perl' ) {
+		if ( $self->{current_location} eq 'perl' && $self->{module_file} !~ m{^pod/} ) {
 			$self->{module_file} = "pod/$self->{module_file}";
 		}
 	}
