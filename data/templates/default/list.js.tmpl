@@ -831,7 +831,7 @@ function section_toggle( section ) {
 		head.style.marginBottom = '1px';
 		link.removeChild( link.firstChild );
 		link.appendChild( document.createTextNode('+') );
-		link.title = '[% str_section_hide %]';
+		link.title = '[% str_section_show %]';
 		set_cookie( section, 'hide' );
 	}
 }
