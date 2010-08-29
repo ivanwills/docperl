@@ -378,6 +378,11 @@ function create_click (anchor, url) {
 		$.get( url, null, function(data) {
 			var right = $('td.right');
 			right.html(data);
+
+			var table = $('#title table');
+			var doc   = $(document);
+			table.css('width', doc.width() - 240 + 'px');
+
 			var links = $('td.right a');
 			var location = document.location.toString() + '';
 			location = location.replace(/#.*$/, '');
