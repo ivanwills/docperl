@@ -83,7 +83,21 @@ function setup_modules() {
 			list_toggle(open_list[i]);
 		}
 	}
+	else if ( setup_modules.group == 6 ) {
+		level = 0;
+		setup_modules.group++;
+		setTimeout( setup_modules, 10 );
+
+		$(window).resize(function (e) {
+			var head  = $('head');
+			var doc   = $('body');
+			var style = '<style type="text/css"> #frames #title { width: ' + ( doc.get(0).offsetWidth - 240 ) + 'px; } #frames #content { width: ' + ( doc.get(0).offsetWidth - 260 ) + 'px; }</style>';
+			head.append(style);
+		});
+		$(window).resize();
+	}
 }
+
 
 /**
  *  @todo
@@ -378,10 +392,6 @@ function create_click (anchor, url) {
 		$.get( url, null, function(data) {
 			var right = $('td.right');
 			right.html(data);
-
-			var table = $('#title table');
-			var doc   = $(document);
-			table.css('width', doc.width() - 240 + 'px');
 
 			var links = $('td.right a');
 			var location = document.location.toString() + '';
