@@ -81,7 +81,7 @@ LINE:
 			my $found_line = $i;
 			my $line;
 			my $sub_line_no = 0;
-			while ( $sub_line_no < 10 && ( $line = <$fh> ) ) {
+			while ( $sub_line_no < 5 && ( $line = <$fh> ) ) {
 				$i++;
 				if ( my ($require) = $line =~ /require\s+([\w:]*)/xms ) {
 					$api{required}{$require}++;
@@ -93,19 +93,25 @@ LINE:
 				}
 
 				# if the line is of the form $class = shift or $caller = shift assume sub is a class method
-				elsif ( $line =~ /\$(class|caller)\s*=\s*shift;/xms ) {
+				elsif ( $line =~ /\$(class|caller) \s* = \s* shift;/xms ) {
+					$api{class}{$func} = $found_line;
+					$method = 1;
+				}
+
+				# alternate class method my ($class, ...) = @_ or my ($caller, ...) = @_
+				elsif ( $line =~ /my \s* \( \s* \$(class|caller) [^\)]* \) \s* = \s* \@_;/xms ) {
 					$api{class}{$func} = $found_line;
 					$method = 1;
 				}
 
 				# stop if we come accross a closing bracket
-				elsif ( $line =~ /\$(self|this)\s*=\s*shift;/xms ) {
+				elsif ( $line =~ /\$(self|this) \s* = \s* shift;/xms ) {
 					$api{object}{$func} = $found_line;
 					$method = 1;
 				}
 
 				# alternate object opener $this = shift form
-				elsif ( $line =~ /my\s*\(\s*\$(self|this)[^\)]*\)\s*=\s*\@_;/xms ) {
+				elsif ( $line =~ /my \s* \( \s* \$(self|this) [^\)]* \) \s* = \s* \@_;/xms ) {
 					$api{object}{$func} = $found_line;
 					$method = 1;
 				}
@@ -196,6 +202,14 @@ sub check_base_parents {
 	my ($parents) = $line =~ m{\A \s* use \s+ base \s+ $LIST_ALL }xms;
 	if ($parents) {
 		my @parents = split /\s+/xms, $parents;
+		push @{ $api->{parents} }, @parents;
+		return 1;
+	}
+
+	# check for Moose extents construct
+	my (@parents) = $line =~ m{\A \s* extends \s+ $LIST_ALL }xms;
+	if (@parents) {
+		@parents = split /\s+/xms, join ' ', map { defined $_ ? $_ : () } @parents;
 		push @{ $api->{parents} }, @parents;
 		return 1;
 	}
@@ -326,6 +340,9 @@ sub get_hierarchy {
 	{
 		no strict qw/refs/;    ## no critic
 		@parents = @{"$object\:\:ISA"};
+	}
+	if ( $object->can('meta') && $object->meta->can('superclasses') ) {
+		push @parents, @{ $object->meta->superclasses };
 	}
 
 	for my $parent (@parents) {
