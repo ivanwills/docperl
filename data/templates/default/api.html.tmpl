@@ -18,6 +18,7 @@
 				[% IF list.size %]
 				<ul>
 					[% FOR item = list %]
+						[% IF item && item.class %]
 					<li>
 						[% UNLESS first %]<a href="?page=module&module=[% item.class %]&location=[% location %]" target="main">[% END %]
 							[% item.class %]
@@ -29,6 +30,7 @@
 							%]
 						[% END %]
 					</li>
+						[% END %]
 					[% END %]
 				</ul>
 				[% END %]
