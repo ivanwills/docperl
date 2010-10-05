@@ -98,35 +98,6 @@ function setup_modules() {
 	}
 }
 
-
-/**
- *  @todo
- *  @bug
- *
- *  Sets the iframe height to match the iframe contents
- */
-function set_iframe_height () {
-	var iframe = $('#main');
-
-	if (iframe) {
-		var list   = $('#list_div');
-		var height = 800;
-
-		if ( !iframe.get(0).contentWindow
-			|| !iframe.get(0).contentWindow.document
-			|| !iframe.get(0).contentWindow.document.body
-			|| iframe.get(0).contentWindow.document.body.scrollHeight < list.height()
-		)
-			height = list.height();
-		else
-			height = iframe.get(0).contentWindow.document.body.scrollHeight;
-
-		iframe.height(height);
-	}
-
-	setTimeout(set_iframe_height, 500);
-}
-
 /**
  *  @todo
  *  @bug
@@ -385,6 +356,7 @@ function create_click (anchor, url) {
 	var target = url.match(/module=([^&]+)/);
 	if (target && target[1]) target = target[1];
 	else                     target = create_click.count++;
+	console.log(url, "\n", target);
 
 	label.click( function () {
 		$.historyLoad(target);
@@ -615,7 +587,7 @@ function search_ajax(args) {
 	section.appendChild(ul);
 	reset_count(args.section);
 
-	HTTP.get_jason(
+	HTTP.get_json(
 		url,
 		function(result) {
 			//alert(result + '\n' + args.section);
@@ -1057,7 +1029,7 @@ HTTP.newRequest = function() {
 	return false;
 };
 
-HTTP.get_jason = function(url, callback) {
+HTTP.get_json = function(url, callback) {
 	var request = HTTP.newRequest();
 	request.onreadystatechange = function() {
 		if (request.readyState == 4 && request.status == 200) {
@@ -1098,29 +1070,29 @@ function debug(msg) {
 
 /**** JQuery code ****/
 
-				function pageload(hash) {
-					var url;
-					if (hash) {
-						var module = hash.match(/^((?:(local|inc|perl)__[A-Z]|\w+::).*)/);
-						url = "?page=pod" + "&module=" + module[1] + "&location=" + (module[2] ? module[2] : inc);
-					}
-					else {
-						url = default_url;
-					}
-					$.get( url, null, function(data) {
-						var right = $('td.right');
-						right.html(data);
-						var links = $('td.right a');
-						links.each(function(i) {
-							if (!this.href) return true;
+function pageload(hash) {
+	var url;
+	if (hash) {
+		var module = hash.match(/^((?:(local|inc|perl)__[A-Z]|\w+::).*)/);
+		url = "?page=pod" + "&module=" + module[1] + "&location=" + (module[2] ? module[2] : inc);
+	}
+	else {
+		url = default_url;
+	}
+	$.get( url, null, function(data) {
+		var right = $('td.right');
+		right.html(data);
+		var links = $('td.right a');
+		links.each(function(i) {
+			if (!this.href) return true;
 
-							create_click(this, this.href);
+			create_click(this, this.href);
 
-							return true;
-						});
-					});
-				}
+			return true;
+		});
+	});
+}
 
-				$(document).ready( function() {
-					$.historyInit(pageload, default_url);
-				});
+$(document).ready( function() {
+	$.historyInit(pageload, default_url);
+});
