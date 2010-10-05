@@ -587,7 +587,7 @@ function search_ajax(args) {
 	section.appendChild(ul);
 	reset_count(args.section);
 
-	HTTP.get_json(
+	HTTP.get_jason(
 		url,
 		function(result) {
 			//alert(result + '\n' + args.section);
@@ -1029,7 +1029,7 @@ HTTP.newRequest = function() {
 	return false;
 };
 
-HTTP.get_json = function(url, callback) {
+HTTP.get_jason = function(url, callback) {
 	var request = HTTP.newRequest();
 	request.onreadystatechange = function() {
 		if (request.readyState == 4 && request.status == 200) {
