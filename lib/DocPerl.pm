@@ -229,6 +229,17 @@ sub process {
 	}
 	elsif ( my ($type) = $page =~ /^(pod|text|api|function|code)$/xmsi ) {
 
+		# check that we are not incorrectly showing a .pm when there is a .pod file
+		if ( $page eq 'pod' && !$q->{source} && @{ $self->{sources} } > 1 && $self->{source} =~ /[.]pm$/xms ) {
+			SOURCE:
+			for my $source ( @{ $self->{sources} } ) {
+				if ( $source->{file} =~ /[.]pod$/ ) {
+					$self->{source} = $source->{file};
+					last SOURCE;
+				}
+			}
+		}
+
 		# try to see if the method is a cached module
 		my $module = 'DocPerl::View::' . uc $type;
 		my $file   = 'DocPerl/View/' . ( uc $type ) . '.pm';
