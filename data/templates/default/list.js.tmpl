@@ -356,7 +356,6 @@ function create_click (anchor, url) {
 	var target = url.match(/module=([^&]+)/);
 	if (target && target[1]) target = target[1];
 	else                     target = create_click.count++;
-	console.log(url, "\n", target);
 
 	label.click( function () {
 		$.historyLoad(target);
