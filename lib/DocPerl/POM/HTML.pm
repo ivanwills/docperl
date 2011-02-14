@@ -222,7 +222,7 @@ sub view_item {
 	if ( !$strip ) {
 		$start_title   = '<dt>';
 		$end_title     = '</dt>';
-		$start_content = '<dd';
+		$start_content = '<dd>';
 		$end_content   = '</dd>';
 	}
 
