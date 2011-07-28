@@ -1,0 +1,27 @@
+Bugs
+* AJAX history not always working particularly if you navigate to a real named anchor
+* Not all links are properly handled via hashing eg API page
+
+Features
+* Highlight the currently viewed modules path (.parent and .open classes)
+* Only show current module version
+* Projects display - more than on local code section
+* Convert to Config::General will help with the last point
+* AJAX module list loading
+*
+
+Catalysed
+
+    List section, path
+        section - in (pod|perl|other...) where other is defined in the config
+        path    - the tree path to be listed
+        Lists all modules or directories found in the path for the section specified
+
+    Pod section, module
+        displays the first module found in the section's path (will choose a .pod over a .pm)
+
+    API section, module
+
+    Code section, module
+
+    Search
