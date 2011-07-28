@@ -119,13 +119,13 @@
 	[%- IF sources.size > 1 %]
 						<div style="display: block; float: right">&nbsp;:&nbsp;</div>
 		[%- file_count = 0 %]
-						<div style="display: block; float: right">
+						<!--div style="display: block; float: right">
 							<select id="file_selector" onchange="change_file();">
 		[%- FOR src = sources -%]
 			[%- file_count = file_count + 1 %]
 								<option value="[% file_count %]"[% IF src.file == source %] selected="selected"[% END %]>[% src.file %]</option>
 		[%- END %]
-							</select>
+							</select-->
 						</div>
 	[%- END -%]
 					</td>
