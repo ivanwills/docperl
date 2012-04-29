@@ -14,12 +14,12 @@
 		<meta name="copyright"   content="Copyright (c) 2006 Ivan Wills, All Rights Reserved" />
 		<meta name="description" content="" />
 		<meta name="keywords"    content="" />
-		<link rel="icon"       href="[% static %]docperl1.png" type="image/png" />
+		<link rel="icon"       href="[% request.uri_base %]docperl1.png" type="image/png" />
 		<link rel="stylesheet" href="?page=css.css"            type="text/css"  />
 		<link rel="stylesheet" href="?page=common.css"         type="text/css"  />
 		<link rel="stylesheet" href="?page=cpan.css"           type="text/css"  />
-		<script type="text/javascript" src="[% static %]js/jquery-1.2.6.min.js"></script>
-		<script type="text/javascript" src="[% static %]js/jquery.history.js"></script>
+		<script type="text/javascript" src="[% request.uri_base %]js/jquery-1.2.6.min.js"></script>
+		<script type="text/javascript" src="[% request.uri_base %]js/jquery.history.js"></script>
 		<script type="text/javascript" src="?page=list.js"></script>
 		<script type="text/javascript">
 		<!--/* <![CDATA[ */
@@ -101,7 +101,7 @@
 				[% UNLESS LocalOnly %]
 				<div id="perl_doc">
 					<h2 id="perl_head">
-						<span class="info"><img src="[% static %]info.png" alt="info" border="0"/><span>[% perl_path %]</span></span>
+						<span class="info"><img src="[% request.uri_base %]info.png" alt="info" border="0"/><span>[% perl_path %]</span></span>
 						<a id="plus__perl" href="javascript: section_toggle('perl');" class="mod_expand" title="[% str_section_hide %]">-</a>
 						[% PerlLabel || str_list_perl %] (<span id="perl_count">0</span>)
 					</h2>
@@ -110,7 +110,7 @@
 				[%- END %]
 				<div id="local_doc">
 					<h2 id="local_head">
-						<span class="info"><img src="[% static %]info.png" alt="info" border="0"/><span>[% local_path %]</span></span>
+						<span class="info"><img src="[% request.uri_base %]info.png" alt="info" border="0"/><span>[% local_path %]</span></span>
 						<a id="plus__local" href="javascript: section_toggle('local');" class="mod_expand" title="[% str_section_hide %]">-</a>
 						[% LocalLabel || str_list_local %] (<span id="local_count">0</span>)
 					</h2>
@@ -119,7 +119,7 @@
 				[% UNLESS LocalOnly %]
 				<div id="inc_doc">
 					<h2 id="inc_head">
-						<span class="info"><img src="[% static %]info.png" alt="info" border="0"/><span>[% inc_path %]</span></span>
+						<span class="info"><img src="[% request.uri_base %]info.png" alt="info" border="0"/><span>[% inc_path %]</span></span>
 						<a id="plus__inc" href="javascript: section_toggle('inc');" class="mod_expand" title="[% str_section_hide %]">-</a>
 						[% IncLabel || str_list_inc %] (<span id="inc_count">0</span>)
 					</h2>

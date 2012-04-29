@@ -1,0 +1,167 @@
+/* * Fluid Grid System * http://fluid.gs/
+* http://fluid.newgoldleaf.com/
+* * Copyright (c) 2009 Joseph Silvashy and New Gold Leaf LP * Licensed under the MIT,GPL,and CC licenses. * * Date:2009-06-22 (Mon,22 Jun 2009) * Revision:3 * * Modifications and fixes made from:* http://meyerweb.com/eric/tools/css/reset/
+* http://code.google.com/p/blueprintcss/
+*/
+/* .fluid_grid_layout is the main wrapper for grid system,comment out for 100% width of body */ /*.fluid_grid_layout {
+    width: 80%;
+    margin: 0 10%;
+    position: relative;
+}
+*/
+/* min-width does not work in IE 6/7 */
+/*body {
+    min-width: 996px;
+    width: 996px;
+}*/
+
+/****
+* RESET CSS styles
+*/
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: 0;
+    font-size: 100%;
+    vertical-align: baseline;
+    background: transparent;
+}
+body {
+    line-height: 1; /* no measurement unit on purpose. "1" is like "1em" */
+}
+ol, ul {
+    list-style-type: none;
+}
+blockquote,
+q {
+    quotes: none;
+}
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
+    content: '';
+    content: none;
+}
+:focus {
+    outline: 0;
+}
+ins {
+    text-decoration: none;
+}
+del {
+    text-decoration: line-through;
+}
+table {
+    width: 99%;
+    border-collapse: collapse;
+}
+th,
+td {
+    padding: 0px 4px 0px 4px;
+}
+tr:last-child td {
+    border-bottom-width: 0;
+}
+tfoot {
+    font-style: italic;
+}
+caption {
+    background: transparent;
+}
+body,
+blockquote * {
+    font: 12px/1.3 "Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-weight: normal;
+}
+ul,
+ol {
+    list-style-type: none;
+    list-style-position: inside;
+}
+ol {
+    list-style-type: decimal;
+}
+abbr,
+acronym {
+    border-bottom-width: 0;
+}
+
+/* .section and .col are required in your HTML */
+.section {
+    display: block;
+    overflow: hidden;
+}
+.col {
+    display: block;
+    float: left;
+    overflow: hidden;
+}
+.section.section_12 .col_1 {
+    width: 8.335%;
+    *width: 8.29%;
+}
+.section.section_12 .col_2 {
+    width: 16.667%;
+}
+.section.section_12 .col_3 {
+    width: 25%;
+    *width: 24%;
+}
+.section.section_12 .col_4 {
+    width: 33.334%;
+}
+.section.section_12 .col_5 {
+    width: 41.667%;
+    *width: 41.62%;
+}
+.section.section_12 .col_6 {
+    width: 50%;
+    *width: 49.99%;
+}
+.section.section_12 .col_7 {
+    width: 58.24%;
+}
+.section.section_12 .col_8 {
+    width: 66.667%;
+}
+.section.section_12 .col_9 {
+    width: 74.88%;
+}
+.section.section_12 .col_10 {
+    width: 83.2%;
+}
+.section.section_12 .col_11 {
+    width: 91.52%;
+}
+.section.section_12 .col_12 {
+    width: 100%;
+}
+/***
+* Adjustments for Chrome+Safari* src:http://paulirish.com/2009/browser-specific-css-hacks/
+*/
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+    .section.section_12 .col_1 {
+        width: 8.336%;
+    }
+    .section.section_12 .col_2 {
+        width: 16.672%;
+    }
+    .section.section_12 .col_4 {
+        width: 33.336%;
+    }
+    .section.section_12 .col_5 {
+        width: 41.672%;
+    }
+    .section.section_12 .col_8 {
+        width: 66.672%;
+    }
+}
