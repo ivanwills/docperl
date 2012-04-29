@@ -1,7 +1,7 @@
-  
-<!-- 
-    Credit goes to the Ruby on Rails team for this page 
-    has been heavily based on the default Rails page that is 
+
+<!--
+    Credit goes to the Ruby on Rails team for this page
+    has been heavily based on the default Rails page that is
     built with a scaffolded application.
 
     Thanks a lot to them for their work.
@@ -22,7 +22,7 @@
               <li><a href="http://github.com/sukria/Dancer/">GitHub Community</a></li>
             </ul>
           </li>
-          
+
           <li>
             <h3>Browse the documentation</h3>
 
@@ -42,9 +42,9 @@
 
             <ul>
                 <li>Location: <code>/home/www/sites/docperl-git/tmp/DocPerl</code></li>
-                <li>Template engine: <code><% settings.template %></code></li>
-                <li>Logger: <code><% settings.logger %></code></li>
-                <li>Environment: <code><% settings.environment %></code></li>
+                <li>Template engine: <code>[% settings.template %]</code></li>
+                <li>Logger: <code>[% settings.logger %]</code></li>
+                <li>Environment: <code>[% settings.environment %]</code></li>
             </ul>
 
           </li>
@@ -61,7 +61,7 @@
         <div id="getting-started">
           <h1>Getting started</h1>
           <h2>Here&rsquo;s how to get dancing:</h2>
-                    
+
           <h3><a href="#" id="about_env_link">About your application's environment</a></h3>
 
           <div id="about-content" style="display: none;">
@@ -69,15 +69,15 @@
                 <tbody>
                 <tr>
                     <td>Perl version</td>
-                    <td><tt><% perl_version %></tt></td>
+                    <td><tt>[% perl_version %]</tt></td>
                 </tr>
                 <tr>
                     <td>Dancer version</td>
-                    <td><tt><% dancer_version %></tt></td>
+                    <td><tt>[% dancer_version %]</tt></td>
                 </tr>
                 <tr>
                     <td>Backend</td>
-                    <td><tt><% settings.apphandler %></tt></td>
+                    <td><tt>[% settings.apphandler %]</tt></td>
                 </tr>
                 <tr>
                     <td>Appdir</td>
@@ -85,15 +85,15 @@
                 </tr>
                 <tr>
                     <td>Template engine</td>
-                    <td><tt><% settings.template %></tt></td>
+                    <td><tt>[% settings.template %]</tt></td>
                 </tr>
                 <tr>
                     <td>Logger engine</td>
-                    <td><tt><% settings.logger %></tt></td>
+                    <td><tt>[% settings.logger %]</tt></td>
                 </tr>
                 <tr>
                     <td>Running environment</td>
-                    <td><tt><% settings.environment %></tt></td>
+                    <td><tt>[% settings.environment %]</tt></td>
                 </tr>
                 </tbody>
             </table>
@@ -109,7 +109,7 @@
     </script>
 
 
-          <ol>          
+          <ol>
             <li>
               <h2>Tune your application</h2>
 
@@ -127,9 +127,9 @@
               <p>
               The default route that displays this page can be removed,
               it's just here to help you get started. The template used to
-              generate this content is located in 
+              generate this content is located in
               <code>views/index.tt</code>.
-              You can add some routes to <tt>lib/DocPerl.pm</tt>. 
+              You can add some routes to <tt>lib/DocPerl.pm</tt>.
               </p>
             </li>
 
