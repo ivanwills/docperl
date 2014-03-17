@@ -417,8 +417,7 @@ __END__
 
 =head1 NAME
 
-DocPerl::View::API - Inspects a perl file to find what functions are defined
-modules used/inherited etc
+DocPerl::View::API - Inspects a perl file to find what functions are defined modules used/inherited etc
 
 =head1 VERSION
 
