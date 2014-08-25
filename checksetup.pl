@@ -151,7 +151,7 @@ HEADER
 
 	# read the config file
 	require Config::Std;
-	Config::Std->import qw/read_config/;
+	Config::Std->import( qw/read_config/ );
 	my %config;
 	read_config( $CONFIG, \%config );
 
