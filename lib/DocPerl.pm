@@ -513,6 +513,7 @@ sub _organise_perl {
 		'Licence'               => { map { 'perl'.$_ => 1 } qw/artistic gpl / },
 		'Processes and Threads' => { map { 'perl'.$_ => 1 } qw/fork ipc thrtut / },
 		'Programming'           => { map { 'perl'.$_ => 1 } qw/data form func lol number obj op pod podspec port pragma ref sec style sub syn tie unicode unintro var xs lexwarn / },
+		'POD'                   => { map { 'perl'.$_ => 1 } qw/pod podspec / },
 	);
 
 	for my $module ( keys %{$perl} ) {
